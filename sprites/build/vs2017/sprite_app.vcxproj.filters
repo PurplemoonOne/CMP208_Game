@@ -24,9 +24,15 @@
     <ClCompile Include="..\..\main_vita.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TouchInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\sprite_app.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TouchInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

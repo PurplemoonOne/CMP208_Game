@@ -22,6 +22,10 @@ void SpriteApp::Init()
 	my_sprite_.set_position(platform_.width()*0.5f, platform_.height()*0.5f, 0.0f);
 	my_sprite_.set_width(32.0f);
 	my_sprite_.set_height(32.0f);
+
+	/*..Declare Variables Here..*/
+
+
 }
 
 void SpriteApp::CleanUp()
@@ -38,16 +42,8 @@ bool SpriteApp::Update(float frame_time)
 	// frame rate = 1 second / frame_delta_time
 	fps_ = 1.0f / frame_time;
 
-	// move the sprite along the x-axis
 
-	// get a copy of the current position of the sprite
-	gef::Vector4 sprite_position = my_sprite_.position();
 
-	// update the x-axis on the COPY of the current position
-	sprite_position.set_x(sprite_position.x() + 1);
-
-	// update the sprite with the new position
-	my_sprite_.set_position(sprite_position);
 
 	return true;
 }
@@ -59,6 +55,7 @@ void SpriteApp::Render()
 
 	// draw my sprite here
 	sprite_renderer_->DrawSprite(my_sprite_);
+
 
 	DrawHUD();
 	sprite_renderer_->End();

@@ -6,6 +6,9 @@
 #include <maths/vector4.h>
 #include <vector>
 
+
+
+
 // FRAMEWORK FORWARD DECLARATIONS
 namespace gef
 {
@@ -23,6 +26,7 @@ public:
 	bool Update(float frame_time);
 	void Render();
 private:
+
 	void InitFont();
 	void CleanUpFont();
 	void DrawHUD();
@@ -32,6 +36,8 @@ private:
 
 	float fps_;
 	gef::Sprite my_sprite_;
+
+
 };
 
 #endif // _sprite_app_H
