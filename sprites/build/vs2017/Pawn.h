@@ -15,6 +15,11 @@ public:
 	Pawn();
 	~Pawn();
 
+public:
+
+
+
+
 protected:
 
 
