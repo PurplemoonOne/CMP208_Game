@@ -213,11 +213,17 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\sprite_app.cpp" />
-    <ClCompile Include="TouchInput.cpp" />
+    <ClCompile Include="HUD.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="Pawn.cpp" />
+    <ClCompile Include="PawnController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\sprite_app.h" />
-    <ClInclude Include="TouchInput.h" />
+    <ClInclude Include="HUD.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="Pawn.h" />
+    <ClInclude Include="PawnController.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

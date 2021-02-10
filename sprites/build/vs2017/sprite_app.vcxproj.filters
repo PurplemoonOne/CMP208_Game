@@ -24,7 +24,16 @@
     <ClCompile Include="..\..\main_vita.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TouchInput.cpp">
+    <ClCompile Include="Pawn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HUD.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PawnController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,7 +41,16 @@
     <ClInclude Include="..\..\sprite_app.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TouchInput.h">
+    <ClInclude Include="Pawn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HUD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PawnController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
