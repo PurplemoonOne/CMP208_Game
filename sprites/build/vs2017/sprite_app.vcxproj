@@ -206,24 +206,22 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|PSVita'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|PSVita'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\main_vita.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\..\sprite_app.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="Pawn.cpp" />
+    <ClCompile Include="Pawn3d.cpp" />
     <ClCompile Include="PawnController.cpp" />
+    <ClCompile Include="ThirdPersonCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\sprite_app.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="Object.h" />
-    <ClInclude Include="Pawn.h" />
+    <ClInclude Include="Pawn3d.h" />
     <ClInclude Include="PawnController.h" />
+    <ClInclude Include="ThirdPersonCamera.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

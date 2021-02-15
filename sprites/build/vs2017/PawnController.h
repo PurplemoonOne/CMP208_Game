@@ -11,19 +11,22 @@ namespace gef
 	class SonyControllerInputManager;
 	class TouchInputManager;
 	class Platform;
+	class Keyboard;
 	class Font;
 }
 
-/*..Rhys Duff - 1702713*/
-//..Personal Forward Declarations..//
-class Pawn;
-
+/*
+*	Pawn controller is responsible for handling the input of several devices 
+*	as well as allowing the user to posses objects within the game world.
+*	Input code is written here allowing greater flexibility when deciding what
+*	objects need input.
+*/
 
 class PawnController final
 {
 public:
 
-	PawnController(gef::Platform* p_ptr, Pawn* pawn);
+	PawnController(gef::Platform* p_pt);
 	~PawnController();
 
 public:
@@ -43,7 +46,7 @@ public:
 	/*..SCE controller manager..*/
 	gef::SonyControllerInputManager* sce_in_manager;
 
-	void ControllerHandler();
+	bool ControllerHandler();
 
 public: 
 
@@ -65,9 +68,6 @@ private:
 	/*.............*/
 
 private:
-
-	/*..Pointer to the current posessed pawn object..*/
-	Pawn* pawn;
 
 	/*..Pointer to the platform..*/
 	gef::Platform* platform_ptr;

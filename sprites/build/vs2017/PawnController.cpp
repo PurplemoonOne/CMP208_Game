@@ -7,12 +7,13 @@
 #include "input/touch_input_manager.h"
 
 
-PawnController::PawnController(gef::Platform* p_ptr, Pawn* p)
-	: 
+PawnController::PawnController(gef::Platform* p_ptr)
+	:
 	platform_ptr(p_ptr),
-	pawn(p),
+
 	input_manager(nullptr),
-	active_touch_id_(-1)
+	active_touch_id_(-1),
+	touch_position_(gef::Vector2::kZero)
 {
 
 }
@@ -26,9 +27,6 @@ void PawnController::InitialiseInputManagers(gef::Platform& platform)
 	/*..Create a new input manager..*/
 	input_manager = gef::InputManager::Create(platform);
 
-	/*..Create a new keyboard object..*/
-	//KEYBOARD
-
 	/*..Create a new sony entertainment controller manager..*/
 	sce_in_manager = input_manager->controller_input();
 
@@ -39,11 +37,10 @@ void PawnController::InitialiseInputManagers(gef::Platform& platform)
 
 }
 
-void PawnController::ControllerHandler()
+bool PawnController::ControllerHandler()
 {
 		const gef::SonyController* sce_controller = sce_in_manager->GetController(0);
 	
-		
 
 		if (sce_controller)
 		{
@@ -114,10 +111,16 @@ void PawnController::ControllerHandler()
 
 						break;
 					default:
+						
 						break;
 				}
 		}
+		else
+		{
+			return false;
+		}
 
+		return true;
 }
 
 
