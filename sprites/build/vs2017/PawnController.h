@@ -157,4 +157,10 @@ private:
 	Keys* left;
 	Keys* right;
 
+	/*..Some more key objects..*/
+
+	Keys* shift;
+	Keys* l_alt;
+	Keys* ctrl;
+
 };

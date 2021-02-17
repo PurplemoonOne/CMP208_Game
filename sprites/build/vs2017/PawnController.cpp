@@ -138,16 +138,6 @@ Button* PawnController::ControllerHandler()
 		return nullptr;
 }
 
-
-void PawnController::ProcessKeybaord()
-{
-}
-
-Keys* PawnController::KeyboardHandler()
-{
-	return nullptr;
-}
-
 void PawnController::ProcessSonyController()
 {
 	Event* event_ = ControllerHandler();
@@ -157,3 +147,85 @@ void PawnController::ProcessSonyController()
 		event_->Action(nullptr);
 	}
 }
+
+Keys* PawnController::KeyboardHandler()
+{
+
+
+		if (keyboard->IsKeyPressed(gef::Keyboard::KC_W))
+		{
+
+				return w;
+
+		}
+		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_S))
+		{
+
+				return s;
+
+		}
+		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_A))
+		{
+
+				return a;
+
+		}
+		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_D))
+		{
+
+				return d;
+
+		}
+		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_UP))
+		{
+
+				return up;
+
+		}
+		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_DOWN))
+		{
+
+				return down;
+
+		}
+		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_RIGHT))
+		{
+
+				return right;
+				
+		}
+		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_LEFT))
+		{
+
+				return left;
+
+		}
+		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_LALT))
+		{
+
+				return l_alt;
+				
+		}
+		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_LCONTROL))
+		{
+
+				return ctrl;
+
+		}
+
+
+	return nullptr;
+}
+
+void PawnController::ProcessKeybaord()
+{
+
+	Event* event_ = KeyboardHandler();
+
+	if (event_)
+	{
+		event_->Action(nullptr);
+	}
+
+}
+
