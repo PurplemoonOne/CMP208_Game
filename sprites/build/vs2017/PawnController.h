@@ -40,9 +40,6 @@ public:
 
 public:
 
-	/// @brief Processes the command that was entered via one of the input devices.
-	void ProcessCommand();
-
 	/*..Input pointers..*/
 
 	/// @brief Input manager responsible for handling input queries.
@@ -52,12 +49,22 @@ public:
 
 	/*..Keyboard input methods..*/
 
+	/// @brief Evaluate the keys pressed and execute an action.
+	void ProcessKeybaord();
+
 	/// @brief Keyboard pointer for key presses and key releases.
 	gef::Keyboard* keyboard;
 
+	/// @brief Handles input from the keyboard 
+	Keys* KeyboardHandler();
+
 public:
 
+
 	/*..SCE controller manager..*/
+
+	/// @brief Processes the command that was entered via one of the input devices.
+	void ProcessSonyController();
 
 	/// @brief A pointer to the system's sony controller manager.
 	gef::SonyControllerInputManager* sce_in_manager;
@@ -66,12 +73,15 @@ public:
 	/// @return Command* Returns a command to be executed.
 	Button* ControllerHandler();
 
+
 public: 
+
 
 	/*..Touch input methods..*/
 
 	/// @brief Touch input manager responsible for tracking screen presses, releases and touch updates.
 	gef::TouchInputManager* touch_in_manager; 
+
 
 private:
 

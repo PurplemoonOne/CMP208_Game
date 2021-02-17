@@ -139,12 +139,21 @@ Button* PawnController::ControllerHandler()
 }
 
 
-void PawnController::ProcessCommand()
+void PawnController::ProcessKeybaord()
 {
-	Command* event_ = ControllerHandler();
+}
+
+Keys* PawnController::KeyboardHandler()
+{
+	return nullptr;
+}
+
+void PawnController::ProcessSonyController()
+{
+	Event* event_ = ControllerHandler();
 
 	if (event_)
 	{
-		event_->Execute(nullptr);
+		event_->Action(nullptr);
 	}
 }

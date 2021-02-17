@@ -1,13 +1,13 @@
 #pragma once
 #include "Command.h"
 
-class Jump : public Command
+class Jump : public Event
 {
 public:
 
-	Command* Execute(Pawn* pawn) override
+	Jump* Action(Pawn* pawn) override
 	{
-		//pawn.addforce();
+		//Jump.
 	}
 
 	~Jump(){}

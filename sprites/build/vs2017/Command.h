@@ -2,7 +2,7 @@
 
 class Pawn;
 
-class Command
+class Event
 {
 public:
 
@@ -11,21 +11,21 @@ public:
 	* commands.
 	*/
 
-	virtual ~Command() {}
+	virtual ~Event() {}
 
 	/// @brief Executes the action bound to the key. (or button)
 	/// @param[in] Pointer to the pawn in which the action is associated with.
-	virtual Command* Execute(Pawn* pawn) = 0;
+	virtual Event* Action(Pawn* pawn) = 0;
 
 };
 
-class Keys : public Command
+class Keys : public Event
 {
 public:
 	Keys* key;
 };
 
-class Button : public Command
+class Button : public Event
 {
 public:
 	Button* button;
