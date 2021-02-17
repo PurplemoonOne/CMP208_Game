@@ -6,6 +6,7 @@
 #include <maths/vector4.h>
 #include <vector>
 
+#include "primitive_builder.h"
 
 
 
@@ -14,8 +15,15 @@ namespace gef
 {
 	class Platform;
 	class SpriteRenderer;
+	class Renderer3D;
 	class Font;
 }
+
+/*..Rhys Duff - 1702718..*/
+//Forward declarations
+
+class Pawn;
+class Camera;
 
 class SpriteApp : public gef::Application
 {
@@ -31,12 +39,23 @@ private:
 	void CleanUpFont();
 	void DrawHUD();
 
-	gef::SpriteRenderer* sprite_renderer_;
+	void SetupLights();
+
 	gef::Font* font_;
 
 	float fps_;
 	gef::Sprite my_sprite_;
 
+
+	/*..3D renderer..*/
+	gef::Renderer3D* render_3D;
+	gef::SpriteRenderer* sprite_renderer_;
+
+	/*..Pawn..*/
+
+	PrimitiveBuilder* primitive_builder;
+	Pawn* player;
+	Camera* main_camera;
 
 };
 

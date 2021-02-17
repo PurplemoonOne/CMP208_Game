@@ -1,21 +1,47 @@
 #include "sprite_app.h"
 #include <system/platform.h>
+
+
+/*..Renderers..*/
 #include <graphics/sprite_renderer.h>
+#include <graphics/renderer_3d.h>
+
+/*..Graphics/3D GFX..*/
 #include <graphics/font.h>
+#include "graphics/mesh_instance.h"
+
 #include <maths/math_utils.h>
 
+/*..Camera..*/
+#include "Camera.h"
+
+/*..Pawn..*/
+#include "Pawn3d.h"
 
 SpriteApp::SpriteApp(gef::Platform& platform) :
 	Application(platform),
 	sprite_renderer_(NULL),
-	font_(NULL)
+	font_(NULL),
+	render_3D(NULL),
+	primitive_builder(NULL),
+	main_camera(NULL)
 {
+	player = new Pawn();
 }
 
 void SpriteApp::Init()
 {
 	// create a sprite renderer to draw your sprites
 	sprite_renderer_ = gef::SpriteRenderer::Create(platform_);
+
+	primitive_builder = new PrimitiveBuilder(platform_);
+
+	render_3D = gef::Renderer3D::Create(platform_);
+
+	main_camera = Camera::Create(&platform_);
+
+
+	SetupLights();
 
 	InitFont();
 
@@ -25,6 +51,8 @@ void SpriteApp::Init()
 
 	/*..Declare Variables Here..*/
 
+	player->Pawn3d_Init(primitive_builder);
+	main_camera->InitialisePerspectiveMatrices();
 
 }
 
@@ -35,6 +63,10 @@ void SpriteApp::CleanUp()
 	// destroy sprite renderer once you've finished using it
 	delete sprite_renderer_;
 	sprite_renderer_ = NULL;
+
+	delete render_3D;
+	render_3D = nullptr;
+
 }
 
 bool SpriteApp::Update(float frame_time)
@@ -50,6 +82,18 @@ bool SpriteApp::Update(float frame_time)
 
 void SpriteApp::Render()
 {
+
+	main_camera->SetCameraPerspectives(render_3D);
+
+	render_3D->Begin();
+
+	player->Render(render_3D);
+
+	render_3D->End();
+
+
+
+
 	// draw all sprites between the Begin() and End() calls
 	sprite_renderer_->Begin();
 
@@ -75,6 +119,23 @@ void SpriteApp::CleanUpFont()
 	delete font_;
 	font_ = NULL;
 }
+
+void SpriteApp::SetupLights()
+{
+	// grab the data for the default shader used for rendering 3D geometry
+	gef::Default3DShaderData& default_shader_data = render_3D->default_shader_data();
+
+	// set the ambient light
+	default_shader_data.set_ambient_light_colour(gef::Colour(0.25f, 0.25f, 0.25f, 1.0f));
+
+	// add a point light that is almost white, but with a blue tinge
+	// the position of the light is set far away so it acts light a directional light
+	gef::PointLight default_point_light;
+	default_point_light.set_colour(gef::Colour(0.7f, 0.7f, 1.0f, 1.0f));
+	default_point_light.set_position(gef::Vector4(-500.0f, 400.0f, 700.0f));
+	default_shader_data.AddPointLight(default_point_light);
+}
+
 
 void SpriteApp::DrawHUD()
 {
