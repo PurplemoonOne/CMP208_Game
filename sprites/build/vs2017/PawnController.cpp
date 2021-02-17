@@ -6,6 +6,9 @@
 #include "input/sony_controller_input_manager.h"
 #include "input/touch_input_manager.h"
 
+/*..Include command..*/
+#include "Command.h"
+
 
 PawnController::PawnController(gef::Platform* p_ptr)
 	:
@@ -37,10 +40,9 @@ void PawnController::InitialiseInputManagers(gef::Platform& platform)
 
 }
 
-bool PawnController::ControllerHandler()
+Button* PawnController::ControllerHandler()
 {
 		const gef::SonyController* sce_controller = sce_in_manager->GetController(0);
-	
 
 		if (sce_controller)
 		{
@@ -48,66 +50,82 @@ bool PawnController::ControllerHandler()
 				{
 					case gef_SONY_CTRL_OPTIONS:
 	
-					
+						return options;
+
 						break;
 					case gef_SONY_CTRL_CROSS:
-	
-	
+
+						return cross;
+
 						break;
 					case gef_SONY_CTRL_CIRCLE:
-	
-	
+						
+						return circle;
+
 						break;
 					case gef_SONY_CTRL_TRIANGLE:
 	
+						return triangle;
 	
 						break;
 					case gef_SONY_CTRL_SQUARE:
 	
+						return sqaure;
 	
 						break;
 					case gef_SONY_CTRL_UP:
 	
+						return dpad_up;
 	
 						break;
 					case gef_SONY_CTRL_RIGHT:
 	
-	
+						return dpad_right;
+
 						break;
 					case gef_SONY_CTRL_DOWN:
 	
+						return dpad_down;
 	
 						break;
 					case gef_SONY_CTRL_LEFT:
 	
-	
+						return dpad_left;
+
 						break;
 					case gef_SONY_CTRL_L1:
 	
+						return left_bumper;
 	
 						break;
 					case gef_SONY_CTRL_L2:
 	
-	
+						return left_trigger;
+
 						break;
 					case gef_SONY_CTRL_L3:
 	
-	
+						return left_stick_button;
+
 						break;
 					case gef_SONY_CTRL_R1:
 	
+						return right_bumper;
 	
 						break;
 					case gef_SONY_CTRL_R2:
 	
-	
+						return right_trigger;
+
 						break;
 					case gef_SONY_CTRL_R3:
 	
+						return right_stick_button;
 				
 						break;	
 					case gef_SONY_CTRL_CIRCLE & gef_SONY_CTRL_CROSS:
 
+						//Custom button Needed
 
 						break;
 					default:
@@ -115,25 +133,18 @@ bool PawnController::ControllerHandler()
 						break;
 				}
 		}
-		else
-		{
-			return false;
-		}
+	
 
-		return true;
+		return nullptr;
 }
 
 
-void PawnController::ProcessInputDevices()
+void PawnController::ProcessCommand()
 {
+	Command* event_ = ControllerHandler();
 
-	//if (input_manager_)
-	//{
-	//	input_manager_->Update();
-
-
-	//	ProcessTouchInput();
-
-	//}
-
+	if (event_)
+	{
+		event_->Execute(nullptr);
+	}
 }

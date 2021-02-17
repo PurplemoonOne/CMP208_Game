@@ -206,6 +206,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|PSVita'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|PSVita'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\primitive_builder.cpp" />
     <ClCompile Include="..\..\sprite_app.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="HUD.cpp" />
@@ -215,9 +216,12 @@
     <ClCompile Include="ThirdPersonCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\primitive_builder.h" />
     <ClInclude Include="..\..\sprite_app.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Command.h" />
     <ClInclude Include="HUD.h" />
+    <ClInclude Include="Jump.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Pawn3d.h" />
     <ClInclude Include="PawnController.h" />

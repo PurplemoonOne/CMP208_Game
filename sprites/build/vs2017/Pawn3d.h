@@ -10,17 +10,21 @@ namespace gef
 }
 
 
-class PawnController;
 class PrimitiveBuilder;
 
-class Pawn3d : public gef::MeshInstance
+///A 3D gameobject supporting user input.
+class Pawn : public gef::MeshInstance
 {
 public:
 
 	/*..Constructor..*/
 
-	Pawn3d(PawnController* pawn_controller);
-	~Pawn3d();
+	/// @brief Constructor for the gameobject.
+	/// @param[in] PawnController*	A pointer to the input handler.
+	Pawn();
+
+
+	~Pawn();
 
 
 public:
@@ -33,10 +37,6 @@ public:
 
 protected:
 
-
-private:
-
-	PawnController* input;
 
 };
 

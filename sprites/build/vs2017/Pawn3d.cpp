@@ -5,23 +5,22 @@
 #include <graphics/renderer_3d.h>
 #include "primitive_builder.h"
 
-Pawn3d::Pawn3d(PawnController* pawn_input)
-	:input(pawn_input)
+Pawn::Pawn()
 {
 }
 
-Pawn3d::~Pawn3d()
+Pawn::~Pawn()
 {
 }
 
 
-void Pawn3d::Pawn3d_Init(PrimitiveBuilder* primitive_builder)
+void Pawn::Pawn3d_Init(PrimitiveBuilder* primitive_builder)
 {
 
 	set_mesh(primitive_builder->GetDefaultCubeMesh());
 }
 
-void Pawn3d::Render(gef::Renderer3D* renderer_3d)
+void Pawn::Render(gef::Renderer3D* renderer_3d)
 {
 	/*..Render this object..*/
 
