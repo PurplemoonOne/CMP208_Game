@@ -1,19 +1,16 @@
 #pragma once
-
-#include <graphics/mesh_instance.h>
+#include "GameObject.h"
 
 
 namespace gef
 {
-	class Renderer3D;
-	class MeshInstance;
+	class Platform;
 }
 
-
-class PrimitiveBuilder;
+class PawnController;
 
 ///A 3D gameobject supporting user input.
-class Pawn : public gef::MeshInstance
+class Pawn : public GameObject
 {
 public:
 
@@ -21,21 +18,22 @@ public:
 
 	/// @brief Constructor for the gameobject.
 	/// @param[in] PawnController*	A pointer to the input handler.
-	Pawn();
-
+	Pawn(PrimitiveBuilder* primitive_builder, gef::Platform& platform_);
 
 	~Pawn();
-
 
 public:
 
 	/*..Methods public access..*/
+	static Pawn* Create(PrimitiveBuilder* primitive_builder, gef::Platform& platform_);
 
-	void Pawn3d_Init(PrimitiveBuilder* primitive_builder);
-
-	void Render(gef::Renderer3D* renderer_3d);
+	/// @brief Updates this objects attributes.
+	/// @param[in] Delta time tracks the time since last frame.
+	virtual void Update(float delta_time) override;
 
 protected:
+	//Not sure just yet if i'll need this here.
+	PawnController* controller;
 
 
 };

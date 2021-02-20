@@ -8,7 +8,8 @@
 
 #include "primitive_builder.h"
 
-
+#include "Actor.h"
+#include "Pawn3d.h"
 
 // FRAMEWORK FORWARD DECLARATIONS
 namespace gef
@@ -23,6 +24,8 @@ namespace gef
 //Forward declarations
 
 class Pawn;
+class Actor;
+class PawnController;
 class Camera;
 
 class SpriteApp : public gef::Application
@@ -35,6 +38,8 @@ public:
 	void Render();
 private:
 
+	void HandleInput();
+
 	void InitFont();
 	void CleanUpFont();
 	void DrawHUD();
@@ -42,6 +47,9 @@ private:
 	void SetupLights();
 
 	gef::Font* font_;
+	gef::Font* camera_debugger;
+	gef::Font* controller_debugger;
+	gef::Font* player_debugger;
 
 	float fps_;
 	gef::Sprite my_sprite_;
@@ -54,6 +62,8 @@ private:
 	/*..Pawn..*/
 
 	PrimitiveBuilder* primitive_builder;
+
+	PawnController* player_controller;
 	Pawn* player;
 	Camera* main_camera;
 

@@ -1,30 +1,23 @@
 //This file.
 #include "Pawn3d.h"
 
-//Graphics includes.
-#include <graphics/renderer_3d.h>
-#include "primitive_builder.h"
-
-Pawn::Pawn()
+Pawn::Pawn(PrimitiveBuilder* primitive_builder_, gef::Platform& platform_)
+	:GameObject(primitive_builder_, platform_)
 {
+	controller = nullptr;
 }
 
 Pawn::~Pawn()
 {
 }
 
-
-void Pawn::Pawn3d_Init(PrimitiveBuilder* primitive_builder)
+Pawn* Pawn::Create(PrimitiveBuilder* primitive_builder, gef::Platform& platform_)
 {
-
-	set_mesh(primitive_builder->GetDefaultCubeMesh());
+	return new Pawn(primitive_builder, platform_);
 }
 
-void Pawn::Render(gef::Renderer3D* renderer_3d)
+void Pawn::Update(float delta_time)
 {
-	/*..Render this object..*/
-
-	renderer_3d->DrawMesh(*this);
-
+	SceneComponent::Update(delta_time);
 
 }

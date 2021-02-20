@@ -4,6 +4,10 @@
 #include <maths/vector4.h>
 #include <vector>
 
+//Some 'getter' methods require access to variables.
+#include "input/touch_input_manager.h"
+#include "input/input_manager.h"
+
 namespace gef
 {
 	class InputManager;
@@ -28,29 +32,61 @@ namespace gef
 
 class Button;
 class Keys;
+class Event;
 
+/*..Forward declaration, used as an argument in functions below..*/
 class Pawn;
+class Camera;
 
 class PawnController final
 {
-public:
+protected:
 
-	PawnController(gef::Platform* p_pt);
+	PawnController(gef::Platform& p_pt);
 	~PawnController();
 
 public:
 
-	/*..Input pointers..*/
+	/// @brief Gets the scene input manager.
+	/// @return Pointer to the input manager.
+	//gef::InputManager* GetSceneInputManager() { return input_manager; }
 
-	/// @brief Input manager responsible for handling input queries.
-	gef::InputManager* input_manager;
+	/// @brief Public method used to allocate a pawn controller on the heap.
+	/// @param[in] Takes a reference to the application's platform.
+	static PawnController* Create(gef::Platform& platform);
+
+	void PosessPawn(Pawn* pawn);
+
+	/// @brief Function responsible for binding buttons.
+	void BindButtons();
+
+	/// @brief Function responsible for binding keys.
+	void BindKeys();
 
 public:
+
+	/// @brief Getter to the touch/mouse manager
+	inline gef::InputManager* GetTouchInputManager() { return input_manager; }
+
+	/// @brief Grabs the mouse coordinates when left mouse button is down.
+	/// @returns A reference to the mouse coordinates contained in a vector 2.
+	inline const gef::Vector2& MouseLDownPositionCoordinates() { return touch_position_; }
+
+	/// @brief Checks if we can update the camera.
+	inline bool& CanUpdateCamera() { return can_get_mouse_coords; }
+
+	/// @brief Handles input for the scene camera.
+	void ControlCamera(Camera* scene_camera);
+
+	/// @brief Tracks and evaluates touch input.
+	void ProcessTouchInput();
 
 	/*..Keyboard input methods..*/
 
 	/// @brief Evaluate the keys pressed and execute an action.
 	void ProcessKeybaord();
+
+protected:
 
 	/// @brief Keyboard pointer for key presses and key releases.
 	gef::Keyboard* keyboard;
@@ -66,6 +102,8 @@ public:
 	/// @brief Processes the command that was entered via one of the input devices.
 	void ProcessSonyController();
 
+protected:
+
 	/// @brief A pointer to the system's sony controller manager.
 	gef::SonyControllerInputManager* sce_in_manager;
 
@@ -74,7 +112,7 @@ public:
 	Button* ControllerHandler();
 
 
-public: 
+private:
 
 
 	/*..Touch input methods..*/
@@ -101,15 +139,17 @@ private:
 
 private:
 
+	/*..Input pointers..*/
+
+	/// @brief Input manager responsible for handling input queries.
+	gef::InputManager* input_manager;
+
 	/*..Pointer to the platform..*/
 
 
 	gef::Platform* platform_ptr;
 
-	/*..Pawn currently posessed..*/
-
-	/// @brief This is a pointer to the currently controlled pawn.
-	Pawn* pawn;
+	Pawn* ptr_to_pawn;
 
 private:
 
@@ -162,5 +202,10 @@ private:
 	Keys* shift;
 	Keys* l_alt;
 	Keys* ctrl;
+
+private:
+	
+	/// @brief Tracks whether we can grab the mouse coordinates checking if we are pressing left mouse button.
+	bool can_get_mouse_coords = false;
 
 };

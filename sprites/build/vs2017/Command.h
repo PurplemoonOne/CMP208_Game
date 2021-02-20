@@ -1,6 +1,16 @@
 #pragma once
+#include "input/keyboard.h"
 
 class Pawn;
+
+
+enum EventStatus
+{
+	E_PRESSED = 0,
+	E_ACTIVE,
+	E_RELEASED
+};
+
 
 class Event
 {
@@ -15,18 +25,21 @@ public:
 
 	/// @brief Executes the action bound to the key. (or button)
 	/// @param[in] Pointer to the pawn in which the action is associated with.
-	virtual Event* Action(Pawn* pawn) = 0;
+	virtual Event* Action(Pawn* pawn);
+
 
 };
 
-class Keys : public Event
+class Keys 
 {
 public:
-	Keys* key;
+	Event* action;
+	EventStatus event_status;
 };
 
-class Button : public Event
+class Button
 {
 public:
-	Button* button;
+	Event* action;
+	EventStatus event_status;
 };
