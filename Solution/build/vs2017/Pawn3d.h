@@ -32,6 +32,10 @@ public:
 	virtual void Update(float delta_time) override;
 
 protected:
+
+	virtual void BuildTransform() override;
+
+
 	//Not sure just yet if i'll need this here.
 	PawnController* controller;
 

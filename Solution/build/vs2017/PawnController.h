@@ -8,6 +8,7 @@
 #include "input/touch_input_manager.h"
 #include "input/input_manager.h"
 
+
 namespace gef
 {
 	class InputManager;
@@ -68,16 +69,6 @@ public:
 	/// @brief Getter to the touch/mouse manager
 	inline gef::InputManager* GetTouchInputManager() { return input_manager; }
 
-	/// @brief Grabs the mouse coordinates when left mouse button is down.
-	/// @returns A reference to the mouse coordinates contained in a vector 2.
-	inline const gef::Vector2& MouseLDownPositionCoordinates() { return touch_position_; }
-
-	/// @brief Checks if we can update the camera.
-	inline bool& CanUpdateCamera() { return can_get_mouse_coords; }
-
-	/// @brief Handles input for the scene camera.
-	void ControlCamera(Camera* scene_camera);
-
 	/// @brief Tracks and evaluates touch input.
 	void ProcessTouchInput();
 
@@ -86,6 +77,24 @@ public:
 	/// @brief Evaluate the keys pressed and execute an action.
 	void ProcessKeybaord();
 
+	bool iskeydown = false;
+
+public:
+
+	/*..Fly Camera - Debug Mode..*/
+
+	/// @brief Grabs the mouse coordinates when left mouse button is down.
+	/// @returns A reference to the mouse coordinates contained in a vector 2.
+	inline const gef::Vector2& MouseLDownPositionCoordinates() { return touch_position_; }
+
+	/// @brief Checks if we can update the camera.
+	inline bool& CanUpdateCamera() { return can_get_mouse_coords; }
+
+	/// @brief Handles input for the scene camera.
+	/// @param[in] Takes a pointer to the scene's camera. 
+	/// @param[in] Delta time since the last frame.
+	void ControlCamera(Camera* scene_camera, float delta_time);
+
 protected:
 
 	/// @brief Keyboard pointer for key presses and key releases.
@@ -93,8 +102,6 @@ protected:
 
 	/// @brief Handles input from the keyboard 
 	Keys* KeyboardHandler();
-
-public:
 
 
 	/*..SCE controller manager..*/

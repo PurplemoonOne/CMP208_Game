@@ -17,7 +17,8 @@
 #define PI = 3.1415
 
 Camera::Camera(gef::Platform* platform_)
-	:platform(platform_),
+	:SceneComponent(*platform_),
+	platform(platform_),
 	camera_position(gef::Vector4::kZero),
 	camera_target(gef::Vector4::kZero),
 	camera_up(gef::Vector4::kZero)
@@ -25,8 +26,12 @@ Camera::Camera(gef::Platform* platform_)
 	proj_matrix.SetIdentity();
 	view_matrix.SetIdentity();
 
-	camera_velocity = 2.0f;
-	radial_acceleration = 0.1f;
+	//Kinematics
+	camera_velocity = 1.0f;
+	camera_acceleration = 1.2f;
+
+	//Radial motion
+	radial_acceleration = 1.2f;
 }
 
 Camera::~Camera()
@@ -60,7 +65,7 @@ void Camera::InitialisePerspectiveMatrices()
 
 }
 
-void Camera::CameraMatrices(gef::Renderer3D* scene_3d_renderer)
+void Camera::SetSceneMatrices(gef::Renderer3D* scene_3d_renderer)
 {
 	scene_3d_renderer->set_projection_matrix(proj_matrix);
 	scene_3d_renderer->set_view_matrix(view_matrix);
@@ -94,11 +99,67 @@ void Camera::UpdateCameraLookAt(const gef::Vector2& mouse_coordinates, float del
 	
 }
 
-void Camera::UpdateCameraStrafe(float delta_time)
+void Camera::Update(float delta_time)
+{
+	//Calculate the necessary components for the camera.
+	CalculateForwardVector();
+	CalculateUpVector();
+	CalculateRightVector();
+
+	//Calculate where the camera should face.
+	CalculateLookAtVector();
+
+	view_matrix.LookAt(camera_position, camera_target, camera_up);
+}
+
+void Camera::MoveForward(float delta_time)
+{
+	//Update the camera's velocity, v = u + at.
+	camera_velocity += camera_acceleration * delta_time;
+
+	//s = ut + a/2 * t^2
+	gef::Vector4 position_ = camera_position;
+
+	position_ += forward * camera_velocity * delta_time;
+
+	camera_position = position_;
+}
+
+void Camera::MoveBackward(float delta_time)
 {
 
+	camera_velocity -= camera_acceleration * delta_time;
 
+	//s = ut + a/2 * t^2
+	gef::Vector4 position_ = camera_position;
 
+	position_ -= forward * camera_velocity * delta_time;
+
+	camera_position = position_;
+}
+
+void Camera::MoveRight(float delta_time)
+{
+	camera_velocity += camera_acceleration * delta_time;
+
+	//s = ut + a/2 * t^2
+	gef::Vector4 position_ = camera_position;
+
+	position_ += right * camera_velocity * delta_time;
+
+	camera_position = position_;
+}
+
+void Camera::MoveLeft(float delta_time)
+{
+	camera_velocity -= camera_acceleration * delta_time;
+
+	//s = ut + a/2 * t^2
+	gef::Vector4 position_ = camera_position;
+
+	position_ -= forward * camera_velocity * delta_time;
+
+	camera_position = position_;
 }
 
 

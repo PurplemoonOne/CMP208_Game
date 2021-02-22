@@ -1,7 +1,11 @@
 #pragma once
+/*..Parent header..*/
 #include "SceneComponent.h"
 
+/*..graphics headers..*/
+#include <graphics/mesh_instance.h>
 
+/*..gef's Transform class..*/
 #include <maths/transform.h>
 
 /*..Forward Declarations..*/
@@ -11,11 +15,11 @@ namespace gef
 	class Renderer3D;
 }
 
-//Other classes (Not internal to gef)
+/*..Other class dependencies..(NOT internal to gef)..*/
 class PrimitiveBuilder;
 
 
-class GameObject : public SceneComponent
+class GameObject : public SceneComponent, public gef::MeshInstance
 {
 protected:
 
@@ -45,7 +49,10 @@ protected:
 
 	/// @brief Updates the gameobjets behaviour.
 	/// @param[in] Change in time since the last frame.
-	virtual void Update(float delta_time);
+	virtual void Update(float delta_time) override;
+
+	/// @brief Builds the objects transform 
+	virtual void BuildTransform();
 
 	/// @brief Pointer to the current platform.
 	gef::Platform* platform_ptr;

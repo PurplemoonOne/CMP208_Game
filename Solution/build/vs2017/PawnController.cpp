@@ -4,7 +4,6 @@
 #include "input/keyboard.h"
 #include "input/sony_controller_input_manager.h"
 
-
 /*..Include command..*/
 #include "Command.h"
 
@@ -41,17 +40,15 @@ void PawnController::InitialiseInputManagers(gef::Platform& platform)
 	/*..Create a new input manager..*/
 	input_manager = gef::InputManager::Create(platform);
 
-	/*..Create a new sony entertainment controller manager..*/
-	sce_in_manager = input_manager->controller_input();
+	/*..Point to the keyboard manager..*/
+	keyboard = input_manager->keyboard();
 
+	/*..Point to the sony entertainment controller manager..*/
+	sce_in_manager = input_manager->controller_input();
 
 	// make sure if there is a panel to detect touch input, then activate it
 	if (input_manager && input_manager->touch_manager() && (input_manager->touch_manager()->max_num_panels() > 0))
 		input_manager->touch_manager()->EnablePanel(0);
-	
-	
-		
-
 }
 
 
@@ -93,16 +90,34 @@ void PawnController::BindKeys()
 {
 }
 
-void PawnController::ControlCamera(Camera* scene_camera)
+void PawnController::ControlCamera(Camera* scene_camera, float delta_time)
 {
-	if (gef::Keyboard::KC_W)
+
+	if (keyboard)
 	{
 
-		//scene_camera.
-
+			if (keyboard->IsKeyDown(gef::Keyboard::KeyCode::KC_W))
+			{
+				iskeydown = true;
+				scene_camera->MoveForward(delta_time);
+			}
+			else if (keyboard->IsKeyDown(gef::Keyboard::KeyCode::KC_S))
+			{
+				scene_camera->MoveBackward(delta_time);
+			}
+			else if (keyboard->IsKeyDown(gef::Keyboard::KeyCode::KC_D))
+			{
+				scene_camera->MoveRight(delta_time);
+			}
+			else if (keyboard->IsKeyDown(gef::Keyboard::KeyCode::KC_A))
+			{
+				scene_camera->MoveLeft(delta_time);
+			}
+			else
+			{
+				iskeydown = false;
+			}
 	}
-	
-
 }
 
 void PawnController::ProcessTouchInput()
@@ -267,7 +282,7 @@ void PawnController::ProcessSonyController()
 Keys* PawnController::KeyboardHandler()
 {
 
-		if (keyboard->IsKeyPressed(gef::Keyboard::KC_W))
+		/*if (keyboard->IsKeyPressed(gef::Keyboard::KC_W))
 		{
 			return w;
 		}
@@ -306,7 +321,7 @@ Keys* PawnController::KeyboardHandler()
 		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_LCONTROL))
 		{
 			return ctrl;
-		}
+		}*/
 
 	return nullptr;
 }

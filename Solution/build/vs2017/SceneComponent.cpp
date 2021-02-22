@@ -11,11 +11,10 @@ SceneComponent* SceneComponent::Create(gef::Platform& platform_)
 
 void SceneComponent::Update(float delta_time)
 {
-	//Finally build this objects transform component.
-	BuildTransform();
+
 }
 
-void SceneComponent::BuildTransform()
+gef::Matrix44 SceneComponent::GetFinalTransform()
 {
 	gef::Matrix44 scale_, rot_x, rot_y, rot_z, trans;
 	gef::Matrix44 final_transform;
@@ -36,6 +35,5 @@ void SceneComponent::BuildTransform()
 	//Finally multiply out the matrices using standard SRT method.
 	final_transform = scale_ * rot_x * rot_y * rot_z * trans;
 
-	//Update this objects transform.
-	set_transform(final_transform);
+	return final_transform;
 }

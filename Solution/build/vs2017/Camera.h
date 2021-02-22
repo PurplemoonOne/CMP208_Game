@@ -1,8 +1,12 @@
 #pragma once
 
+//Maths headers
 #include "maths/vector2.h"
 #include "maths/vector4.h"
 #include "maths/matrix44.h"
+
+//Scene Component
+#include "SceneComponent.h"
 
 
 namespace gef
@@ -11,7 +15,7 @@ namespace gef
 	class Platform;
 }
 
-class Camera
+class Camera : public SceneComponent
 {
 protected:
 
@@ -28,9 +32,11 @@ public:
 
 	void InitialisePerspectiveMatrices();
 
-	void CameraMatrices(gef::Renderer3D* scene_3d_renderer);
+	/// @brief Use this method to tell the 3D renderer which view and projection matrices.
+	/// @param[in] Takes a pointer to the scene's 3D renderer.
+	void SetSceneMatrices(gef::Renderer3D* scene_3d_renderer);
 
-	/// @brief Grabs the cameras projection matrix in scene.
+	/// @brief Grabs the scene camera's projection matrix.
 	/// @return Returns a Matrix4x4.
 	inline const gef::Matrix44& CameraProjectionMatrix() { return proj_matrix; }
 
@@ -49,9 +55,24 @@ public:
 	/// @param[in] Time since last frame.
 	void UpdateCameraLookAt(const gef::Vector2& mouse_coordinates, float delta_time, bool update_cam);
 
+	/// @brief Updates the camera's properties.
+	/// @param[in] Mouse position on the screen.
+	/// @param[in] Time since last frame.
+	void Update(float delta_time) override;
+
 	/// @brief Updates the camera's movement
 	/// @param[in] Delta time since last frame.
-	void UpdateCameraStrafe(float delta_time);
+	//void UpdateCameraStrafe(float delta_time);
+
+
+	void MoveForward(float delta_time);
+
+	void MoveBackward(float delta_time);
+
+	void MoveRight(float delta_time);
+
+	void MoveLeft(float delta_time);
+
 
 protected:
 
@@ -75,6 +96,7 @@ protected:
 
 	float radial_acceleration;
 	float camera_velocity;
+	float camera_acceleration;
 
 	gef::Vector2 delta_mouse;
 

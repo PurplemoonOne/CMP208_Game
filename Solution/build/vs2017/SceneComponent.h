@@ -4,17 +4,13 @@
 #include <maths/matrix44.h>
 #include <maths/vector4.h>
 
-/*..graphics headers..*/
-#include <graphics/mesh_instance.h>
-
-
 namespace gef
 {
 	class Platform;
 	class Sprite;
 }
 
-class SceneComponent : public gef::MeshInstance
+class SceneComponent
 {
 protected:
 
@@ -53,7 +49,7 @@ public:
 protected:
 
 	/// @brief Builds a new transform for the gameobject, called everyframe capturing changes.
-	void BuildTransform();
+	virtual gef::Matrix44 GetFinalTransform();
 
 	/*..Game object attributes..*/
 

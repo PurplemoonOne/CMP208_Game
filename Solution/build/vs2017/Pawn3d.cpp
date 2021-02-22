@@ -21,3 +21,11 @@ void Pawn::Update(float delta_time)
 	SceneComponent::Update(delta_time);
 
 }
+
+void Pawn::BuildTransform()
+{
+	//May alter this function later.
+
+	set_transform(GetFinalTransform());
+
+}
