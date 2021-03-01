@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "PawnController.h"
 
 /*..gef input devices includes..*/
@@ -5,11 +6,9 @@
 #include "input/sony_controller_input_manager.h"
 
 /*..Include command..*/
-#include "Command.h"
+#include "Event.h"
 
-
-/*..Actions..*/
-#include "Move.h"
+/*..Camera..*/
 #include "Camera.h"
 
 //@brief Variable tracks how many pawn controllers are active. \n For this module there should only be ONE active.
@@ -18,7 +17,6 @@ static uint16_t controller_counter = 0;
 PawnController::PawnController(gef::Platform& p_ptr)
 	:
 	platform_ptr(&p_ptr),
-
 	input_manager(nullptr),
 	active_touch_id_(-1),
 	touch_position_(gef::Vector2::kZero)
@@ -31,8 +29,7 @@ PawnController::PawnController(gef::Platform& p_ptr)
 
 PawnController::~PawnController()
 {
-	//On application close, delete this from memory.
-	//delete this;
+
 }
 
 void PawnController::InitialiseInputManagers(gef::Platform& platform)
@@ -49,6 +46,9 @@ void PawnController::InitialiseInputManagers(gef::Platform& platform)
 	// make sure if there is a panel to detect touch input, then activate it
 	if (input_manager && input_manager->touch_manager() && (input_manager->touch_manager()->max_num_panels() > 0))
 		input_manager->touch_manager()->EnablePanel(0);
+
+	BindButtons();
+	BindKeys();
 }
 
 
@@ -60,7 +60,7 @@ PawnController* PawnController::Create(gef::Platform& platform)
 		return new PawnController(platform);
 	}
 	else
-	{
+	{	
 		/*
 		*	There shouldn't more than one controller at a time.
 		*	In future however if developing a game supporting coop 
@@ -81,8 +81,9 @@ void PawnController::PosessPawn(Pawn* pawn)
 
 void PawnController::BindButtons()
 {
-
-	
+	DButton dbutton;
+	cross = new Button();
+	cross->action = &dbutton;
 
 }
 
@@ -171,7 +172,7 @@ void PawnController::ProcessTouchInput()
 }
 
 
-Button* PawnController::ControllerHandler()
+Event* PawnController::ControllerHandler()
 {
 		const gef::SonyController* sce_controller = sce_in_manager->GetController(0);
 
@@ -181,77 +182,77 @@ Button* PawnController::ControllerHandler()
 				{
 					case gef_SONY_CTRL_OPTIONS:
 	
-						return options;
+						return options->action;
 
 						break;
 					case gef_SONY_CTRL_CROSS:
 
-						return cross;
+						return cross->action;
 
 						break;
 					case gef_SONY_CTRL_CIRCLE:
 						
-						return circle;
+						return circle->action;
 
 						break;
 					case gef_SONY_CTRL_TRIANGLE:
 	
-						return triangle;
+						return triangle->action;
 	
 						break;
 					case gef_SONY_CTRL_SQUARE:
 	
-						return sqaure;
+						return sqaure->action;
 	
 						break;
 					case gef_SONY_CTRL_UP:
 	
-						return dpad_up;
+						return dpad_up->action;
 	
 						break;
 					case gef_SONY_CTRL_RIGHT:
 	
-						return dpad_right;
+						return dpad_right->action;
 
 						break;
 					case gef_SONY_CTRL_DOWN:
 	
-						return dpad_down;
+						return dpad_down->action;
 	
 						break;
 					case gef_SONY_CTRL_LEFT:
 	
-						return dpad_left;
+						return dpad_left->action;
 
 						break;
 					case gef_SONY_CTRL_L1:
 	
-						return left_bumper;
+						return left_bumper->action;
 	
 						break;
 					case gef_SONY_CTRL_L2:
 	
-						return left_trigger;
+						return left_trigger->action;
 
 						break;
 					case gef_SONY_CTRL_L3:
 	
-						return left_stick_button;
+						return left_stick_button->action;
 
 						break;
 					case gef_SONY_CTRL_R1:
 	
-						return right_bumper;
+						return right_bumper->action;
 	
 						break;
 					case gef_SONY_CTRL_R2:
 	
-						return right_trigger;
+						return right_trigger->action;
 
 						break;
 					case gef_SONY_CTRL_R3:
 	
-						return right_stick_button;
+						return right_stick_button->action;
 				
 						break;	
 					case gef_SONY_CTRL_CIRCLE & gef_SONY_CTRL_CROSS:
@@ -271,7 +272,8 @@ Button* PawnController::ControllerHandler()
 
 void PawnController::ProcessSonyController()
 {
-	Event* event_ = ControllerHandler()->action;
+
+	Event* event_ = ControllerHandler();
 
 	if (event_)
 	{
@@ -279,49 +281,49 @@ void PawnController::ProcessSonyController()
 	}
 }
 
-Keys* PawnController::KeyboardHandler()
+Event* PawnController::KeyboardHandler()
 {
 
-		/*if (keyboard->IsKeyPressed(gef::Keyboard::KC_W))
+		if (keyboard->IsKeyPressed(gef::Keyboard::KC_W))
 		{
-			return w;
+			return w->action;
 		}
 		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_S))
 		{
-			return s;
+			return s->action;
 		}
 		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_A))
 		{
-			return a;
+			return a->action;
 		}
 		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_D))
 		{
-			return d;
+			return d->action;
 		}
 		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_UP))
 		{
-			return up;
+			return up->action;
 		}
 		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_DOWN))
 		{
-			return down;
+			return down->action;
 		}
 		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_RIGHT))
 		{
-			return right;
+			return right->action;
 		}
 		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_LEFT))
 		{
-			return left;
+			return left->action;
 		}
 		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_LALT))
 		{
-			return l_alt;
+			return l_alt->action;
 		}
 		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_LCONTROL))
 		{
-			return ctrl;
-		}*/
+			return ctrl->action;
+		}
 
 	return nullptr;
 }
@@ -329,7 +331,7 @@ Keys* PawnController::KeyboardHandler()
 void PawnController::ProcessKeybaord()
 {
 
-	Event* event_ = KeyboardHandler()->action;
+	Event* event_ = KeyboardHandler();
 
 	if (event_)
 	{

@@ -18,14 +18,14 @@ public:
 
 	/// @brief Constructor for the gameobject.
 	/// @param[in] PawnController*	A pointer to the input handler.
-	Pawn(PrimitiveBuilder* primitive_builder, gef::Platform& platform_);
+	Pawn(PrimitiveBuilder* primitive_builder, gef::Platform& platform_, b2World* world_);
 
 	~Pawn();
 
 public:
 
 	/*..Methods public access..*/
-	static Pawn* Create(PrimitiveBuilder* primitive_builder, gef::Platform& platform_);
+	static Pawn* Create(PrimitiveBuilder* primitive_builder, gef::Platform& platform_, b2World* world_);
 
 	/// @brief Updates this objects attributes.
 	/// @param[in] Delta time tracks the time since last frame.

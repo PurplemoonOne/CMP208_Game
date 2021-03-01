@@ -8,6 +8,11 @@
 #include "input/touch_input_manager.h"
 #include "input/input_manager.h"
 
+/*..Actions..*/
+#include "Move.h"
+#include "Jump.h"
+#include "AddForce.h"
+#include "DebugButton.h"
 
 namespace gef
 {
@@ -31,6 +36,14 @@ namespace gef
 * 
 */
 
+/*..Actions..*/
+class Move;
+class Jump;
+class AddForce;
+class DButton;
+
+
+/*..Forward Declarations..*/
 class Button;
 class Keys;
 class Event;
@@ -43,10 +56,13 @@ class PawnController final
 {
 protected:
 
+	/// @brief Pawn controller constructor.
 	PawnController(gef::Platform& p_pt);
-	~PawnController();
 
 public:
+
+	/// @brief Pawn controller destructor.
+	~PawnController();
 
 	/// @brief Gets the scene input manager.
 	/// @return Pointer to the input manager.
@@ -56,6 +72,8 @@ public:
 	/// @param[in] Takes a reference to the application's platform.
 	static PawnController* Create(gef::Platform& platform);
 
+	/// @brief Pass a pawn to gain control of that pawn.
+	/// @param[in] Takes a pointer to a pawn in the scene.
 	void PosessPawn(Pawn* pawn);
 
 	/// @brief Function responsible for binding buttons.
@@ -101,8 +119,9 @@ protected:
 	gef::Keyboard* keyboard;
 
 	/// @brief Handles input from the keyboard 
-	Keys* KeyboardHandler();
+	Event* KeyboardHandler();
 
+public:
 
 	/*..SCE controller manager..*/
 
@@ -116,7 +135,7 @@ protected:
 
 	/// @brief Handles controller input, returns an action based on what button was pressed.
 	/// @return Command* Returns a command to be executed.
-	Button* ControllerHandler();
+	Event* ControllerHandler();
 
 
 private:
@@ -152,10 +171,9 @@ private:
 	gef::InputManager* input_manager;
 
 	/*..Pointer to the platform..*/
-
-
 	gef::Platform* platform_ptr;
 
+	/// @brief Pointer to the current player in the scene.
 	Pawn* ptr_to_pawn;
 
 private:
@@ -214,5 +232,7 @@ private:
 	
 	/// @brief Tracks whether we can grab the mouse coordinates checking if we are pressing left mouse button.
 	bool can_get_mouse_coords = false;
+
+
 
 };

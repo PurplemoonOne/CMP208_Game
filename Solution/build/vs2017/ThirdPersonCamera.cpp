@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "ThirdPersonCamera.h"
 
 ThirdPersonCamera::ThirdPersonCamera(gef::Platform* plat)

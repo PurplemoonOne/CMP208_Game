@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "Camera.h"
 
 //Maths Includes
@@ -56,7 +58,7 @@ void Camera::InitialisePerspectiveMatrices()
 
 
 	/*..Initialise the look at matrix..*/
-	camera_position = gef::Vector4(4.0f, 1.0f, 2.0f);
+	camera_position = gef::Vector4(6.0f, 1.0f, 12.0f);
 	camera_up = gef::Vector4(0.0f, 1.0f, 0.0f);
 	camera_target = gef::Vector4(0.0f, 0.0f, 0.0f);
 
@@ -109,7 +111,7 @@ void Camera::Update(float delta_time)
 	//Calculate where the camera should face.
 	CalculateLookAtVector();
 
-	view_matrix.LookAt(camera_position, camera_target, camera_up);
+//	view_matrix.LookAt(camera_position, camera_target, camera_up);
 }
 
 void Camera::MoveForward(float delta_time)

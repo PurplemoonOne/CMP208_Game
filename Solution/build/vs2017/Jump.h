@@ -1,11 +1,11 @@
 #pragma once
-#include "Command.h"
+#include "Event.h"
 
 class Jump : public Event
 {
 public:
 
-	Jump* Action(Pawn* pawn) override
+	virtual void Action(Pawn* pawn) override
 	{
 		//Jump.
 	}

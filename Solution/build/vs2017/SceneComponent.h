@@ -4,6 +4,7 @@
 #include <maths/matrix44.h>
 #include <maths/vector4.h>
 
+
 namespace gef
 {
 	class Platform;
@@ -32,18 +33,34 @@ public:
 public:
 
 	// @brief Grabs the game objects position in the scene.
+	// @param[in] Position 'x'
+	// @param[in] Position 'y'
+	// @param[in] Position 'z'
+	virtual inline void SetPosition(float x_pos, float y_pos, float z_pos);
+
+	// @brief Grabs the game objects current scale in the scene.
+	// @param[in] Rotation 'x'
+	// @param[in] Rotation 'y'
+	// @param[in] Rotation 'z'
+	virtual inline void SetRotation(float rot_x, float rot_y, float rot_z);
+
+	// @brief Grab the rotation values around the x-axis
+	// @param[in] Scale 'x'
+	// @param[in] Scale 'y'
+	// @param[in] Scale 'z'
+	virtual inline void SetScale(float scl_x, float scl_y, float scl_z);
+
+	// @brief Grabs the game objects position in the scene.
 	// @return Returns a vector 4.
 	virtual inline const gef::Vector4& GetPosition() { return position; }
-
 
 	// @brief Grabs the game objects current scale in the scene.
 	// @return Returns a Vector 4.
 	virtual inline const gef::Vector4& GetScale() { return scale; }
 
-
 	// @brief Grab the rotation values around the x-axis
 	// @return Returns a Vector 4.
-	virtual inline const gef::Vector4& GetRotationX() { return rotation;}
+	virtual inline const gef::Vector4& GetRotation() { return rotation;}
 
 
 protected:
