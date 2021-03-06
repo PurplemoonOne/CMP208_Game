@@ -1,43 +1,108 @@
 #include "pch.h"
 
 #include "PhysicsComponent.h"
+#include "GameObject.h"
 
-PhysicsComponent::PhysicsComponent(b2World* world_, float density, float weight, float friction, bool is_dynamic, float angle, bool is_sensor, float height, float width, gef::Vector4 position_)
+PhysicsComponent::PhysicsComponent(b2World* world_, GameObject* game_object_, bool is_dynamic)
+	:world(world_),
+	game_object(game_object_)
 {
-	world = world_;
 
-	/*..Body's attributes are cloned, hence instantiated on stack..*/
+	/*..Grab the position and scale..*/
+	body_position = b2Vec2(game_object->GetPosition().x(),
+		game_object->GetPosition().y());
+
+	body_scale = b2Vec2(game_object->GetScale().x() / 2.0f,
+		game_object->GetScale().y() / 2.0f);
+
+
 	b2BodyDef body_definition;
-	b2FixtureDef fixture_def;
-	b2PolygonShape shape;
 
 	/*..Initiliaside the body definition..*/
-	if (density > 0.0f) {
-		body_definition.type = b2_dynamicBody;
-	}
-	body_definition.position = b2Vec2(position_.x(), position_.y());
-	body_definition.angle = angle;
+
+	is_dynamic ? body_definition.type = b2_dynamicBody : body_definition.type = b2_staticBody;
+	body_definition.position = b2Vec2(body_position.x, body_position.y);
+	body_definition.angle = 0.0f;
 	body_definition.enabled = true;
+	
+	if (body_definition.type == b2_dynamicBody || body_definition.type == b2_kinematicBody)
+	{
+			/*..Only want to point to the game object data if the subject is a dynamic body..*/
+			body_definition.userData.pointer = reinterpret_cast<uintptr_t>(game_object);
+			body_definition.allowSleep = false;
+	}
+	else
+	{
+			body_definition.allowSleep = true;
+	}
 
+	/*..Finally create the main physics body for the game object..*/
 	physics_body = world->CreateBody(&body_definition);
+}
 
-	/*..Create our body's shape..*/
-	b2Vec2 scale = b2Vec2((width / 2.0f), (height / 2.0f));
-	shape.SetAsBox(scale.x, scale.y);
-
-	fixture_def.shape = &shape;
-	fixture_def.density = density;
-	fixture_def.friction = friction;
-	fixture_def.isSensor = is_sensor;
-
-	fixture = physics_body->CreateFixture(&fixture_def);
+void PhysicsComponent::Update()
+{
+	body_position = physics_body->GetPosition();
 }
 
 
 PhysicsComponent::~PhysicsComponent()
 {
 }
-PhysicsComponent* PhysicsComponent::Create(b2World* world_, float density, float weight, float friction, bool is_dynamic, float angle, bool is_sensor, float height, float width,  gef::Vector4 position)
+PhysicsComponent* PhysicsComponent::Create(b2World* world_, GameObject* game_object, bool is_dynamic)
 {
-	return new  PhysicsComponent(world_, density, weight, friction, is_dynamic, angle, is_sensor, height, width, position);
+	return new PhysicsComponent(world_, game_object, is_dynamic);
+}
+
+void PhysicsComponent::CreateFixture(Shape shape_, float density, float friction, float mass, bool is_sensor)
+{
+	/*
+	*	In this function, we want to attach a shape to our object, thereby setting the physics body as
+	*	the parent AND changing the shapes coordinate system to local. 
+	* 
+	*	In addition we would like to set various attributes describing how this object behaves in the world.
+	*	i.e friction - how resistant is this object to sliding along a surface
+	*
+	*/
+
+	b2Filter filter;
+	b2FixtureDef fixture_def;
+	b2PolygonShape shape;
+	b2MassData mass_data;
+
+	/*..Create our body's shape..*/
+	switch (shape_)
+	{
+	case Shape::BOX:
+		shape.SetAsBox(body_scale.x, body_scale.y);
+
+		/*..Set mass parameters..*/
+		mass_data.center = body_position;
+		mass_data.mass = mass;
+
+		/*..Apply the remaining attributes to our body..*/
+		fixture_def.shape = &shape;
+		fixture_def.density = density;
+		fixture_def.friction = friction;
+		fixture_def.isSensor = is_sensor;
+
+
+		break;
+	case Shape::EDGE:
+		//Make edge.
+		break;
+	case Shape::POLYGON:
+		//Make custom polygon
+		break;
+	case Shape::CIRCLE:
+		//Make circle
+		break;
+	}
+	
+
+	fixture = physics_body->CreateFixture(&fixture_def);
+}
+
+inline void PhysicsComponent::UpdatePhysicsParameters(float density, float weight, float friction)
+{
 }

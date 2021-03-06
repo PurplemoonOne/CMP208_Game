@@ -4,6 +4,7 @@
 
 //System includes.
 #include <system/platform.h>
+#include <system/debug_log.h>
 
 //Primitive Builder
 #include "primitive_builder.h"
@@ -15,7 +16,7 @@
 #include "box2d/box2d.h"
 
 
-GameObject::GameObject(PrimitiveBuilder* primitive_builder, gef::Platform& platform_, b2World* world_, bool is_dynamic_)
+GameObject::GameObject(gef::Platform& platform_, b2World* world_, bool is_dynamic_)
 
 	: SceneComponent(platform_),
 	platform_ptr(&platform_),
@@ -24,22 +25,25 @@ GameObject::GameObject(PrimitiveBuilder* primitive_builder, gef::Platform& platf
 	position = gef::Vector4::kZero;
 	rotation = gef::Vector4::kZero;
 	scale = gef::Vector4::kZero;
-
-	//If we passed in a valid primitive builder, instantiate the mesh.
-	if (primitive_builder){
-		InitialiseStaticMesh(primitive_builder);
-	}
-
 }
 
-GameObject* GameObject::Create(PrimitiveBuilder* primitive_builder, gef::Platform& platform_, b2World* world_, bool is_dynamic)
+GameObject* GameObject::Create(gef::Platform& platform_, b2World* world_, bool is_dynamic)
 {
-	return new GameObject(primitive_builder, platform_, world_, is_dynamic);
+	return new GameObject(platform_, world_, is_dynamic);
 }
 
-void GameObject::AttachPhysicsComponent(b2World* world_, float density, float weight, float friction, float angle, bool is_sensor)
+void GameObject::AttachPhysicsComponent(b2World* world_)
 {
-	physics_component = PhysicsComponent::Create(world_, density, weight, friction, is_dynamic, angle, is_sensor, scale.x(), scale.y(), position);
+	physics_component = PhysicsComponent::Create(world_, this, is_dynamic);
+}
+
+void GameObject::InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor)
+{
+	if (physics_component)
+		physics_component->CreateFixture(shape_, density, friction, mass, is_sensor);
+
+	else
+		gef::DebugOut("Error, Create a physics component before attempting to intialise attribute.");
 }
 
 void GameObject::Update(float delta_time)
@@ -73,9 +77,10 @@ inline void GameObject::UpdateMesh()
 {
 	//We need to update the GFX to reflect the changes made
 	//from the simulation.
+	physics_component->Update();
 
-	SetPosition(physics_component->PhysicsBodyComponent()->GetPosition().y, 
-		physics_component->PhysicsBodyComponent()->GetPosition().x,
+	SetPosition(physics_component->PhysicsBodyComponent()->GetPosition().x, 
+		physics_component->PhysicsBodyComponent()->GetPosition().y,
 		0.0f);
 	SetRotation(0.0f, 0.0f, physics_component->PhysicsBodyComponent()->GetAngle());
 }

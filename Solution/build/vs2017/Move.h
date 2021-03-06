@@ -6,10 +6,11 @@ class MoveRight : public Event
 {
 public:
 
-		virtual void Move(Pawn* pawn, float delta_time)
-		{
-				
-		}
+
+	void Action(Pawn* pawn, float delta_time)
+	{
+
+	}
 
 	~MoveRight(){}
 };

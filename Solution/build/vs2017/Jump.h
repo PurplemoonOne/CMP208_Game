@@ -5,9 +5,9 @@ class Jump : public Event
 {
 public:
 
-	virtual void Action(Pawn* pawn) override
+	void Action(Pawn* pawn, float delta_time) override
 	{
-		//Jump.
+
 	}
 
 	~Jump(){}

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "primitive_builder.h"
 #include <graphics/mesh.h>
 #include <system/platform.h>

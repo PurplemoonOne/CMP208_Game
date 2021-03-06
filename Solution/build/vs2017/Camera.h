@@ -44,9 +44,6 @@ public:
 	/// @return Returns a Matrix4x4.
 	inline const gef::Matrix44& CameraViewMatrix() { return view_matrix; }
 
-	/// @brief Grabs the cameras position in scene.
-	/// @return Returns a vector 4.
-	inline const gef::Vector4& GetTranslation() { return camera_position; }
 
 	/*..Methods for calculating flying camera..*/
 
@@ -58,11 +55,12 @@ public:
 	/// @brief Updates the camera's properties.
 	/// @param[in] Mouse position on the screen.
 	/// @param[in] Time since last frame.
-	void Update(float delta_time) override;
+	//void Update(float delta_time) override;
 
 	/// @brief Updates the camera's movement
 	/// @param[in] Delta time since last frame.
 	//void UpdateCameraStrafe(float delta_time);
+
 
 
 	void MoveForward(float delta_time);
@@ -77,22 +75,18 @@ public:
 protected:
 
 	/// @brief Calculate the camera's new yaw.
-	void CalculateForwardVector();
+	void CalculateForwardVector(float& yaw, float& pitch);
 
 	/// @brief Calculate the forward look at position.
 	void CalculateLookAtVector();
 
 	/// @brief Calculate the up vector.
-	void CalculateUpVector();
+	void CalculateUpVector(float& yaw, float& pitch, float& roll);
 
 	/// @brief Calculate the right vector perpindicluar to the forward and up vectors.
 	void CalculateRightVector();
 
 	/*..Fly camera attributes..*/
-
-	float yaw;
-	float pitch;
-	float roll;
 
 	float radial_acceleration;
 	float camera_velocity;
@@ -105,7 +99,6 @@ protected:
 	gef::Matrix44 view_matrix;
 
 	/*..Camera variables..*/
-	gef::Vector4 camera_position;
 	gef::Vector4 camera_target;
 	gef::Vector4 camera_up;
 

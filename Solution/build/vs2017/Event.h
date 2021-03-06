@@ -2,7 +2,7 @@
 #include "input/keyboard.h"
 
 class Pawn;
-
+class GameObject;
 
 enum EventStatus
 {
@@ -17,12 +17,14 @@ class Event
 public:
 	/*
 	* Base command class. Responsible for mapping keys and buttons to 
-	* commands.
+	* commands. Purely virtual, (interface) can be overridden.
 	*/
 
 	/// @brief Executes the action bound to the key. (or button)
 	/// @param[in] Pointer to the pawn in which the action is associated with.
-	virtual void Action(Pawn* pawn) = 0;
+	/// @param[in] Delta time since last frame.
+	virtual void Action(Pawn* pawn, float delta_time) = 0;
+
 	virtual ~Event() {}
 
 };

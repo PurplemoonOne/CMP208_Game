@@ -1,3 +1,4 @@
+#include "pch.h"
 #include <platform/d3d11/system/platform_d3d11.h>
 #include "scene_app.h"
 

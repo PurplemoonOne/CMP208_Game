@@ -17,19 +17,21 @@ static uint16_t controller_counter = 0;
 PawnController::PawnController(gef::Platform& p_ptr)
 	:
 	platform_ptr(&p_ptr),
-	input_manager(nullptr),
+	input_manager(NULL),
 	active_touch_id_(-1),
 	touch_position_(gef::Vector2::kZero)
 {
-
-	InitialiseInputManagers(*platform_ptr);
 
 }
 
 
 PawnController::~PawnController()
 {
-
+	if (input_manager)
+	{
+		delete input_manager;
+		input_manager = nullptr;
+	}
 }
 
 void PawnController::InitialiseInputManagers(gef::Platform& platform)
@@ -37,18 +39,12 @@ void PawnController::InitialiseInputManagers(gef::Platform& platform)
 	/*..Create a new input manager..*/
 	input_manager = gef::InputManager::Create(platform);
 
-	/*..Point to the keyboard manager..*/
-	keyboard = input_manager->keyboard();
-
-	/*..Point to the sony entertainment controller manager..*/
-	sce_in_manager = input_manager->controller_input();
-
 	// make sure if there is a panel to detect touch input, then activate it
 	if (input_manager && input_manager->touch_manager() && (input_manager->touch_manager()->max_num_panels() > 0))
 		input_manager->touch_manager()->EnablePanel(0);
 
-	BindButtons();
-	BindKeys();
+	keyboard = KeyboardHandler::Create(input_manager, ptr_to_pawn);
+	controller = SCE_InputHandler::Create(input_manager, ptr_to_pawn);
 }
 
 
@@ -79,58 +75,81 @@ void PawnController::PosessPawn(Pawn* pawn)
 
 }
 
-void PawnController::BindButtons()
+void PawnController::ProcessInput(float delta_time)
 {
-	DButton dbutton;
-	cross = new Button();
-	cross->action = &dbutton;
-
+	input_manager->Update();
+	ProcessTouchInput();
+	keyboard->ProcessKeybaord(delta_time);
+	controller->ProcessSonyController(delta_time);
 }
 
-void PawnController::BindKeys()
+Event* PawnController::PickAction()
 {
+	input_manager->Update();
+	gef::Keyboard* temp_keyboard = input_manager->keyboard();
+
+	Jump jump;
+	MoveRight move_right;
+	AddForceToRightEngine add_force;
+
+	if (temp_keyboard->IsKeyPressed(gef::Keyboard::KeyCode::KC_0))
+	{
+		return &jump;
+	}
+	else if (temp_keyboard->IsKeyPressed(gef::Keyboard::KeyCode::KC_1))
+	{
+		return &move_right;
+	}
+	else if (temp_keyboard->IsKeyPressed(gef::Keyboard::KeyCode::KC_2))
+	{
+		return &add_force;
+	}
+
+	return nullptr;
 }
+
 
 void PawnController::ControlCamera(Camera* scene_camera, float delta_time)
 {
+	gef::Keyboard* keyboard_ = input_manager->keyboard();
 
-	if (keyboard)
+
+	if (keyboard_)
 	{
-
-			if (keyboard->IsKeyDown(gef::Keyboard::KeyCode::KC_W))
+			
+			if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_W))
 			{
-				iskeydown = true;
+			
 				scene_camera->MoveForward(delta_time);
 			}
-			else if (keyboard->IsKeyDown(gef::Keyboard::KeyCode::KC_S))
+			else if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_S))
 			{
 				scene_camera->MoveBackward(delta_time);
 			}
-			else if (keyboard->IsKeyDown(gef::Keyboard::KeyCode::KC_D))
+			else if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_D))
 			{
 				scene_camera->MoveRight(delta_time);
 			}
-			else if (keyboard->IsKeyDown(gef::Keyboard::KeyCode::KC_A))
+			else if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_A))
 			{
 				scene_camera->MoveLeft(delta_time);
 			}
-			else
-			{
-				iskeydown = false;
-			}
+
+		
 	}
 }
 
 void PawnController::ProcessTouchInput()
 {
+
 	const gef::TouchInputManager* touch_input = input_manager->touch_manager();
 
-	bool validate_input = (touch_input && (touch_input->max_num_panels() > 0));
-
-	if (validate_input)
+	if (touch_input && (touch_input->max_num_panels() > 0))
 	{
 		// get the active touches for this panel
 		const gef::TouchContainer& panel_touches = touch_input->touches(0);
+
+		touch_input->panel_enabled(0);
 
 		// go through the touches
 		for (gef::ConstTouchIterator touch = panel_touches.begin(); touch != panel_touches.end(); ++touch)
@@ -146,6 +165,7 @@ void PawnController::ProcessTouchInput()
 					// do any processing for a new touch here
 					// we're just going to record the position of the touch
 					touch_position_ = touch->position;
+					can_get_mouse_coords = true;
 				}
 			}
 			else if (active_touch_id_ == touch->id)
@@ -157,6 +177,7 @@ void PawnController::ProcessTouchInput()
 					// we're just going to record the position of the touch
 					touch_position_ = touch->position;
 					can_get_mouse_coords = true;
+
 				}
 				else if (touch->type == gef::TT_RELEASED)
 				{
@@ -169,174 +190,5 @@ void PawnController::ProcessTouchInput()
 			}
 		}
 	}
-}
-
-
-Event* PawnController::ControllerHandler()
-{
-		const gef::SonyController* sce_controller = sce_in_manager->GetController(0);
-
-		if (sce_controller)
-		{
-				switch (sce_controller->buttons_pressed())
-				{
-					case gef_SONY_CTRL_OPTIONS:
-	
-						return options->action;
-
-						break;
-					case gef_SONY_CTRL_CROSS:
-
-						return cross->action;
-
-						break;
-					case gef_SONY_CTRL_CIRCLE:
-						
-						return circle->action;
-
-						break;
-					case gef_SONY_CTRL_TRIANGLE:
-	
-						return triangle->action;
-	
-						break;
-					case gef_SONY_CTRL_SQUARE:
-	
-						return sqaure->action;
-	
-						break;
-					case gef_SONY_CTRL_UP:
-	
-						return dpad_up->action;
-	
-						break;
-					case gef_SONY_CTRL_RIGHT:
-	
-						return dpad_right->action;
-
-						break;
-					case gef_SONY_CTRL_DOWN:
-	
-						return dpad_down->action;
-	
-						break;
-					case gef_SONY_CTRL_LEFT:
-	
-						return dpad_left->action;
-
-						break;
-					case gef_SONY_CTRL_L1:
-	
-						return left_bumper->action;
-	
-						break;
-					case gef_SONY_CTRL_L2:
-	
-						return left_trigger->action;
-
-						break;
-					case gef_SONY_CTRL_L3:
-	
-						return left_stick_button->action;
-
-						break;
-					case gef_SONY_CTRL_R1:
-	
-						return right_bumper->action;
-	
-						break;
-					case gef_SONY_CTRL_R2:
-	
-						return right_trigger->action;
-
-						break;
-					case gef_SONY_CTRL_R3:
-	
-						return right_stick_button->action;
-				
-						break;	
-					case gef_SONY_CTRL_CIRCLE & gef_SONY_CTRL_CROSS:
-
-						//Custom button Needed
-
-						break;
-					default:
-						
-						break;
-				}
-		}
-	
-
-		return nullptr;
-}
-
-void PawnController::ProcessSonyController()
-{
-
-	Event* event_ = ControllerHandler();
-
-	if (event_)
-	{
-		event_->Action(ptr_to_pawn);
-	}
-}
-
-Event* PawnController::KeyboardHandler()
-{
-
-		if (keyboard->IsKeyPressed(gef::Keyboard::KC_W))
-		{
-			return w->action;
-		}
-		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_S))
-		{
-			return s->action;
-		}
-		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_A))
-		{
-			return a->action;
-		}
-		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_D))
-		{
-			return d->action;
-		}
-		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_UP))
-		{
-			return up->action;
-		}
-		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_DOWN))
-		{
-			return down->action;
-		}
-		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_RIGHT))
-		{
-			return right->action;
-		}
-		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_LEFT))
-		{
-			return left->action;
-		}
-		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_LALT))
-		{
-			return l_alt->action;
-		}
-		else if (keyboard->IsKeyPressed(gef::Keyboard::KC_LCONTROL))
-		{
-			return ctrl->action;
-		}
-
-	return nullptr;
-}
-
-void PawnController::ProcessKeybaord()
-{
-
-	Event* event_ = KeyboardHandler();
-
-	if (event_)
-	{
-		event_->Action(ptr_to_pawn);
-	}
-
 }
 

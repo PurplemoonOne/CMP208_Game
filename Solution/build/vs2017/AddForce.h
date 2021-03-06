@@ -1,18 +1,25 @@
 #pragma once
 
 #include "Event.h"
-#include "box2d/box2d.h"
+#include "Pawn3d.h"
+#include "GameObject.h"
 
-class AddForce : public Event
+
+class AddForceToRightEngine : public Event
 {
 public:
 
-	virtual void Action(Pawn* pawn, b2World* world)
+
+	void Action(Pawn* pawn, float delta_time) override
 	{
-	  
+		b2Vec2 right_engine = b2Vec2(pawn->GetPosition().x() + (pawn->GetScale().x() / 2.0f),
+			pawn->GetPosition().y() + (pawn->GetScale().y() / 2.0f));
+
+		pawn->GetPhysicsBody()->PhysicsBodyComponent()->ApplyForce(b2Vec2(0.0f, 10.0f), right_engine, true);
 	}
 
-	~AddForce() {}
+
+	~AddForceToRightEngine() {}
 
 };
 

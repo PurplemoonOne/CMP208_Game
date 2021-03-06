@@ -3,6 +3,9 @@
 #include "box2d/box2d.h"
 #include "maths/vector4.h"
 
+
+class GameObject;
+
 class PhysicsComponent
 {
 public:
@@ -11,10 +14,13 @@ public:
 	enum class Shape
 	{
 		BOX = 0,
-		SPHERE,
+		CIRCLE,
 		EDGE,
 		POLYGON
 	};
+
+
+	void Update();
 
 protected:
 
@@ -22,37 +28,45 @@ protected:
 	*	Physics component.
 	*/
 
-	PhysicsComponent(b2World* world_,float density, float weight, float friction, bool is_dynamic, float angle, bool is_sensor, float height, float width, gef::Vector4 position);
+	PhysicsComponent(b2World* world_, GameObject* game_object, bool is_dynamic);
 
 public:
 
 	~PhysicsComponent();
 
 	/// @brief Returns a new Physics component.
-	static PhysicsComponent* Create(b2World* world_, float density, float weight, float friction, bool is_dynamic, float angle, bool is_sensor, float height, float width, gef::Vector4 position);
+	static PhysicsComponent* Create(b2World* world_, GameObject* game_object, bool is_dynamic);
+
+	/// @brief update the attributes of the physics body.
+	/// @param[in] The bodies Denisty.
+	/// @param[in] The bodies Friction against a suface, ideal range between '0.0f' and '1.0f'.
+	/// @param[in] Is this body a collider or a trigger, i.e collider will react to the simulation where 
+	///as a trigger can be used as a means of checking logic.
+	void CreateFixture(Shape shape_, float density, float friction, float mass, bool is_sensor);
 
 	/// @brief update the attributes of the physics body.
 	/// @param[in] The bodies Denisty.
 	/// @param[in] The bodies Weight (in KG).
 	/// @param[in] The bodies Friction (in N's)
-	//inline void UpdatePhysicsParameters(float density, float weight, float friction);
+	inline void UpdatePhysicsParameters(float density, float weight, float friction);
 
 	/// @brief Returns the objects physics component.
 	/// @returns A pointer to the physics body.
 	inline b2Body* PhysicsBodyComponent() { return physics_body; }
 
-	///// @brief Sets the world position of the body.
-	///// @param[in] Takes a float for the 'x' position.
-	///// @param[in] Takes a float for the 'y' position.
-	//inline void SetPhysicsBodyPosition(float x_pos, float y_pos);
+
 
 private:
 
+	/*..Pointer to the game object that *this* is attached to..*/
+	GameObject* game_object;
+
+	/*..Attributes..*/
+	b2Vec2 body_scale;
+	b2Vec2 body_position;
+
 	b2World* world = nullptr;
-
-	/// @brief The physics component of the game object.
 	b2Body* physics_body = nullptr;
-
 	b2Fixture* fixture = nullptr;
-	
+
 };

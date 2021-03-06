@@ -1,10 +1,32 @@
+#include "pch.h"
+
 #include "scene_app.h"
 #include <system/platform.h>
+
+//Graphics includes
 #include <graphics/sprite_renderer.h>
 #include <graphics/font.h>
 #include <system/debug_log.h>
 #include <graphics/renderer_3d.h>
+
+//Multi-Threading
+#include <thread>
+#include <mutex>
+
+//Import from the thread and mutex libraries.
+using std::thread;
+using std::mutex;
+using std::unique_lock;
+
+//Maths
 #include <maths/math_utils.h>
+
+//Other headers
+#include "PawnController.h"
+
+//Debug
+#include <system/debug_log.h>
+
 
 SceneApp::SceneApp(gef::Platform& platform) :
 	Application(platform),
@@ -18,23 +40,6 @@ SceneApp::SceneApp(gef::Platform& platform) :
 	b2Vec2 gravity(0.0f, -9.8f);
 	world = new b2World(gravity);
 
-	/*..Initialise the 2D body..*/
-	b2BodyDef body_definition;//Needs a definition
-	body_definition.type = b2_dynamicBody;
-	body_definition.position = b2Vec2(0.0f, 0.0f);
-
-	body = world->CreateBody(&body_definition);
-
-	b2PolygonShape box_collider;
-	box_collider.SetAsBox(1.0f, 1.0f);
-
-	b2FixtureDef fixture_def;
-	fixture_def.shape = &box_collider;
-	fixture_def.density = 0.2f;
-	fixture_def.density = 1.0f;
-
-	b2Fixture* fixture = body->CreateFixture(&fixture_def);
-
 }
 
 void SceneApp::Init()
@@ -47,11 +52,18 @@ void SceneApp::Init()
 	// initialise primitive builder to make create some 3D geometry easier
 	primitive_builder_ = new PrimitiveBuilder(platform_);
 
-	// setup the mesh for the player
-	player_.set_mesh(primitive_builder_->GetDefaultCubeMesh());
+	InitPlayer();
+	InitScene();
+	InitInput();
+
+	//camera
+	camera = Camera::Create(&platform_);
+	camera->InitialisePerspectiveMatrices();
 
 	InitFont();
 	SetupLights();
+
+
 }
 
 void SceneApp::CleanUp()
@@ -67,64 +79,131 @@ void SceneApp::CleanUp()
 	delete sprite_renderer_;
 	sprite_renderer_ = NULL;
 
+	delete player;
+	player = nullptr;
+
+	delete camera;
+	camera = nullptr;
+
+	delete input;
+	input = nullptr;
+
 	/*..Clean up 2D physics world..*/
 	delete world;
 	world = nullptr;
 }
 
+
 bool SceneApp::Update(float frame_time)
 {
 	fps_ = 1.0f / frame_time;
 
-	const uint32 velocity_iterations = 6;
-	const uint32 position_iterations = 2;
-
-	/*
-	* Update the physics world, iteration variables dictate the quality of the simulations.
-	*/
-	world->Step(frame_time, velocity_iterations, position_iterations);
-
-	//Get the physics body's y position.
-	yPos = body->GetTransform().p.y;
-
-	gef::Matrix44 player_transform;
-	player_transform.SetIdentity();
-	player_transform.RotationZ(body->GetTransform().q.GetAngle());
-	player_transform.SetTranslation(gef::Vector4(body->GetPosition().x, body->GetPosition().y, 0.0f));
+	////////////////////////////////////////////////////////////////////////////////////
+	//Process Input
+	input->ProcessInput(frame_time);
+	input->ControlCamera(camera, frame_time);
+	//camera->Update(frame_time);
+	//
+	////////////////////////////////////////////////////////////////////////////////////
 
 
-	player_.set_transform(player_transform);
+
+	////////////////////////////////////////////////////////////////////////////////////
+	//Physics Step.
+
+
+
+
+			const uint32 velocity_iterations = 8;
+			const uint32 position_iterations = 2;
+
+			/*
+			* Update the physics world, iteration variables dictate the quality of the simulations.
+			*/
+			world->Step(frame_time, velocity_iterations, position_iterations);
+			
+
+		// collision detection
+		// get the head of the contact list
+		b2Contact* contact = world->GetContactList();
+		// get contact count
+		int contact_count = world->GetContactCount();
+	
+		for (int contact_num = 0; contact_num < contact_count; ++contact_num)
+		{
+			if (contact->IsTouching())
+			{
+				// get the colliding bodies
+				b2Body* bodyA = contact->GetFixtureA()->GetBody();
+				b2Body* bodyB = contact->GetFixtureB()->GetBody();
+	
+				// DO COLLISION RESPONSE HERE
+				GameObject* player_pointer = reinterpret_cast<GameObject*>(bodyA->GetUserData().pointer);
+				if (player_pointer)
+				{
+					gef::DebugOut("Player pointer is a dynamic body.\n");
+				}
+
+				GameObject* floor_pointer = reinterpret_cast<GameObject*>(bodyB->GetUserData().pointer);
+				if (!floor_pointer)
+				{
+					gef::DebugOut("Floor pointer is a static body.\n");
+				}
+				else
+				{
+					gef::DebugOut("Hmm.\n");
+				}
+			}
+	
+			// Get next contact point
+			contact = contact->GetNext();
+		}
+
+
+	//End Physics Step.
+	////////////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////
+	//Game Logic.
+
+
+			/*..Update scene camera..*/
+			camera->UpdateCameraLookAt(gef::Vector2(input->MouseLDownPositionCoordinates().x,
+				input->MouseLDownPositionCoordinates().y),
+				frame_time,
+				input->CanUpdateCamera());
+
+			gef::DebugOut("Can rotate camera %d \n", input->CanUpdateCamera());
+
+			/*..Player update..*/
+			floor->Update(frame_time);
+			player->Update(frame_time);
+			//planet->Update(frame_time);
+
+
+	//End Game Logic.
+	////////////////////////////////////////////////////////////////////////////////////
+
+
 	return true;
 }
 
 void SceneApp::Render()
 {
-	// setup camera
-
 	// projection
-	float fov = gef::DegToRad(45.0f);
-	float aspect_ratio = (float)platform_.width() / (float)platform_.height();
-	gef::Matrix44 projection_matrix;
-	projection_matrix = platform_.PerspectiveProjectionFov(fov, aspect_ratio, 0.1f, 100.0f);
-	renderer_3d_->set_projection_matrix(projection_matrix);
-
-	// view
-	gef::Vector4 camera_eye(-2.0f, 2.0f, 5.0f);
-	gef::Vector4 camera_lookat(0.0f, 0.0f, 0.0f);
-	gef::Vector4 camera_up(0.0f, 1.0f, 0.0f);
-	gef::Matrix44 view_matrix;
-	view_matrix.LookAt(camera_eye, camera_lookat, camera_up);
-	renderer_3d_->set_view_matrix(view_matrix);
-
+	camera->SetSceneMatrices(renderer_3d_);
 
 	// draw 3d geometry
 	renderer_3d_->Begin();
 
-	renderer_3d_->set_override_material(&primitive_builder_->red_material());
-	renderer_3d_->DrawMesh(player_);
-	renderer_3d_->set_override_material(NULL);
+	
+		floor->Render(renderer_3d_);
+
+		player->Render(renderer_3d_);
+		//planet->Render(renderer_3d_);
+		
 
 	renderer_3d_->End();
+
 
 	// start drawing sprites, but don't clear the frame buffer
 	sprite_renderer_->Begin(false);
@@ -145,15 +224,20 @@ void SceneApp::CleanUpFont()
 
 void SceneApp::DrawHUD()
 {
+	float x = camera->GetPosition().x();
+	float y = camera->GetPosition().y();
+	float z = camera->GetPosition().z();
+
 	if(font_)
 	{
 		// display frame rate
 		font_->RenderText(sprite_renderer_,
-			gef::Vector4(600.0f, 510.0f, -0.9f),
+			gef::Vector4(200.0f, 510.0f, -0.9f),
 			1.0f, 0xffffffff, gef::TJ_LEFT,
-			"Y-Position %.1f FPS: %.1f",
-			yPos,
-			fps_
+			"Cam Pos: %.1f %.1f %.1f",
+			x,
+			y,
+			z
 		);
 	}
 }
@@ -172,4 +256,62 @@ void SceneApp::SetupLights()
 	default_point_light.set_colour(gef::Colour(0.7f, 0.7f, 1.0f, 1.0f));
 	default_point_light.set_position(gef::Vector4(-500.0f, 400.0f, 700.0f));
 	default_shader_data.AddPointLight(default_point_light);
+}
+
+void SceneApp::InitPlayer()
+{
+	// setup the mesh for the player - Note: No need to call seperate functions to instantiate mesh and physics.
+	player = Pawn::Create(platform_, world);
+	player->SetPosition(0.0f, 4.0f, 0.0f);
+	player->SetScale(1.0f, 1.0f, 1.0f);
+
+	player->InitialiseStaticMesh(primitive_builder_);
+	/*..Attach a physics component to the object..*/
+	player->AttachPhysicsComponent(world);
+
+	player->InitialisePhysicsFixture(PhysicsComponent::Shape::BOX,
+		0.4f, //Density
+		0.5f, //Friction
+		1.0f, //Mass
+		false //Is trigger
+	);
+}
+
+void SceneApp::InitScene()
+{
+	//Floor
+	floor = GameObject::Create(platform_, world, false);
+	floor->SetPosition(0.0f, -2.0f, 0.0f);
+	floor->SetScale(10.0f, 1.0f, 1.0f);
+	floor->InitialiseStaticMesh(primitive_builder_);
+	floor->AttachPhysicsComponent(world);
+
+	floor->InitialisePhysicsFixture(PhysicsComponent::Shape::BOX,
+		0.0f, //Density
+		1.0f, //Friction
+		0.5,  //Mass
+		false //Is trigger
+	);
+
+//	//Planet
+//	planet = Planet::Create(platform_, world, 1.0f);
+//	planet->SetPosition(0.0f, -4.0f, 0.0f);
+//	//planet->SetScale(10.0f, 10.0f, 10.0f);
+//
+//	planet->AttachPhysicsComponent(world);
+//
+//	planet->InitialiseStaticMesh(primitive_builder_);
+//
+//	planet->InitialisePhysicsFixture(PhysicsComponent::Shape::BOX,
+//		0.0f,
+//		1.0f,
+//		false);
+}
+
+void SceneApp::InitInput()
+{
+	//input 
+	input = PawnController::Create(platform_);
+	input->InitialiseInputManagers(platform_);
+	input->PosessPawn(player);
 }

@@ -7,6 +7,16 @@
 #include <graphics/mesh_instance.h>
 #include "box2d/box2d.h"
 
+/*..Pawn Include..*/
+#include "Pawn3d.h"
+#include "Planet.h"
+/*..Camera..*/
+#include "Camera.h"
+
+
+//Debug Physics
+#include "b2DebugDraw.h"
+
 // FRAMEWORK FORWARD DECLARATIONS
 namespace gef
 {
@@ -30,8 +40,6 @@ private:
 	void CleanUpFont();
 	void DrawHUD();
 	void SetupLights();
-
-
     
 	gef::SpriteRenderer* sprite_renderer_;
 	gef::Font* font_;
@@ -39,15 +47,21 @@ private:
 
 	PrimitiveBuilder* primitive_builder_;
 
-	gef::MeshInstance player_;
+	//My Includes
+	Pawn* player;
+	void InitPlayer();
+	GameObject* floor;
+	void InitScene();
+	Planet* planet;
+
+	Camera* camera;
+	PawnController* input;
+	void InitInput();
 
 	float fps_;
 
 	/*..Box 2D world..*/
 	b2World* world;
-
-	/*..Box 2D body..*/
-	b2Body* body;
 
 	float yPos = 0.0f;
 };

@@ -21,12 +21,12 @@
 Camera::Camera(gef::Platform* platform_)
 	:SceneComponent(*platform_),
 	platform(platform_),
-	camera_position(gef::Vector4::kZero),
 	camera_target(gef::Vector4::kZero),
 	camera_up(gef::Vector4::kZero)
 {
 	proj_matrix.SetIdentity();
 	view_matrix.SetIdentity();
+
 
 	//Kinematics
 	camera_velocity = 1.0f;
@@ -58,11 +58,11 @@ void Camera::InitialisePerspectiveMatrices()
 
 
 	/*..Initialise the look at matrix..*/
-	camera_position = gef::Vector4(6.0f, 1.0f, 12.0f);
+	position = gef::Vector4(6.0f, 1.0f, 25.0f);
 	camera_up = gef::Vector4(0.0f, 1.0f, 0.0f);
-	camera_target = gef::Vector4(0.0f, 0.0f, 0.0f);
+	camera_target = gef::Vector4(0.0f, -2.0f, 0.0f);
 
-	view_matrix.LookAt(camera_position, camera_target, camera_up);
+	view_matrix.LookAt(position, camera_target, camera_up);
 
 
 }
@@ -78,53 +78,41 @@ void Camera::UpdateCameraLookAt(const gef::Vector2& mouse_coordinates, float del
 
 		if (update_cam)
 		{
+				float yaw = rotation.y();
+				float pitch = rotation.x();
+				float roll = rotation.z();
 
 				const gef::Vector2 mouse_position = mouse_coordinates;
 
 				//Calculate the change in coordinates from the screen centre.
-				gef::Vector2 delta_mouse = mouse_position - gef::Vector2(platform->width(), platform->height());
+				gef::Vector2 delta_mouse = mouse_position - gef::Vector2(platform->width() / 2.0f, platform->height() / 2.0f);
 
-				//Update yaw and pitch based on mouse new coordinates.
-				yaw += delta_mouse.x * radial_acceleration * delta_time;
+				//Update rotation.x and pitch based on mouse new coordinates.
+				yaw -= delta_mouse.x * radial_acceleration * delta_time;
 				pitch += delta_mouse.y * radial_acceleration * delta_time;
 
 
 				//Update the camera's forward vector.
-				CalculateForwardVector();
-				CalculateUpVector();
+				CalculateForwardVector(yaw, pitch);
+				CalculateUpVector(yaw, pitch, roll);
 				CalculateRightVector();
 
-				//Update the look at matrix.
-				view_matrix.LookAt(camera_position, camera_target, camera_up);
 		
 		}
 	
+		//Update the look at matrix.
+		view_matrix.LookAt(position, camera_target, camera_up);
 }
 
-void Camera::Update(float delta_time)
-{
-	//Calculate the necessary components for the camera.
-	CalculateForwardVector();
-	CalculateUpVector();
-	CalculateRightVector();
-
-	//Calculate where the camera should face.
-	CalculateLookAtVector();
-
-//	view_matrix.LookAt(camera_position, camera_target, camera_up);
-}
 
 void Camera::MoveForward(float delta_time)
 {
+
 	//Update the camera's velocity, v = u + at.
 	camera_velocity += camera_acceleration * delta_time;
 
 	//s = ut + a/2 * t^2
-	gef::Vector4 position_ = camera_position;
-
-	position_ += forward * camera_velocity * delta_time;
-
-	camera_position = position_;
+	position += forward * camera_velocity * delta_time;
 }
 
 void Camera::MoveBackward(float delta_time)
@@ -133,11 +121,7 @@ void Camera::MoveBackward(float delta_time)
 	camera_velocity -= camera_acceleration * delta_time;
 
 	//s = ut + a/2 * t^2
-	gef::Vector4 position_ = camera_position;
-
-	position_ -= forward * camera_velocity * delta_time;
-
-	camera_position = position_;
+	position -= forward * camera_velocity * delta_time;
 }
 
 void Camera::MoveRight(float delta_time)
@@ -145,11 +129,8 @@ void Camera::MoveRight(float delta_time)
 	camera_velocity += camera_acceleration * delta_time;
 
 	//s = ut + a/2 * t^2
-	gef::Vector4 position_ = camera_position;
+	position += right * camera_velocity * delta_time;
 
-	position_ += right * camera_velocity * delta_time;
-
-	camera_position = position_;
 }
 
 void Camera::MoveLeft(float delta_time)
@@ -157,15 +138,11 @@ void Camera::MoveLeft(float delta_time)
 	camera_velocity -= camera_acceleration * delta_time;
 
 	//s = ut + a/2 * t^2
-	gef::Vector4 position_ = camera_position;
-
-	position_ -= forward * camera_velocity * delta_time;
-
-	camera_position = position_;
+	position -= right * camera_velocity * delta_time;
 }
 
 
-void Camera::CalculateForwardVector()
+void Camera::CalculateForwardVector(float& yaw, float& pitch)
 {
 	//Calculate the forward components.
 	const float forward_x = gef::RadToDeg((sinf(yaw) * cosf(pitch)));
@@ -180,16 +157,18 @@ void Camera::CalculateForwardVector()
 void Camera::CalculateLookAtVector()
 {
 
-	camera_target = camera_position + forward;
+	camera_target = position + forward;
 
 }
 
-void Camera::CalculateUpVector()
+void Camera::CalculateUpVector(float& yaw, float& pitch, float& roll)
 {
-	//Calculate the up vector component using the camera's yaw, pitch and roll values.
-	const float up_x = gef::RadToDeg(-cosf(yaw) * sinf(roll) - sinf(yaw) * sinf(pitch) * cosf(roll));
-	const float up_y = gef::RadToDeg(cosf(pitch) * cosf(roll));
-	const float up_z = gef::RadToDeg(-sinf(yaw) * sinf(roll) - sinf(pitch) * cosf(roll) * -cosf(yaw));
+	//Calculate the up vector component using the camera's rotation.x, pitch and roll values.
+//	const float up_x = gef::RadToDeg(-cosf(yaw) * sinf(roll) - sinf(yaw) * sinf(pitch) * cosf(roll));
+//	const float up_y = gef::RadToDeg(cosf(pitch) * cosf(roll));
+//	const float up_z = gef::RadToDeg(-sinf(yaw) * sinf(roll) - sinf(pitch) * cosf(roll) * -cosf(yaw));
+
+	up = gef::Vector4(0.0f, 1.0f, 0.0f);
 }
 
 void Camera::CalculateRightVector()

@@ -32,7 +32,7 @@ protected:
 	/// @param[in] Pointer to a primitive builder
 	/// @param[in] Reference to the current platform.
 	/// @param[in] Dictates whether the game object is dynamic at construction time.
-	GameObject(PrimitiveBuilder* primitive_builder, gef::Platform& platform_, b2World* world_, bool is_dynamic);
+	GameObject(gef::Platform& platform_, b2World* world_, bool is_dynamic);
 
 
 	/// @brief Default constructor.
@@ -49,11 +49,12 @@ public:
 	/// @param[in] Pointer to a primitive builder. 
 	/// @param[in] Reference to the current platform.
 	/// @param[in] Pointer to the world physics object. 
-	static GameObject* Create(PrimitiveBuilder* primitive_builder, gef::Platform& platform_, b2World* world_, bool is_dynamic);
+	static GameObject* Create(gef::Platform& platform_, b2World* world_, bool is_dynamic);
 
 	/// @brief Initialises and sets the static mesh for the Actor.
 	/// @param[in] Takes a pointer to a primitive builder.
 	virtual void InitialiseStaticMesh(PrimitiveBuilder* primitive_builder);
+
 
 	/// @brief Renders this actor.
 	/// @param[in] Takes the scene 3D renderer.
@@ -63,6 +64,7 @@ public:
 	/// @param[in] Change in time since the last frame.
 	virtual void Update(float delta_time) override;
 
+	inline PhysicsComponent* GetPhysicsBody() const { if (physics_component) { return physics_component; } }
 
 protected:
 
@@ -83,8 +85,11 @@ protected:
 public:
 
 	/// @brief Call this to attach a physics component to the game object.
-	void AttachPhysicsComponent(b2World* world_, float density, float weight, float friction, float angle,  bool is_sensor);
+	void AttachPhysicsComponent(b2World* world_);
 
+	typedef PhysicsComponent::Shape PolyShape;
+
+	void InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor);
 
 private:
 
