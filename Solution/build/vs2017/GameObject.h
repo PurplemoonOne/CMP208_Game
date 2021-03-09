@@ -53,8 +53,12 @@ public:
 
 	/// @brief Initialises and sets the static mesh for the Actor.
 	/// @param[in] Takes a pointer to a primitive builder.
-	virtual void InitialiseStaticMesh(PrimitiveBuilder* primitive_builder);
+	virtual void SetMeshAsCube(PrimitiveBuilder* primitive_builder);
 
+	/// @brief Initialises and sets the static mesh for the Actor.
+	/// @param[in] Takes a pointer to a primitive builder.
+	/// @param[in] Filepath to the .scn file on disc.
+	virtual void SetMeshFromDisc(PrimitiveBuilder* primitive_builder, std::string filepath);
 
 	/// @brief Renders this actor.
 	/// @param[in] Takes the scene 3D renderer.
@@ -92,6 +96,8 @@ public:
 	void InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor);
 
 private:
+
+	b2World* world_ptr = nullptr;
 
 	// @brief Setting this true will create a physics component.
 	bool is_dynamic = false;

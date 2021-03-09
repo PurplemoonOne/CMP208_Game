@@ -9,6 +9,9 @@
 #include <system/debug_log.h>
 #include <graphics/renderer_3d.h>
 
+//Scene
+#include "graphics/scene.h"
+
 //Multi-Threading
 #include <thread>
 #include <mutex>
@@ -63,7 +66,7 @@ void SceneApp::Init()
 	InitFont();
 	SetupLights();
 
-
+	world->SetDebugDraw(&)
 }
 
 void SceneApp::CleanUp()
@@ -106,7 +109,26 @@ bool SceneApp::Update(float frame_time)
 	//
 	////////////////////////////////////////////////////////////////////////////////////
 
+		////////////////////////////////////////////////////////////////////////////////////
+	//Game Logic.
 
+
+			/*..Update scene camera..*/
+	camera->UpdateCameraLookAt(gef::Vector2(input->MouseLDownPositionCoordinates().x,
+		input->MouseLDownPositionCoordinates().y),
+		frame_time,
+		input->CanUpdateCamera());
+
+	//	gef::DebugOut("Can rotate camera %d \n", input->CanUpdateCamera());
+
+		/*..Player update..*/
+	floor->Update(frame_time);
+	player->Update(frame_time);
+	//planet->Update(frame_time);
+
+
+	//End Game Logic.
+	////////////////////////////////////////////////////////////////////////////////////
 
 	////////////////////////////////////////////////////////////////////////////////////
 	//Physics Step.
@@ -123,64 +145,8 @@ bool SceneApp::Update(float frame_time)
 			world->Step(frame_time, velocity_iterations, position_iterations);
 			
 
-		// collision detection
-		// get the head of the contact list
-		b2Contact* contact = world->GetContactList();
-		// get contact count
-		int contact_count = world->GetContactCount();
-	
-		for (int contact_num = 0; contact_num < contact_count; ++contact_num)
-		{
-			if (contact->IsTouching())
-			{
-				// get the colliding bodies
-				b2Body* bodyA = contact->GetFixtureA()->GetBody();
-				b2Body* bodyB = contact->GetFixtureB()->GetBody();
-	
-				// DO COLLISION RESPONSE HERE
-				GameObject* player_pointer = reinterpret_cast<GameObject*>(bodyA->GetUserData().pointer);
-				if (player_pointer)
-				{
-					gef::DebugOut("Player pointer is a dynamic body.\n");
-				}
-
-				GameObject* floor_pointer = reinterpret_cast<GameObject*>(bodyB->GetUserData().pointer);
-				if (!floor_pointer)
-				{
-					gef::DebugOut("Floor pointer is a static body.\n");
-				}
-				else
-				{
-					gef::DebugOut("Hmm.\n");
-				}
-			}
-	
-			// Get next contact point
-			contact = contact->GetNext();
-		}
-
 
 	//End Physics Step.
-	////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////
-	//Game Logic.
-
-
-			/*..Update scene camera..*/
-			camera->UpdateCameraLookAt(gef::Vector2(input->MouseLDownPositionCoordinates().x,
-				input->MouseLDownPositionCoordinates().y),
-				frame_time,
-				input->CanUpdateCamera());
-
-			gef::DebugOut("Can rotate camera %d \n", input->CanUpdateCamera());
-
-			/*..Player update..*/
-			floor->Update(frame_time);
-			player->Update(frame_time);
-			//planet->Update(frame_time);
-
-
-	//End Game Logic.
 	////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -199,8 +165,7 @@ void SceneApp::Render()
 		floor->Render(renderer_3d_);
 
 		player->Render(renderer_3d_);
-		//planet->Render(renderer_3d_);
-		
+
 
 	renderer_3d_->End();
 
@@ -265,7 +230,7 @@ void SceneApp::InitPlayer()
 	player->SetPosition(0.0f, 4.0f, 0.0f);
 	player->SetScale(1.0f, 1.0f, 1.0f);
 
-	player->InitialiseStaticMesh(primitive_builder_);
+	player->SetMeshAsCube(primitive_builder_);
 	/*..Attach a physics component to the object..*/
 	player->AttachPhysicsComponent(world);
 
@@ -283,7 +248,7 @@ void SceneApp::InitScene()
 	floor = GameObject::Create(platform_, world, false);
 	floor->SetPosition(0.0f, -2.0f, 0.0f);
 	floor->SetScale(10.0f, 1.0f, 1.0f);
-	floor->InitialiseStaticMesh(primitive_builder_);
+	floor->SetMeshAsCube(primitive_builder_);
 	floor->AttachPhysicsComponent(world);
 
 	floor->InitialisePhysicsFixture(PhysicsComponent::Shape::BOX,
@@ -315,3 +280,4 @@ void SceneApp::InitInput()
 	input->InitialiseInputManagers(platform_);
 	input->PosessPawn(player);
 }
+                                    

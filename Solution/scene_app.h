@@ -1,18 +1,7 @@
 #ifndef _SCENE_APP_H
 #define _SCENE_APP_H
 
-#include <system/application.h>
-#include <maths/vector2.h>
-#include "primitive_builder.h"
-#include <graphics/mesh_instance.h>
-#include "box2d/box2d.h"
-
-/*..Pawn Include..*/
-#include "Pawn3d.h"
-#include "Planet.h"
-/*..Camera..*/
-#include "Camera.h"
-
+#include "SceneHandler.h"
 
 //Debug Physics
 #include "b2DebugDraw.h"
@@ -25,6 +14,7 @@ namespace gef
 	class Font;
 	class InputManager;
 	class Renderer3D;
+	class Scene;
 }
 
 class SceneApp : public gef::Application
@@ -40,12 +30,18 @@ private:
 	void CleanUpFont();
 	void DrawHUD();
 	void SetupLights();
+
+	gef::Scene* LoadSceneAssets(gef::Platform& platform, const char* filename);
+	gef::Mesh* GetMeshFromSceneAssets(gef::Scene* scene);
     
 	gef::SpriteRenderer* sprite_renderer_;
 	gef::Font* font_;
 	gef::Renderer3D* renderer_3d_;
 
 	PrimitiveBuilder* primitive_builder_;
+
+	gef::Scene scene_assets_;
+
 
 	//My Includes
 	Pawn* player;
