@@ -2,9 +2,12 @@
 #define _SCENE_APP_H
 
 #include "SceneHandler.h"
+#include "ContactListener.h"
 
 //Debug Physics
 #include "b2DebugDraw.h"
+
+#include "PawnController.h"
 
 // FRAMEWORK FORWARD DECLARATIONS
 namespace gef
@@ -16,6 +19,7 @@ namespace gef
 	class Renderer3D;
 	class Scene;
 }
+
 
 class SceneApp : public gef::Application
 {
@@ -31,17 +35,13 @@ private:
 	void DrawHUD();
 	void SetupLights();
 
-	gef::Scene* LoadSceneAssets(gef::Platform& platform, const char* filename);
-	gef::Mesh* GetMeshFromSceneAssets(gef::Scene* scene);
-    
 	gef::SpriteRenderer* sprite_renderer_;
 	gef::Font* font_;
 	gef::Renderer3D* renderer_3d_;
 
 	PrimitiveBuilder* primitive_builder_;
 
-	gef::Scene scene_assets_;
-
+	
 
 	//My Includes
 	Pawn* player;
@@ -49,6 +49,8 @@ private:
 	GameObject* floor;
 	void InitScene();
 	Planet* planet;
+
+	ContactListener scene_contact_listener;
 
 	Camera* camera;
 	PawnController* input;

@@ -11,6 +11,15 @@
 /*..Camera..*/
 #include "Camera.h"
 
+struct DataPacket
+{
+	Pawn* player;
+
+	std::vector<GameObject*> static_objects;
+	std::vector<GameObject*> dynamic_objects;
+	
+};
+
 class SceneHandler
 {
 public:
@@ -23,7 +32,7 @@ public:
 
 private:
 
-	gef::Scene* current_scene;
+//	gef::Scene current_scene;
 
 };
 

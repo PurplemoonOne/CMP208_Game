@@ -32,7 +32,7 @@ public:
 
 	/// @brief Initialises and sets the static mesh for the Actor.
 	/// @param[in] Takes a pointer to a primitive builder.
-	virtual void InitialiseStaticMesh(PrimitiveBuilder* primitive_builder) override;
+	virtual void SetMeshSphere(PrimitiveBuilder* primitive_builder);
 
 	~Planet();
 

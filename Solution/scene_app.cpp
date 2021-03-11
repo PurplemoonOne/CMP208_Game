@@ -66,7 +66,8 @@ void SceneApp::Init()
 	InitFont();
 	SetupLights();
 
-	world->SetDebugDraw(&)
+	//Set the collision callback methods.
+	world->SetContactListener(&scene_contact_listener);
 }
 
 void SceneApp::CleanUp()
@@ -137,7 +138,7 @@ bool SceneApp::Update(float frame_time)
 
 
 			const uint32 velocity_iterations = 8;
-			const uint32 position_iterations = 2;
+			const uint32 position_iterations = 4;
 
 			/*
 			* Update the physics world, iteration variables dictate the quality of the simulations.

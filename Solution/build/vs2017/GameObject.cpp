@@ -20,7 +20,8 @@ GameObject::GameObject(gef::Platform& platform_, b2World* world_, bool is_dynami
 
 	: SceneComponent(platform_),
 	platform_ptr(&platform_),
-	is_dynamic(is_dynamic_)
+	is_dynamic(is_dynamic_),
+	platform(&platform_)
 {
 	position = gef::Vector4::kZero;
 	rotation = gef::Vector4::kZero;
@@ -47,6 +48,12 @@ void GameObject::InitialisePhysicsFixture(PolyShape shape_, float density, float
 		gef::DebugOut("Error, Create a physics component before attempting to intialise attribute.");
 }
 
+bool GameObject::EvaluateStaticMeshInstances()
+{
+
+	return false;
+}
+
 void GameObject::Update(float delta_time)
 {
 	if (physics_component) {
@@ -56,47 +63,7 @@ void GameObject::Update(float delta_time)
 
 	//////////////////////////////////////////////////////////
 	//Gameplay scripts go here.
-/*
-	if (world_ptr != nullptr)
-	{
-		// collision detection
-			// get the head of the contact list
-		b2Contact* contact = world_ptr->GetContactList();
-		// get contact count
-		int contact_count = world_ptr->GetContactCount();
 
-		for (int contact_num = 0; contact_num < contact_count; ++contact_num)
-		{
-			if (contact->IsTouching())
-			{
-				// get the colliding bodies
-				b2Body* bodyA = contact->GetFixtureA()->GetBody();
-				b2Body* bodyB = contact->GetFixtureB()->GetBody();
-
-				// DO COLLISION RESPONSE HERE
-				GameObject* player_pointer = reinterpret_cast<GameObject*>(bodyA->GetUserData().pointer);
-				if (player_pointer)
-				{
-					//	gef::DebugOut("Player pointer is a dynamic body.\n");
-				}
-
-				GameObject* floor_pointer = reinterpret_cast<GameObject*>(bodyB->GetUserData().pointer);
-				if (!floor_pointer)
-				{
-					//	gef::DebugOut("Floor pointer is a static body.\n");
-				}
-				else
-				{
-					//	gef::DebugOut("Hmm.\n");
-				}
-			}
-
-			// Get next contact point
-			contact = contact->GetNext();
-		}
-	}
-*/			
-	
 
 	//End
 	//////////////////////////////////////////////////////////
@@ -130,38 +97,39 @@ void GameObject::SetMeshAsCube(PrimitiveBuilder* primitive_builder)
 	set_mesh(primitive_builder->GetDefaultCubeMesh());
 }
 
-//void GameObject::SetMeshFromDisc(PrimitiveBuilder* primitive_builder, std::string filepath)
-//{
+void GameObject::SetMeshFromDisc(PrimitiveBuilder* primitive_builder, std::string filepath)
+{
 //	const char* scene_asset_filename = filepath.data();
-//
-//	scene_assets_ = LoadSceneAssets(platform_, scene_asset_filename);
-//	if (scene_assets_)
-//	{
-//		mesh_instance_.set_mesh(GetMeshFromSceneAssets(scene_assets_));
-//		gef::Matrix44 trans;
-//		gef::Matrix44 final_;
-//		gef::Matrix44 rotX;
-//		trans.SetIdentity();
-//		trans.SetTranslation(gef::Vector4(0.0f, -3.0f, 8.0f));
-//
-//		rotX.RotationY(90.0f);
-//
-//		final_ = rotX * trans;
-//
-//		mesh_instance_.set_transform(final_);
-//	}
-//	else
-//	{
-//		gef::DebugOut("Scene file %s failed to load\n", scene_asset_filename);
-//	}
-//}
-//
-//void GameObject::Render(gef::Renderer3D* renderer)
-//{
-//	// Draws this object.
-//	renderer->DrawMesh(*this);
-//}
-//
+//	
+//		scene_assets_ = LoadSceneAssets(platform_, scene_asset_filename);
+//		if (scene_assets_)
+//		{
+//			mesh_instance_.set_mesh(GetMeshFromSceneAssets(scene_assets_));
+//			gef::Matrix44 trans;
+//			gef::Matrix44 final_;
+//			gef::Matrix44 rotX;
+//			trans.SetIdentity();
+//			trans.SetTranslation(gef::Vector4(0.0f, -3.0f, 8.0f));
+//	
+//			rotX.RotationY(90.0f);
+//	
+//			final_ = rotX * trans;
+//	
+//			mesh_instance_.set_transform(final_);
+//		}
+//		else
+//		{
+//			gef::DebugOut("Scene file %s failed to load\n", scene_asset_filename);
+//		}
+}
+
+
+void GameObject::Render(gef::Renderer3D* renderer)
+{
+	// Draws this object.
+	renderer->DrawMesh(*this);
+}
+
 //gef::Scene* SceneApp::LoadSceneAssets(gef::Platform& platform, const char* filename)
 //{
 //	gef::Scene* scene = new gef::Scene();
