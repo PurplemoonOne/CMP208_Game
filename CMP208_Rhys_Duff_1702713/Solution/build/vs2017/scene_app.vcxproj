@@ -231,6 +231,7 @@
     <ClCompile Include="SceneComponent.cpp" />
     <ClCompile Include="SceneHandler.cpp" />
     <ClCompile Include="SpaceShip.cpp" />
+    <ClCompile Include="State.cpp" />
     <ClCompile Include="ThirdPersonCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -259,6 +260,7 @@
     <ClInclude Include="SceneComponent.h" />
     <ClInclude Include="SceneHandler.h" />
     <ClInclude Include="SpaceShip.h" />
+    <ClInclude Include="State.h" />
     <ClInclude Include="ThirdPersonCamera.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
