@@ -213,12 +213,13 @@
     </ClCompile>
     <ClCompile Include="..\..\primitive_builder.cpp" />
     <ClCompile Include="..\..\scene_app.cpp" />
+    <ClCompile Include="AnimatedGameObject.cpp" />
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="b2DebugDraw.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="KeyboardHandler.cpp" />
-    <ClCompile Include="Pawn3d.cpp" />
+    <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="PawnController.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -229,12 +230,15 @@
     <ClCompile Include="SCEInputHandler.cpp" />
     <ClCompile Include="SceneComponent.cpp" />
     <ClCompile Include="SceneHandler.cpp" />
+    <ClCompile Include="SpaceShip.cpp" />
     <ClCompile Include="ThirdPersonCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\primitive_builder.h" />
     <ClInclude Include="..\..\scene_app.h" />
-    <ClInclude Include="AddForce.h" />
+    <ClInclude Include="AddForceToLeftEngine.h" />
+    <ClInclude Include="AddForceToRightEngine.h" />
+    <ClInclude Include="AnimatedGameObject.h" />
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="b2DebugDraw.h" />
     <ClInclude Include="Camera.h" />
@@ -245,7 +249,8 @@
     <ClInclude Include="Jump.h" />
     <ClInclude Include="KeyboardHandler.h" />
     <ClInclude Include="Move.h" />
-    <ClInclude Include="Pawn3d.h" />
+    <ClInclude Include="ObjectType.h" />
+    <ClInclude Include="Pawn.h" />
     <ClInclude Include="PawnController.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PhysicsComponent.h" />
@@ -253,6 +258,7 @@
     <ClInclude Include="SCEInputHandler.h" />
     <ClInclude Include="SceneComponent.h" />
     <ClInclude Include="SceneHandler.h" />
+    <ClInclude Include="SpaceShip.h" />
     <ClInclude Include="ThirdPersonCamera.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

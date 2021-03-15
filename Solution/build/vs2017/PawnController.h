@@ -13,7 +13,8 @@
 /*..Actions..*/
 #include "Move.h"
 #include "Jump.h"
-#include "AddForce.h"
+#include "AddForceToLeftEngine.h"
+#include "AddForceToRightEngine.h"
 
 
 namespace gef

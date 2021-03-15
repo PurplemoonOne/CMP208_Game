@@ -2,10 +2,7 @@
 #include "ThirdPersonCamera.h"
 
 ThirdPersonCamera::ThirdPersonCamera(gef::Platform* plat)
-	:Camera(plat),
-	velocity(0.0f),
-	acceleration(0.0f),
-	angular_velocity(0.0f)
+	:Camera(plat)
 {
 }
 
@@ -18,10 +15,11 @@ ThirdPersonCamera* ThirdPersonCamera::Create(gef::Platform* platform_)
 	return new ThirdPersonCamera(platform_);
 }
 
-void ThirdPersonCamera::Input(float delta_time)
+void ThirdPersonCamera::FocusOnObject(GameObject* game_object)
 {
+
+	camera_target = gef::Vector4(game_object->GetPosition().x(), game_object->GetPosition().y(), game_object->GetPosition().z());
+	//camera_up = gef::Vector4(game_object->GetPosition().x(), game_object->GetPosition().y(), game_object->GetPosition().z());
+
 }
 
-void ThirdPersonCamera::Update(float delta_time)
-{
-}

@@ -5,7 +5,7 @@
 #include "system/debug_log.h"
 
 //Class includes
-#include "Pawn3d.h"
+#include "SpaceShip.h"
 #include "Asteroid.h"
 
 class ContactListener : public b2ContactListener
@@ -15,23 +15,32 @@ public:
 	/// Called when two fixtures begin to touch.
 	virtual void BeginContact(b2Contact* contact) override
 	{
-		b2BodyUserData* object_body_data = &contact->GetFixtureA()->GetBody()->GetUserData();
+		b2BodyUserData* body_a = &contact->GetFixtureA()->GetBody()->GetUserData();
 
-		if (object_body_data)
+		if (body_a)
 		{
-			gef::DebugOut("The space ships thrust is ", reinterpret_cast<Pawn*>(object_body_data)->GetThrust());
-			gef::DebugOut("\n ");
-			gef::DebugOut("The space ships hull integrity ", reinterpret_cast<Pawn*>(object_body_data)->GetShipIntegrity());
-			gef::DebugOut("\n ");
-			gef::DebugOut("The space ships current velcoity is ", reinterpret_cast<Pawn*>(object_body_data)->GetVelocity());
-			gef::DebugOut("\n ");
+			SpaceShip* space_ship = reinterpret_cast<SpaceShip*>(body_a);
+
+			if (space_ship)
+			{
+
+				gef::DebugOut("The object type is ", space_ship->GetObjectType());
+				gef::DebugOut("\n ");
+				gef::DebugOut("The space ships thrust is ", space_ship->GetThrust());
+				gef::DebugOut("\n ");
+				gef::DebugOut("The space ships hull integrity ", space_ship->GetShipIntegrity());
+				gef::DebugOut("\n ");
+				gef::DebugOut("The space ships current velcoity is ", space_ship->GetVelocity());
+				gef::DebugOut("\n ");
+
+			}
 		}
 
-		b2BodyUserData* object_body_b_data = &contact->GetFixtureB()->GetBody()->GetUserData();
+		b2BodyUserData* body_b = &contact->GetFixtureB()->GetBody()->GetUserData();
 
-		if (object_body_b_data)
+		if (body_b)
 		{
-			gef::DebugOut("This asteroid is of type", reinterpret_cast<Asteroid*>(object_body_b_data)->GetObjectType());
+			gef::DebugOut("This asteroid is of type", reinterpret_cast<Asteroid*>(body_b)->GetObjectType());
 			gef::DebugOut("\n ");
 		}
 

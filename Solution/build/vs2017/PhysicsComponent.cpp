@@ -68,6 +68,7 @@ void PhysicsComponent::CreateFixture(Shape shape_, float density, float friction
 	b2Filter filter;
 	b2FixtureDef fixture_def;
 	b2PolygonShape shape;
+	b2CircleShape cirlce;
 	b2MassData mass_data;
 
 	/*..Create our body's shape..*/
@@ -75,16 +76,8 @@ void PhysicsComponent::CreateFixture(Shape shape_, float density, float friction
 	{
 	case Shape::BOX:
 		shape.SetAsBox(body_scale.x, body_scale.y);
-
-		/*..Set mass parameters..*/
-		mass_data.center = body_position;
-		mass_data.mass = mass;
-
 		/*..Apply the remaining attributes to our body..*/
 		fixture_def.shape = &shape;
-		fixture_def.density = density;
-		fixture_def.friction = friction;
-		fixture_def.isSensor = is_sensor;
 
 
 		break;
@@ -95,10 +88,21 @@ void PhysicsComponent::CreateFixture(Shape shape_, float density, float friction
 		//Make custom polygon
 		break;
 	case Shape::CIRCLE:
-		//Make circle
+		cirlce.m_p.Set(body_position.x, body_position.y);
+		cirlce.m_radius = (body_scale.x);
+
+		fixture_def.shape = &cirlce;
 		break;
 	}
 	
+	fixture_def.density = density;
+	fixture_def.friction = friction;
+	fixture_def.isSensor = is_sensor;
+
+	/*..Set mass parameters..*/
+	mass_data.center = body_position;
+	mass_data.mass = mass;
+
 
 	fixture = physics_body->CreateFixture(&fixture_def);
 }

@@ -3,22 +3,15 @@
 #include <maths/vector2.h>
 #include "primitive_builder.h"
 #include <graphics/mesh_instance.h>
+#include "graphics/scene.h"
 #include "box2d/box2d.h"
 
 /*..Pawn Include..*/
-#include "Pawn3d.h"
+#include "Pawn.h"
 #include "Planet.h"
 /*..Camera..*/
 #include "Camera.h"
-
-struct DataPacket
-{
-	Pawn* player;
-
-	std::vector<GameObject*> static_objects;
-	std::vector<GameObject*> dynamic_objects;
-	
-};
+#include "ThirdPersonCamera.h"
 
 class SceneHandler
 {
@@ -30,9 +23,18 @@ public:
 	* 
 	*/
 
+	SceneHandler();
+	~SceneHandler();
+
+	void PushGameObjects(const GameObject& gameObject);
+
+	void PushTextures(const gef::Texture* texture);
+
+	void PushMaterials(const gef::Material* texture);
+
 private:
 
-//	gef::Scene current_scene;
+	gef::Scene current_scene;
 
 };
 

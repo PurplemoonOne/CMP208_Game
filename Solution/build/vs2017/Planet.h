@@ -30,10 +30,6 @@ public:
 	// @param[in] Delta time since the last frame.
 	virtual void Update(float delta_time) override;
 
-	/// @brief Initialises and sets the static mesh for the Actor.
-	/// @param[in] Takes a pointer to a primitive builder.
-	virtual void SetMeshSphere(PrimitiveBuilder* primitive_builder);
-
 	~Planet();
 
 private:

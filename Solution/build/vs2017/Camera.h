@@ -30,6 +30,7 @@ public:
 	/// @brief Returns a new Camera object.
 	static Camera* Create(gef::Platform* platform_);
 
+	// @brief Set up the camera's attributes.
 	void InitialisePerspectiveMatrices();
 
 	/// @brief Use this method to tell the 3D renderer which view and projection matrices.
@@ -44,18 +45,20 @@ public:
 	/// @return Returns a Matrix4x4.
 	inline const gef::Matrix44& CameraViewMatrix() { return view_matrix; }
 
+	// @brief Grab the camera's look at vector.
+	inline const gef::Vector4& CameraLookAt() { return camera_target; }
 
 	/*..Methods for calculating flying camera..*/
 
 	/// @brief Calculates the difference in mouse position.
 	/// @param[in] Mouse position on the screen.
 	/// @param[in] Time since last frame.
-	void UpdateCameraLookAt(const gef::Vector2& mouse_coordinates, float delta_time, bool update_cam);
+	virtual void UpdateCameraLookAt(const gef::Vector2& mouse_coordinates, float delta_time, bool update_cam);
 
 	/// @brief Updates the camera's properties.
 	/// @param[in] Mouse position on the screen.
 	/// @param[in] Time since last frame.
-	//void Update(float delta_time) override;
+	void Update(float delta_time) override;
 
 	/// @brief Updates the camera's movement
 	/// @param[in] Delta time since last frame.

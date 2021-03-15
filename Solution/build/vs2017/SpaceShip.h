@@ -1,31 +1,17 @@
 #pragma once
-#include "GameObject.h"
+#include "Pawn.h"
 
-
-namespace gef
+class SpaceShip final : public Pawn
 {
-	class Platform;
-}
+protected:
 
-
-///A 3D gameobject supporting user input.
-class Pawn : public GameObject
-{
-public:
-
-	/*..Constructor..*/
-
-	/// @brief Constructor for the gameobject.
-	/// @param[in] Takes a reference to the current platform.
-	/// @param[in] Takes a pointer to the physics world.
-	Pawn(gef::Platform& platform_, b2World* world_);
-
-	~Pawn();
+	SpaceShip(gef::Platform& platform_, b2World* world_);
 
 public:
 
-	/*..Methods public access..*/
-	static Pawn* Create(gef::Platform& platform_, b2World* world_);
+	~SpaceShip();
+
+	static SpaceShip* Create(gef::Platform& platform_, b2World* world_);
 
 	/// @brief Updates this objects attributes.
 	/// @param[in] Delta time tracks the time since last frame.
@@ -58,11 +44,7 @@ public:
 	// @brief Returns the ship's current lifeline.
 	inline const float& GetShipIntegrity() { return hull_integrity; }
 
-
-
-protected:
-
-	virtual void BuildTransform() override;
+private:
 
 	/*..Player parameters..*/
 

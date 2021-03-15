@@ -3,7 +3,7 @@
 #include "SceneComponent.h"
 
 /*..graphics headers..*/
-#include <graphics/mesh_instance.h>
+#include <graphics/skinned_mesh_instance.h>
 
 /*..gef's Transform class..*/
 #include <maths/transform.h>
@@ -11,29 +11,20 @@
 /*..Physics Component..*/
 #include "PhysicsComponent.h"
 
-
+#include "ObjectType.h"
 
 /*..Forward Declarations..*/
 namespace gef
 {
 	class Platform;
 	class Renderer3D;
+	class Scene;
 }
 
 /*..Other class dependencies..(NOT internal to gef)..*/
 class PrimitiveBuilder;
 
-enum class ObjectType
-{
-	environment_ = 0x0001,
-	environment_dynamic_ = 0x0002,
-	dynamic_ = 0x0004,
-	dynamic_friendly_ = 0x0008,
-	dynamic_enemy_ = 0x0010,
-
-};
-
-class GameObject : public SceneComponent, public gef::MeshInstance
+class GameObject : public SceneComponent, public  gef::MeshInstance
 {
 protected:
 
@@ -58,7 +49,6 @@ public:
 
 
 
-
 	/*..GFX..*/
 
 	/// @brief Initialises and sets the static mesh for the Actor.
@@ -67,8 +57,21 @@ public:
 
 	/// @brief Initialises and sets the static mesh for the Actor.
 	/// @param[in] Takes a pointer to a primitive builder.
+	virtual void SetMeshAsSphere(PrimitiveBuilder* primitive_builder);
+
+	/// @brief Initialises and sets the static mesh for the Actor.
+	/// @param[in] Takes a pointer to a primitive builder.
 	/// @param[in] Filepath to the .scn file on disc.
 	virtual void SetMeshFromDisc(PrimitiveBuilder* primitive_builder, std::string filepath);
+
+	// @brief Loads an asset with a specified filepath.
+	// @param[in] A reference to the platform.
+	// @param[in] A string representing the filepath.
+	virtual gef::Scene* LoadSceneAssets(gef::Platform& platform, const char* filename);
+
+	// @brief Grab a mesh from the scene object. Returns a mesh from the front of the list.
+	// @param[in] Takes a pointer to the scene object.
+	virtual gef::Mesh* GameObject::GetMeshFromSceneAssets(gef::Scene* scene);
 
 
 

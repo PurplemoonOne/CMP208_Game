@@ -104,6 +104,11 @@ void Camera::UpdateCameraLookAt(const gef::Vector2& mouse_coordinates, float del
 		view_matrix.LookAt(position, camera_target, camera_up);
 }
 
+void Camera::Update(float delta_time)
+{
+	view_matrix.LookAt(position, camera_target, camera_up);
+}
+
 
 void Camera::MoveForward(float delta_time)
 {

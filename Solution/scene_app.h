@@ -53,6 +53,8 @@ private:
 	ContactListener scene_contact_listener;
 
 	Camera* camera;
+	ThirdPersonCamera* t_camera; 
+
 	PawnController* input;
 	void InitInput();
 

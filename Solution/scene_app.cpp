@@ -60,8 +60,10 @@ void SceneApp::Init()
 	InitInput();
 
 	//camera
-	camera = Camera::Create(&platform_);
-	camera->InitialisePerspectiveMatrices();
+	//camera = Camera::Create(&platform_);
+	//camera->InitialisePerspectiveMatrices();
+	t_camera = ThirdPersonCamera::Create(&platform_);
+	t_camera->InitialisePerspectiveMatrices();
 
 	InitFont();
 	SetupLights();
@@ -86,8 +88,11 @@ void SceneApp::CleanUp()
 	delete player;
 	player = nullptr;
 
-	delete camera;
-	camera = nullptr;
+	//delete camera;
+	//camera = nullptr;
+
+	delete t_camera;
+	t_camera = nullptr;
 
 	delete input;
 	input = nullptr;
@@ -106,24 +111,17 @@ bool SceneApp::Update(float frame_time)
 	//Process Input
 	input->ProcessInput(frame_time);
 	input->ControlCamera(camera, frame_time);
-	//camera->Update(frame_time);
+	
+	t_camera->FocusOnObject(player);
+	t_camera->Update(frame_time);
 	//
 	////////////////////////////////////////////////////////////////////////////////////
 
 		////////////////////////////////////////////////////////////////////////////////////
 	//Game Logic.
 
-
-			/*..Update scene camera..*/
-	camera->UpdateCameraLookAt(gef::Vector2(input->MouseLDownPositionCoordinates().x,
-		input->MouseLDownPositionCoordinates().y),
-		frame_time,
-		input->CanUpdateCamera());
-
-	//	gef::DebugOut("Can rotate camera %d \n", input->CanUpdateCamera());
-
-		/*..Player update..*/
-	floor->Update(frame_time);
+	/*..Player update..*/
+	//floor->Update(frame_time);
 	player->Update(frame_time);
 	//planet->Update(frame_time);
 
@@ -131,22 +129,24 @@ bool SceneApp::Update(float frame_time)
 	//End Game Logic.
 	////////////////////////////////////////////////////////////////////////////////////
 
+
+
+
 	////////////////////////////////////////////////////////////////////////////////////
 	//Physics Step.
-
-
-
 
 			const uint32 velocity_iterations = 8;
 			const uint32 position_iterations = 4;
 
 			/*
-			* Update the physics world, iteration variables dictate the quality of the simulations.
+			* 
+			*	Update the physics world, iteration variables dictate the quality of the simulations.
+			*	
+			*	Collisions are handled here through callback methods.
+			* 
 			*/
 			world->Step(frame_time, velocity_iterations, position_iterations);
 			
-
-
 	//End Physics Step.
 	////////////////////////////////////////////////////////////////////////////////////
 
@@ -157,14 +157,15 @@ bool SceneApp::Update(float frame_time)
 void SceneApp::Render()
 {
 	// projection
-	camera->SetSceneMatrices(renderer_3d_);
+	t_camera->SetSceneMatrices(renderer_3d_);
 
 	// draw 3d geometry
 	renderer_3d_->Begin();
 
 	
-		floor->Render(renderer_3d_);
-
+		//floor->Render(renderer_3d_);
+		
+		//planet->Render(renderer_3d_);
 		player->Render(renderer_3d_);
 
 
@@ -190,9 +191,9 @@ void SceneApp::CleanUpFont()
 
 void SceneApp::DrawHUD()
 {
-	float x = camera->GetPosition().x();
-	float y = camera->GetPosition().y();
-	float z = camera->GetPosition().z();
+	float x = t_camera->CameraLookAt().x();
+	float y = t_camera->CameraLookAt().y();
+	float z = t_camera->CameraLookAt().z();
 
 	if(font_)
 	{
@@ -200,7 +201,7 @@ void SceneApp::DrawHUD()
 		font_->RenderText(sprite_renderer_,
 			gef::Vector4(200.0f, 510.0f, -0.9f),
 			1.0f, 0xffffffff, gef::TJ_LEFT,
-			"Cam Pos: %.1f %.1f %.1f",
+			"Camera Target: %.1f %.1f %.1f",
 			x,
 			y,
 			z
@@ -230,8 +231,10 @@ void SceneApp::InitPlayer()
 	player = Pawn::Create(platform_, world);
 	player->SetPosition(0.0f, 4.0f, 0.0f);
 	player->SetScale(1.0f, 1.0f, 1.0f);
+	player->SetObjectType(ObjectType::dynamic_);
+	//player->SetMeshAsCube(primitive_builder_);
+	player->SetMeshFromDisc(primitive_builder_, std::string("rocket.scn"));
 
-	player->SetMeshAsCube(primitive_builder_);
 	/*..Attach a physics component to the object..*/
 	player->AttachPhysicsComponent(world);
 
@@ -245,19 +248,20 @@ void SceneApp::InitPlayer()
 
 void SceneApp::InitScene()
 {
-	//Floor
-	floor = GameObject::Create(platform_, world, false);
-	floor->SetPosition(0.0f, -2.0f, 0.0f);
-	floor->SetScale(10.0f, 1.0f, 1.0f);
-	floor->SetMeshAsCube(primitive_builder_);
-	floor->AttachPhysicsComponent(world);
-
-	floor->InitialisePhysicsFixture(PhysicsComponent::Shape::BOX,
-		0.0f, //Density
-		1.0f, //Friction
-		0.5,  //Mass
-		false //Is trigger
-	);
+//	//Floor
+//	floor = GameObject::Create(platform_, world, false);
+//
+//	floor->SetPosition(0.0f, -2.0f, 0.0f);
+//	floor->SetScale(10.0f, 1.0f, 1.0f);
+//	floor->SetMeshAsCube(primitive_builder_);
+//	floor->AttachPhysicsComponent(world);
+//
+//	floor->InitialisePhysicsFixture(PhysicsComponent::Shape::BOX,
+//		0.0f, //Density
+//		1.0f, //Friction
+//		0.5,  //Mass
+//		false //Is trigger
+//	);
 
 //	//Planet
 //	planet = Planet::Create(platform_, world, 1.0f);
@@ -266,10 +270,11 @@ void SceneApp::InitScene()
 //
 //	planet->AttachPhysicsComponent(world);
 //
-//	planet->InitialiseStaticMesh(primitive_builder_);
+//	planet->SetMeshAsSphere(primitive_builder_);
 //
-//	planet->InitialisePhysicsFixture(PhysicsComponent::Shape::BOX,
+//	planet->InitialisePhysicsFixture(PhysicsComponent::Shape::CIRCLE,
 //		0.0f,
+//		1.0f,
 //		1.0f,
 //		false);
 }

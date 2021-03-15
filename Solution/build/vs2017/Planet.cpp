@@ -19,10 +19,7 @@ void Planet::Update(float delta_time)
 	//SetRotation(0.0f, 5.0f * delta_time, 0.0f);
 }
 
-void Planet::SetMeshSphere(PrimitiveBuilder* primitive_builder)
-{
-	set_mesh(primitive_builder->GetDefaultSphereMesh());
-}
+
 
 Planet::~Planet()
 {

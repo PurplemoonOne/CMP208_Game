@@ -1,6 +1,6 @@
 #pragma once
 #include "Event.h"
-#include "Pawn3d.h"
+#include "Pawn.h"
 
 class MoveRight : public Event
 {

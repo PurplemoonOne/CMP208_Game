@@ -1,17 +1,12 @@
 #include "pch.h"
 //This file.
-#include "Pawn3d.h"
+#include "Pawn.h"
 
 Pawn::Pawn(gef::Platform& platform_, b2World* world_)
 
 	:GameObject(platform_, world_, true)//Pawn is dynamic by default.
 {
-	hull_integrity = 100.0f;
-	velocity = 25.0f;
-	acceleration = 1.6f;
-	fuel = 100.0f;
-	fuel_loss_rate = 0.8f;
-	thrust = 120.0f;
+
 }
 
 Pawn::~Pawn()

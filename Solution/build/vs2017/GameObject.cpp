@@ -14,7 +14,7 @@
 
 //Box2d
 #include "box2d/box2d.h"
-
+#include "graphics/scene.h"
 
 GameObject::GameObject(gef::Platform& platform_, b2World* world_, bool is_dynamic_)
 
@@ -32,6 +32,8 @@ GameObject* GameObject::Create(gef::Platform& platform_, b2World* world_, bool i
 {
 	return new GameObject(platform_, world_, is_dynamic);
 }
+
+
 
 void GameObject::AttachPhysicsComponent(b2World* world_)
 {
@@ -97,30 +99,25 @@ void GameObject::SetMeshAsCube(PrimitiveBuilder* primitive_builder)
 	set_mesh(primitive_builder->GetDefaultCubeMesh());
 }
 
+void GameObject::SetMeshAsSphere(PrimitiveBuilder* primitive_builder)
+{
+	set_mesh(primitive_builder->GetDefaultSphereMesh());
+}
+
 void GameObject::SetMeshFromDisc(PrimitiveBuilder* primitive_builder, std::string filepath)
 {
-//	const char* scene_asset_filename = filepath.data();
-//	
-//		scene_assets_ = LoadSceneAssets(platform_, scene_asset_filename);
-//		if (scene_assets_)
-//		{
-//			mesh_instance_.set_mesh(GetMeshFromSceneAssets(scene_assets_));
-//			gef::Matrix44 trans;
-//			gef::Matrix44 final_;
-//			gef::Matrix44 rotX;
-//			trans.SetIdentity();
-//			trans.SetTranslation(gef::Vector4(0.0f, -3.0f, 8.0f));
-//	
-//			rotX.RotationY(90.0f);
-//	
-//			final_ = rotX * trans;
-//	
-//			mesh_instance_.set_transform(final_);
-//		}
-//		else
-//		{
-//			gef::DebugOut("Scene file %s failed to load\n", scene_asset_filename);
-//		}
+	const char* scene_asset_filename = filepath.data();
+
+		gef::Scene* scene_assets_ = LoadSceneAssets(*platform_ptr, scene_asset_filename);
+
+		if (scene_assets_)
+		{
+			set_mesh(GetMeshFromSceneAssets(scene_assets_));
+		}
+		else
+		{
+			gef::DebugOut("Scene file %s failed to load\n", scene_asset_filename);
+		}
 }
 
 
@@ -130,35 +127,34 @@ void GameObject::Render(gef::Renderer3D* renderer)
 	renderer->DrawMesh(*this);
 }
 
-//gef::Scene* SceneApp::LoadSceneAssets(gef::Platform& platform, const char* filename)
-//{
-//	gef::Scene* scene = new gef::Scene();
-//
-//	if (scene->ReadSceneFromFile(platform, filename))
-//	{
-//		// if scene file loads successful
-//		// create material and mesh resources from the scene data
-//		scene->CreateMaterials(platform);
-//		scene->CreateMeshes(platform);
-//	}
-//	else
-//	{
-//		delete scene;
-//		scene = NULL;
-//	}
-//
-//	return scene;
-//}
-//
-//gef::Mesh* SceneApp::GetMeshFromSceneAssets(gef::Scene* scene)
-//{
-//	gef::Mesh* mesh = NULL;
-//
-//	// if the scene data contains at least one mesh
-//	// return the first mesh
-//	if (scene && scene->meshes.size() > 0)
-//		mesh = scene->meshes.front();
-//
-//	return mesh;
-//}
-//
+gef::Scene* GameObject::LoadSceneAssets(gef::Platform& platform, const char* filename)
+{
+	gef::Scene* scene = new gef::Scene();
+
+	if (scene->ReadSceneFromFile(platform, filename))
+	{
+		// if scene file loads successful
+		// create material and mesh resources from the scene data
+		scene->CreateMaterials(platform);
+		scene->CreateMeshes(platform);
+	}
+	else
+	{
+		delete scene;
+		scene = NULL;
+	}
+
+	return scene;
+}
+
+gef::Mesh* GameObject::GetMeshFromSceneAssets(gef::Scene* scene)
+{
+	gef::Mesh* mesh = NULL;
+
+	// if the scene data contains at least one mesh
+	// return the first mesh
+	if (scene && scene->meshes.size() > 0)
+		mesh = scene->meshes.front();
+
+	return mesh;
+}
