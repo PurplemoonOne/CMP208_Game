@@ -2,9 +2,9 @@
 #include "KeyboardHandler.h"
 #include "Event.h"
 
-/*..gefs keyboard..*/
-#include "input/keyboard.h"
+//Includes
 #include "input/input_manager.h"
+#include "input/keyboard.h"
 
 KeyboardHandler::KeyboardHandler(gef::InputManager* input_, Pawn* pawn_)
 	:input_manager(input_),

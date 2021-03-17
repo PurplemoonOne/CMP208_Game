@@ -2,19 +2,10 @@
 
 #include "Camera.h"
 
-//Maths Includes
-#include "maths/math_utils.h"
-
-//GFX
-#include "graphics/renderer_3d.h"
-
-
-//Platform
-#include "system/platform.h"
-
 //Input
 #include "PawnController.h"
 
+#include "system/platform.h"
 
 #define PI = 3.1415
 

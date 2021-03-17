@@ -40,8 +40,15 @@ public:
 
 		if (body_b)
 		{
-			gef::DebugOut("This asteroid is of type", reinterpret_cast<Asteroid*>(body_b)->GetObjectType());
-			gef::DebugOut("\n ");
+			if (reinterpret_cast<Asteroid*>(body_b)->GetObjectType() == ObjectType::dynamic_enemy_)
+			{
+				gef::DebugOut("This is an enemy");
+				gef::DebugOut("\n ");
+			}
+			else
+			{
+				gef::DebugOut("This is a static object\n");
+			}
 		}
 
 	}

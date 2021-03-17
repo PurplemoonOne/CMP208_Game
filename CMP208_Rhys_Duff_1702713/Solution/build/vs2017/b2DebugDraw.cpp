@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "b2DebugDraw.h"
-#include "graphics/renderer_3d.h"
-#include "system/platform.h"
+
 
 void b2DebugDraw::DrawPolygon(const b2Vec2* vertices, int32 vertexCount, const b2Color& color)
 {

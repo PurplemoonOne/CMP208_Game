@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Asteroid.h"
-#include "system/debug_log.h"
 
 static uint32_t mesh_instance_count = 0;
 

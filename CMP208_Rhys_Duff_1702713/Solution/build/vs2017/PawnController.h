@@ -25,6 +25,14 @@ namespace gef
 	class Font;
 }
 
+// @brief small wrapper to obtain touch information
+// in mouse context.
+struct MouseData
+{
+	const gef::Vector2* mouse_coordinates;
+	gef::TouchType mouse_left_button_state;
+};
+
 /*
 * 
 *	Pawn controller is responsible for handling the input of several devices 
@@ -96,15 +104,18 @@ public:
 	/// @param[in] A reference to applications current platform.
 	void InitialiseInputManagers(gef::Platform& platform);
 
-
-
-private:
-
-
 	/*..TouchInput..*/
 
 	/// @brief Tracks and evaluates touch input.
 	void ProcessTouchInput();
+
+	// @brief return the mouse position and state for this frame.
+	inline const MouseData& GetMouseData() { return frame_mouse_data; }
+
+private:
+
+	MouseData frame_mouse_data;
+
 
 	/*..Pick bindings method..*/
 	Event* PickAction();

@@ -1,8 +1,15 @@
 #ifndef _SCENE_APP_H
 #define _SCENE_APP_H
 
-#include "SceneHandler.h"
+#include "GameState.h"
+#include "MainMenu.h"
+#include "PauseMenu.h"
+#include "SplashScreen.h"
+
+
 #include "ContactListener.h"
+
+
 
 //Debug Physics
 #include "b2DebugDraw.h"
@@ -20,6 +27,7 @@ namespace gef
 	class Scene;
 }
 
+class State;
 
 class SceneApp : public gef::Application
 {
@@ -29,41 +37,18 @@ public:
 	void CleanUp();
 	bool Update(float frame_time);
 	void Render();
+
 private:
-	void InitFont();
-	void CleanUpFont();
-	void DrawHUD();
-	void SetupLights();
 
-	gef::SpriteRenderer* sprite_renderer_;
-	gef::Font* font_;
-	gef::Renderer3D* renderer_3d_;
-
-	PrimitiveBuilder* primitive_builder_;
-
-	
-
-	//My Includes
-	Pawn* player;
-	void InitPlayer();
-	GameObject* floor;
-	void InitScene();
-	Planet* planet;
-
-	ContactListener scene_contact_listener;
-
-	Camera* camera;
-	ThirdPersonCamera* t_camera; 
-
-	PawnController* input;
-	void InitInput();
+	gef::Renderer3D* renderer;
+	gef::SpriteRenderer* sprite_renderer;
+	gef::Platform* platform;
 
 	float fps_;
 
-	/*..Box 2D world..*/
-	b2World* world;
+	State* state;
+	GameState* game;
 
-	float yPos = 0.0f;
 };
 
 #endif // _SCENE_APP_H

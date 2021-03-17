@@ -144,6 +144,9 @@ void PawnController::ProcessTouchInput()
 
 	const gef::TouchInputManager* touch_input = input_manager->touch_manager();
 
+	/*..This frames mouse information..*/
+
+
 	if (touch_input && (touch_input->max_num_panels() > 0))
 	{
 		// get the active touches for this panel
@@ -165,7 +168,10 @@ void PawnController::ProcessTouchInput()
 					// do any processing for a new touch here
 					// we're just going to record the position of the touch
 					touch_position_ = touch->position;
-					can_get_mouse_coords = true;
+					
+
+					frame_mouse_data.mouse_coordinates = &touch_position_;
+					frame_mouse_data.mouse_left_button_state = gef::TT_NEW;
 				}
 			}
 			else if (active_touch_id_ == touch->id)
@@ -175,8 +181,10 @@ void PawnController::ProcessTouchInput()
 				{
 					// update an active touch here
 					// we're just going to record the position of the touch
-					touch_position_ = touch->position;
-					can_get_mouse_coords = true;
+
+
+					frame_mouse_data.mouse_coordinates = &touch_position_;
+					frame_mouse_data.mouse_left_button_state = gef::TT_ACTIVE;
 
 				}
 				else if (touch->type == gef::TT_RELEASED)
@@ -185,7 +193,10 @@ void PawnController::ProcessTouchInput()
 					// perform any actions that need to happen when a touch is released here
 					// we're not doing anything here apart from resetting the active touch id
 					active_touch_id_ = -1;
-					can_get_mouse_coords = false;
+
+
+					frame_mouse_data.mouse_coordinates = &touch_position_;
+					frame_mouse_data.mouse_left_button_state = gef::TT_RELEASED;
 				}
 			}
 		}

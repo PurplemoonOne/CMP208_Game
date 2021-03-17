@@ -2,19 +2,6 @@
 
 #include "GameObject.h"
 
-//System includes.
-#include <system/platform.h>
-#include <system/debug_log.h>
-
-//Primitive Builder
-#include "primitive_builder.h"
-
-//Graphics 
-#include <graphics/renderer_3d.h>
-
-//Box2d
-#include "box2d/box2d.h"
-#include "graphics/scene.h"
 
 GameObject::GameObject(gef::Platform& platform_, b2World* world_, bool is_dynamic_)
 

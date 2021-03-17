@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "AnimatedGameObject.h"
 
-#include "graphics/renderer_3d.h"
-
 AnimatedGameObject::AnimatedGameObject(const gef::Skeleton& skeleton, gef::Platform& platform, b2World* world, bool is_dynamic) 
 	:
 	GameObject(platform, world, is_dynamic),
