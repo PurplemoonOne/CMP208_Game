@@ -34,10 +34,10 @@ PawnController::~PawnController()
 	}
 }
 
-void PawnController::InitialiseInputManagers(gef::Platform& platform)
+void PawnController::SetPointerToInputManagers(gef::InputManager* input_)
 {
 	/*..Create a new input manager..*/
-	input_manager = gef::InputManager::Create(platform);
+	input_manager = input_;
 
 	// make sure if there is a panel to detect touch input, then activate it
 	if (input_manager && input_manager->touch_manager() && (input_manager->touch_manager()->max_num_panels() > 0))
@@ -88,7 +88,7 @@ Event* PawnController::PickAction()
 	input_manager->Update();
 	gef::Keyboard* temp_keyboard = input_manager->keyboard();
 
-	Jump jump;
+	Jump jump;;
 	MoveRight move_right;
 	AddForceToRightEngine add_force;
 

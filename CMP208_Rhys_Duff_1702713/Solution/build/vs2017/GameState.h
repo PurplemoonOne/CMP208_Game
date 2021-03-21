@@ -14,47 +14,46 @@
 
 #include "UIButton.h"
 
-class GameState : public State
+class GameState : public  State
 {
 public:
 
-	GameState(gef::Platform& platform_, gef::Renderer3D& renderer_, gef::SpriteRenderer& sprite_renderer_);
+	GameState(gef::Platform* platform_, gef::Renderer3D* renderer_, gef::SpriteRenderer* sprite_renderer_, gef::InputManager* input);
 	~GameState();
 
 	// @brief Called when we transition
 	// @note Acts as a buffer allowing us to activate/assume any process
 	//that was previously on hold. We try NOT instantiate new objects here.
-	virtual void OnEnter();
+	virtual void OnEnter() override;
 
 	// @brief Handles the input from the user. Allows control of 'pawns'
-	virtual void Input(float delta_time);
+	virtual void Input(float delta_time) override;
 
 	// @brief Updates the game state.
-	virtual void Update(float delta_time);
-
+	virtual void Update(float delta_time) override;
+	 
 	// @brief Renders the main game.
-	virtual void Render();
+	virtual void Render() override;
 
 	// @brief Called when we leave this state.
 	// @note Like OnEnter but pauses processes if need be.
-	virtual void OnExit();
+	virtual void OnExit() override;
 
 private:
+
+	/*..Application Variables..*/
+	gef::Platform* platform;
+	gef::Renderer3D* renderer;
+	gef::SpriteRenderer* sprite_renderer;
 
 	void InitFont();
 	void CleanUpFont();
 	void DrawHUD();
 	void SetupLights();
 
-	gef::SpriteRenderer* sprite_renderer_;
 	gef::Font* font_;
-	gef::Renderer3D* renderer_3d_;
-	gef::Platform* platform_;
-	
 
 	PrimitiveBuilder* primitive_builder_;
-
-	State* state;
 
 	//My Includes
 	Pawn* player;
@@ -70,7 +69,8 @@ private:
 	Camera* camera;
 	ThirdPersonCamera* t_camera;
 
-	PawnController* input;
+	PawnController* pawn_controller;
+	gef::InputManager* input_manager;
 	void InitInput();
 
 	float fps_;

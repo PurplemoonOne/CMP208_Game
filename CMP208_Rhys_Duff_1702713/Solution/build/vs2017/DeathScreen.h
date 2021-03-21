@@ -14,13 +14,14 @@ class DeathScreen : public State
 {
 public:
 
-	~DeathScreen() {}
+	DeathScreen(gef::Platform* platform_, gef::Renderer3D* renderer_, gef::SpriteRenderer* sprite_renderer_);
+	~DeathScreen();
 
-	void OnEnter() override;
-	void Input(float delta_time) override;
-	void Update(float delta_time) override;
-	void Render() override;
-
+	virtual void OnEnter() override;
+	virtual void Input(float delta_time) override;
+	virtual void Update(float delta_time) override;
+	virtual void Render() override;
+	virtual void OnExit();
 
 private:
 

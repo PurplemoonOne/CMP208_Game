@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "MainMenu.h"
 
-MainMenu::MainMenu()
+MainMenu::MainMenu(gef::Platform* platform_, gef::Renderer3D* renderer_, gef::SpriteRenderer* sprite_renderer_)
 {
+	id = 1;
 }
 
 MainMenu::~MainMenu()

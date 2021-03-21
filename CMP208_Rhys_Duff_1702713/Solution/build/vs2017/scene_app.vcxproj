@@ -235,6 +235,7 @@
     <ClCompile Include="GameState.cpp" />
     <ClCompile Include="SpaceShip.cpp" />
     <ClCompile Include="SplashScreen.cpp" />
+    <ClCompile Include="State.cpp" />
     <ClCompile Include="ThirdPersonCamera.cpp" />
     <ClCompile Include="UIButton.cpp" />
     <ClCompile Include="UserInterface.cpp" />
@@ -247,10 +248,10 @@
     <ClInclude Include="AnimatedGameObject.h" />
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="b2DebugDraw.h" />
+    <ClInclude Include="Context.h" />
     <ClInclude Include="UIButton.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ContactListener.h" />
-    <ClInclude Include="Context.h" />
     <ClInclude Include="DeathScreen.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="GameObject.h" />

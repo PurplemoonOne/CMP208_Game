@@ -25,6 +25,7 @@
 #include <graphics/sprite.h>
 #include <graphics/sprite_renderer.h>
 #include <graphics/font.h>
+#include <graphics/texture.h>
 
 //Debugging
 #include <system/debug_log.h>
@@ -32,6 +33,8 @@
 //Maths
 #include <maths/math_utils.h>
 
+//Input
+#include "input/input_manager.h"
 
 /*..Box 2D..*/
 #include <box2d/box2d.h>

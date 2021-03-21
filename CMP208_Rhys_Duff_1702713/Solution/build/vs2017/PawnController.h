@@ -6,7 +6,6 @@
 
 //Some 'getter' methods require access to variables.
 #include "input/touch_input_manager.h"
-#include "input/input_manager.h"
 #include "KeyboardHandler.h"
 #include "SCEInputHandler.h"
 
@@ -102,7 +101,7 @@ public:
 
 	/// @brief Initialise all input managers supported by the application.
 	/// @param[in] A reference to applications current platform.
-	void InitialiseInputManagers(gef::Platform& platform);
+	void SetPointerToInputManagers(gef::InputManager* input_);
 
 	/*..TouchInput..*/
 

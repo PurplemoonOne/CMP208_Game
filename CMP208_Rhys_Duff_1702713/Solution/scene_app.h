@@ -5,7 +5,7 @@
 #include "MainMenu.h"
 #include "PauseMenu.h"
 #include "SplashScreen.h"
-
+#include "DeathScreen.h"
 
 #include "ContactListener.h"
 
@@ -27,7 +27,7 @@ namespace gef
 	class Scene;
 }
 
-class State;
+class Context;
 
 class SceneApp : public gef::Application
 {
@@ -40,14 +40,11 @@ public:
 
 private:
 
-	gef::Renderer3D* renderer;
-	gef::SpriteRenderer* sprite_renderer;
-	gef::Platform* platform;
-
 	float fps_;
 
-	State* state;
-	GameState* game;
+	Context* context;
+	
+	//Context* context2;
 
 };
 

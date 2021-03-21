@@ -1,20 +1,15 @@
 #pragma once
 
-
 class Context;
 
 class State
 {
-protected:
-
-	Context* context;
-
 public:
+	
+	virtual ~State(){}
 
-	virtual ~State() {}
-
-	void SetContext(Context* context_) {
-		this->context = context_;
+	virtual void SetContext(Context* context){
+		this->context = context;
 	}
 
 	virtual void OnEnter() = 0;
@@ -22,6 +17,16 @@ public:
 	virtual void Update(float delta_time) = 0;
 	virtual void Render() = 0;
 	virtual void OnExit() = 0;
+
+	uint32 id = 0;
+
+
+
+protected:
+
+	float session_timer = 0.0f;
+
+	Context* context;
 
 };
 

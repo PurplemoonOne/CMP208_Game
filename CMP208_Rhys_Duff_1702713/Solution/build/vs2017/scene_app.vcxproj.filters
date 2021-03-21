@@ -90,6 +90,9 @@
     <ClCompile Include="UIButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\scene_app.h">
@@ -185,10 +188,10 @@
     <ClInclude Include="GameState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Context.h">
+    <ClInclude Include="UIButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UIButton.h">
+    <ClInclude Include="Context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
