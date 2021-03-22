@@ -28,7 +28,11 @@ public:
 
 	~KeyboardHandler();
 
+	void PossessPawn(Pawn* pawn_) { pawn = nullptr; pawn = pawn_; }
+
 private:
+
+
 
 	/// @brief Handles input from the keyboard 
 	Event* KeyEvents();

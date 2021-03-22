@@ -9,7 +9,7 @@ SpaceShip::SpaceShip(gef::Platform& platform_, b2World* world_)
 	acceleration = 1.6f;
 	fuel = 100.0f;
 	fuel_loss_rate = 0.8f;
-	thrust = 120.0f;
+	thrust = 10.0f;
 }
 
 SpaceShip::~SpaceShip()

@@ -1,12 +1,13 @@
 #include "pch.h"
 #include "GameState.h"
 
-GameState::GameState(gef::Platform* platform_, gef::Renderer3D* renderer_, gef::SpriteRenderer* sprite_renderer_, gef::InputManager* input_)
+GameState::GameState(gef::Platform* platform_, gef::Renderer3D* renderer_, 
+	gef::SpriteRenderer* sprite_renderer_,PawnController* input_)
 	:
 	platform(platform_),
 	renderer(renderer_),
 	sprite_renderer(sprite_renderer_),
-	input_manager(input_)
+	pawn_controller(input_)
 {
 
 	b2Vec2 gravity = b2Vec2(0.0f, -9.8f);
@@ -46,12 +47,18 @@ void GameState::Input(float delta_time)
 {
 }
 
-void GameState::Update(float delta_time)
+bool GameState::Update(float delta_time)
 {
 
 		////////////////////////////////////////////////////////////////////////////////////
 		//Process Input
 		pawn_controller->ProcessInput(delta_time);
+
+		if (pawn_controller->GetInputManager()->keyboard()->IsKeyDown(gef::Keyboard::KeyCode::KC_ESCAPE))
+		{
+			return false;
+		}
+
 		pawn_controller->ControlCamera(camera, delta_time);
 	
 		t_camera->FocusOnObject(player);
@@ -173,7 +180,7 @@ void GameState::SetupLights()
 void GameState::InitPlayer()
 {
 	// setup the mesh for the player - Note: No need to call seperate functions to instantiate mesh and physics.
-	player = Pawn::Create(*platform, world);
+	player = SpaceShip::Create(*platform, world);
 	player->SetPosition(0.0f, 4.0f, 0.0f);
 	player->SetScale(1.0f, 1.0f, 1.0f);
 	player->SetObjectType(ObjectType::dynamic_pawn_);
@@ -225,10 +232,6 @@ void GameState::InitScene()
 
 void GameState::InitInput()
 {
-	//input 
-	pawn_controller = PawnController::Create(*platform);
-	pawn_controller->SetPointerToInputManagers(input_manager);
-
 	//Now controls the player.
 	pawn_controller->PosessPawn(player);
 }

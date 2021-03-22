@@ -14,27 +14,12 @@
 //@brief Variable tracks how many pawn controllers are active. \n For this module there should only be ONE active.
 static uint16_t controller_counter = 0;
 
-PawnController::PawnController(gef::Platform& p_ptr)
+PawnController::PawnController(gef::Platform& p_ptr, gef::InputManager* input_)
 	:
 	platform_ptr(&p_ptr),
 	input_manager(NULL),
 	active_touch_id_(-1),
 	touch_position_(gef::Vector2::kZero)
-{
-
-}
-
-
-PawnController::~PawnController()
-{
-	if (input_manager)
-	{
-		delete input_manager;
-		input_manager = nullptr;
-	}
-}
-
-void PawnController::SetPointerToInputManagers(gef::InputManager* input_)
 {
 	/*..Create a new input manager..*/
 	input_manager = input_;
@@ -48,12 +33,23 @@ void PawnController::SetPointerToInputManagers(gef::InputManager* input_)
 }
 
 
-PawnController* PawnController::Create(gef::Platform& platform)
+PawnController::~PawnController()
+{
+	if (input_manager)
+	{
+		delete input_manager;
+		input_manager = nullptr;
+	}
+}
+
+
+
+PawnController* PawnController::Create(gef::Platform& platform, gef::InputManager* input_)
 {
 	if (controller_counter == 0) 
 	{
 		controller_counter++;
-		return new PawnController(platform);
+		return new PawnController(platform, input_);
 	}
 	else
 	{	
@@ -73,6 +69,8 @@ void PawnController::PosessPawn(Pawn* pawn)
 	//Change pointer to point to new pawn.
 	ptr_to_pawn = pawn;
 
+	keyboard->PossessPawn(pawn);
+	controller->PossessPawn(pawn);
 }
 
 void PawnController::ProcessInput(float delta_time)
@@ -145,7 +143,7 @@ void PawnController::ProcessTouchInput()
 	const gef::TouchInputManager* touch_input = input_manager->touch_manager();
 
 	/*..This frames mouse information..*/
-
+	frame_mouse_data.mouse_coordinates = nullptr;
 
 	if (touch_input && (touch_input->max_num_panels() > 0))
 	{

@@ -28,7 +28,7 @@ namespace gef
 // in mouse context.
 struct MouseData
 {
-	const gef::Vector2* mouse_coordinates;
+	gef::Vector2 *mouse_coordinates;
 	gef::TouchType mouse_left_button_state;
 };
 
@@ -58,7 +58,7 @@ class PawnController final
 protected:
 
 	/// @brief Pawn controller constructor.
-	PawnController(gef::Platform& p_pt);
+	PawnController(gef::Platform& platform_, gef::InputManager* input_);
 
 public:
 
@@ -72,11 +72,11 @@ public:
 
 	/// @brief Gets the scene input manager.
 	/// @return Pointer to the input manager.
-	gef::InputManager* GetSceneInputManager() { return input_manager; }
+	gef::InputManager* GetInputManager() { return input_manager; }
 
 	/// @brief Public method used to allocate a pawn controller on the heap.
 	/// @param[in] Takes a reference to the application's platform.
-	static PawnController* Create(gef::Platform& platform);
+	static PawnController* Create(gef::Platform& platform, gef::InputManager* input_);
 
 	/// @brief Pass a pawn to gain control of that pawn.
 	/// @param[in] Takes a pointer to a pawn in the scene.
@@ -98,10 +98,6 @@ public:
 	/// @param[in] Takes a pointer to the scene's camera. 
 	/// @param[in] Delta time since the last frame.
 	void ControlCamera(Camera* scene_camera, float delta_time);
-
-	/// @brief Initialise all input managers supported by the application.
-	/// @param[in] A reference to applications current platform.
-	void SetPointerToInputManagers(gef::InputManager* input_);
 
 	/*..TouchInput..*/
 
@@ -145,4 +141,6 @@ private:
 
 	/// @brief Tracks whether we can grab the mouse coordinates checking if we are pressing left mouse button.
 	bool can_get_mouse_coords = false;
+
+
 };

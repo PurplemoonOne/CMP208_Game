@@ -25,10 +25,6 @@ public:
 	/// @param[in] Delta time since last frame.
 	virtual void Action(Pawn* pawn, float delta_time) = 0;
 
-	/// @brief Executes the action bound to the key. (or button)
-	/// @param[in] Pointer to a state object.
-	/// @param[in] Delta time since last frame.
-	//virtual void Action(State* state, float delta_time) = 0;
 
 	virtual ~Event() {}
 

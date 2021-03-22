@@ -24,7 +24,7 @@ SceneApp::SceneApp(gef::Platform& platform) :
 	context = new Context(platform);
 	
 	/*..This just demonstrates you cannot have more than one game context running at a time.*/
-//	context2 = new State(platform);
+	//context2 = new State(platform);
 }
 
 void SceneApp::Init()
@@ -45,11 +45,11 @@ bool SceneApp::Update(float frame_time)
 {
 	fps_ = 1.0f / frame_time;
 
+	// @note 'Context' : Drives the current state
+	// hence 
 	context->CurrentState()->Input(frame_time);
-
-	context->CurrentState()->Update(frame_time);
 	
-	return true;
+	return context->CurrentState()->Update(frame_time);
 }
 
 void SceneApp::Render()

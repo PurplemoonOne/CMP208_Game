@@ -10,6 +10,9 @@ class Button;
 class Event;
 class Pawn;
 
+#include "AddForceToLeftEngine.h"
+#include "AddForceToRightEngine.h"
+
 class SCE_InputHandler
 {
 public:
@@ -24,12 +27,13 @@ public:
 
 	~SCE_InputHandler();
 
+	void PossessPawn(Pawn* pawn_) { pawn = nullptr; pawn = pawn_; }
+
 private:
 
 	/// @brief Handles controller input, returns an action based on what button was pressed.
 	/// @return Command* Returns a command to be executed.
 	Event* ControllerHandler();
-
 
 	SCE_InputHandler(gef::InputManager* input_manager_, Pawn* pawn_);
 
@@ -64,6 +68,10 @@ private:
 
 	Button* options;
 	Button* start;
+
+	/*..Action Mappings..*/
+	AddForceToRightEngine add_force_r;
+	AddForceToLeftEngine add_force_l;
 
 };
 

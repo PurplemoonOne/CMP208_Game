@@ -217,10 +217,12 @@
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="b2DebugDraw.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Context.cpp" />
     <ClCompile Include="DeathScreen.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="KeyboardHandler.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Menu.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="PawnController.cpp" />
@@ -249,6 +251,7 @@
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="b2DebugDraw.h" />
     <ClInclude Include="Context.h" />
+    <ClInclude Include="Menu.h" />
     <ClInclude Include="UIButton.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ContactListener.h" />

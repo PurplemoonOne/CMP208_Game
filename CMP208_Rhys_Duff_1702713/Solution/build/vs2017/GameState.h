@@ -18,7 +18,8 @@ class GameState : public  State
 {
 public:
 
-	GameState(gef::Platform* platform_, gef::Renderer3D* renderer_, gef::SpriteRenderer* sprite_renderer_, gef::InputManager* input);
+	GameState(gef::Platform* platform_, gef::Renderer3D* renderer_, 
+		gef::SpriteRenderer* sprite_renderer_,PawnController* input);
 	~GameState();
 
 	// @brief Called when we transition
@@ -30,7 +31,7 @@ public:
 	virtual void Input(float delta_time) override;
 
 	// @brief Updates the game state.
-	virtual void Update(float delta_time) override;
+	virtual bool Update(float delta_time) override;
 	 
 	// @brief Renders the main game.
 	virtual void Render() override;
@@ -70,7 +71,6 @@ private:
 	ThirdPersonCamera* t_camera;
 
 	PawnController* pawn_controller;
-	gef::InputManager* input_manager;
 	void InitInput();
 
 	float fps_;

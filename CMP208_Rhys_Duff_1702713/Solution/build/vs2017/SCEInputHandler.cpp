@@ -35,6 +35,8 @@ SCE_InputHandler::SCE_InputHandler(gef::InputManager* input_manager_, Pawn* pawn
 	left_bumper = new Button();
 	left_trigger = new Button();
 	left_stick_button = new Button();
+
+	BindButtons();
 }
 
 SCE_InputHandler::~SCE_InputHandler()
@@ -90,11 +92,11 @@ SCE_InputHandler::~SCE_InputHandler()
 
 void SCE_InputHandler::BindButtons()
 {
-	/*..Create new action objects..*/
-	AddForceToRightEngine add_force;
+
 
 	/*..Asign the actions to the buttons..*/
-	cross->action = &add_force;
+	right_trigger->action = &add_force_r;
+	left_trigger->action = &add_force_l;
 }
 
 SCE_InputHandler* SCE_InputHandler::Create(gef::InputManager* input_manager_, Pawn* pawn_)
@@ -114,6 +116,14 @@ Event* SCE_InputHandler::ControllerHandler()
 		if (sce_controller->buttons_down() & gef_SONY_CTRL_CROSS)
 		{
 			return cross->action;
+		}
+		if (sce_controller->buttons_down() & gef_SONY_CTRL_L2)
+		{
+			return left_trigger->action;
+		}
+		if (sce_controller->buttons_down() & gef_SONY_CTRL_R2)
+		{
+			return right_trigger->action;
 		}
 		else
 		{

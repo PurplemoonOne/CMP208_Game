@@ -12,7 +12,7 @@ public:
 
 	void Action(Pawn* pawn, float delta_time) override
 	{
-		SpaceShip* space_ship = reinterpret_cast<SpaceShip*>(pawn);
+		SpaceShip* space_ship = static_cast<SpaceShip*>(pawn);
 
 		if (space_ship)
 		{
@@ -25,14 +25,9 @@ public:
 					left_engine,
 					true);
 
-		}
-		else
-		{
-
-				gef::DebugOut("Left engine - Cast to space ship failed.\n");
 
 		}
-		
+	
 	}
 
 

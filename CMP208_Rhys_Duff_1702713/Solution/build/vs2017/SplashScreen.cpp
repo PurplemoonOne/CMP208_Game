@@ -10,8 +10,7 @@ SplashScreen::SplashScreen(gef::Platform* platform_, gef::Renderer3D* renderer_,
 	sprite_renderer = sprite_renderer_;
 	platform = platform_;
 
-	timer = 0;
-	id = 0;
+	timer = 0.0f;
 
 	gef::ImageData image;
 	png_loader_->Load("FoundationLogo.png", *platform_, image);
@@ -22,6 +21,8 @@ SplashScreen::SplashScreen(gef::Platform* platform_, gef::Renderer3D* renderer_,
 	logo.set_position(0.0f + (platform_->width() / 2.0f),0.0f + (platform_->height() / 2.0f), 0.0f);
 	logo.set_height(platform_->height());
 	logo.set_width(platform_->width());
+
+	transparency = 0.0f;
 }
 
 SplashScreen::~SplashScreen()
@@ -37,17 +38,21 @@ void SplashScreen::Input(float delta_time)
 {
 }
 
-void SplashScreen::Update(float delta_time)
+bool SplashScreen::Update(float delta_time)
 {
 	timer += 1.0f * delta_time;
-	if (timer >= 5.0f)
+
+
+	if (timer >= 4.0f)
 	{
-		context->Transition("Game");
+		context->Transition("MainMenu");
 	}
 
 	logo.set_height(platform->height());
 	logo.set_width(platform->width());
 	//gef::DebugOut("State time : %f\n", timer);
+
+	return true;
 }
 
 void SplashScreen::Render()
@@ -61,6 +66,7 @@ void SplashScreen::Render()
 
 void SplashScreen::OnExit()
 {
+
 	gef::DebugOut("Leaving splash screen\n");
 	timer = 0;
 }
