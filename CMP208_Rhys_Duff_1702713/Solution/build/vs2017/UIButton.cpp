@@ -75,32 +75,28 @@ ButtonState UIButton::EvaluateButtonState(PawnController* pawn_controller)
 
 	const MouseData* mouse_data = &pawn_controller->GetMouseData();
 
-	bool clicked = mouse_data->mouse_left_button_state == gef::TouchType::TT_ACTIVE ?
+	bool clicked = mouse_data->left_button_state == gef::TouchType::TT_ACTIVE ?
 		true : false;
 
 	bool align = false;
 
-	if (mouse_data->mouse_coordinates != nullptr)
+	if (mouse_data->coordinates != nullptr)
 	{
 		//Check if we're  hovering over button
-		if ((mouse_data->mouse_coordinates->x > anchors.bottom_left.x) && // > bottom left x
-			(mouse_data->mouse_coordinates->y < anchors.top_right.y) && // < top right y
+		if ((mouse_data->coordinates->x > anchors.bottom_left.x) && // > bottom left x
+			(mouse_data->coordinates->y < anchors.top_right.y) && // < top right y
 
-			(mouse_data->mouse_coordinates->x < anchors.bottom_right.x) && // < bottom right x
-			(mouse_data->mouse_coordinates->y > anchors.bottom_right.y)	 // > bottom right y
+			(mouse_data->coordinates->x < anchors.bottom_right.x) && // < bottom right x
+			(mouse_data->coordinates->y > anchors.bottom_right.y)	 // > bottom right y
 			)
 		{
 			align = true;
-			gef::DebugOut("Mouse is hovering\n.");
 		}
 	}
-
-
 
 	//If we clicked this region of space return true.
 	if (clicked && align) {
 		button_state = ButtonState::CLICKED;
-		gef::DebugOut("Mouse is clicked button.");
 	}
 	else if (align){
 		button_state = ButtonState::HOVER;

@@ -19,8 +19,6 @@ void Planet::Update(float delta_time)
 	//SetRotation(0.0f, 5.0f * delta_time, 0.0f);
 }
 
-
-
 Planet::~Planet()
 {
 }

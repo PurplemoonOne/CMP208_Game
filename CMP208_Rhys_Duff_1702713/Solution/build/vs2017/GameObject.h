@@ -3,10 +3,7 @@
 #include "SceneComponent.h"
 
 /*..graphics headers..*/
-#include <graphics/skinned_mesh_instance.h>
-
-/*..gef's Transform class..*/
-#include <maths/transform.h>
+#include <graphics/mesh_instance.h>
 
 /*..Physics Component..*/
 #include "PhysicsComponent.h"
@@ -23,8 +20,9 @@ namespace gef
 
 /*..Other class dependencies..(NOT internal to gef)..*/
 class PrimitiveBuilder;
+class AssetLoader;
 
-class GameObject : public SceneComponent, public  gef::MeshInstance
+class GameObject : public SceneComponent, public gef::MeshInstance
 {
 protected:
 
@@ -62,18 +60,7 @@ public:
 	/// @brief Initialises and sets the static mesh for the Actor.
 	/// @param[in] Takes a pointer to a primitive builder.
 	/// @param[in] Filepath to the .scn file on disc.
-	virtual void SetMeshFromDisc(PrimitiveBuilder* primitive_builder, std::string filepath);
-
-	// @brief Loads an asset with a specified filepath.
-	// @param[in] A reference to the platform.
-	// @param[in] A string representing the filepath.
-	virtual gef::Scene* LoadSceneAssets(gef::Platform& platform, const char* filename);
-
-	// @brief Grab a mesh from the scene object. Returns a mesh from the front of the list.
-	// @param[in] Takes a pointer to the scene object.
-	virtual gef::Mesh* GameObject::GetMeshFromSceneAssets(gef::Scene* scene);
-
-
+	virtual void SetMeshFromDisc(AssetLoader* asset_loader, std::string filename);
 
 
 	/*..Standard functions..*/
@@ -124,9 +111,6 @@ public:
 
 protected:
 
-	// @brief The following function handles mesh loading when an object is set to static.
-	virtual inline bool EvaluateStaticMeshInstances();
-
 	/// @brief Update the GFX on the game object if a physics component is added.
 	inline void UpdateMesh();
 
@@ -134,14 +118,10 @@ protected:
 
 	ObjectType object_type;
 
-	/// @brief Pointer to the current platform.
-	gef::Platform* platform_ptr;
-
 	/// @brief this objects physics component. By default it's NULL.
 	PhysicsComponent* physics_component = nullptr;
 
 	gef::Platform* platform;
-
 
 private:
 

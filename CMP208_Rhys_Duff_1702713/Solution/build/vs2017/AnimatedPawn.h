@@ -15,16 +15,12 @@ public:
 
 	/*..Standard functions..*/
 
-	/// @brief Renders this actor.
-	/// @param[in] Takes the scene 3D renderer.
-	virtual void Render(gef::Renderer3D* renderer) override;
-
 	/// @brief Updates the gameobjets behaviour.
 	/// @param[in] Change in time since the last frame.
 	virtual void Update(float delta_time) override;
 
 	/// @brief Builds the objects transform 
-	virtual void BuildTransform() override;
+	//virtual void BuildTransform() override;
 
 
 

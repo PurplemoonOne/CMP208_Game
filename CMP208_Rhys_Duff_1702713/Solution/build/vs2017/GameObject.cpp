@@ -2,11 +2,12 @@
 
 #include "GameObject.h"
 
+/*..Asset Loader..*/
+#include "AssetLoader.h"
 
 GameObject::GameObject(gef::Platform& platform_, b2World* world_, bool is_dynamic_)
 
 	: SceneComponent(platform_),
-	platform_ptr(&platform_),
 	is_dynamic(is_dynamic_),
 	platform(&platform_)
 {
@@ -19,7 +20,6 @@ GameObject* GameObject::Create(gef::Platform& platform_, b2World* world_, bool i
 {
 	return new GameObject(platform_, world_, is_dynamic);
 }
-
 
 
 void GameObject::AttachPhysicsComponent(b2World* world_)
@@ -35,12 +35,6 @@ void GameObject::InitialisePhysicsFixture(PolyShape shape_, float density, float
 
 	else
 		gef::DebugOut("Error, Create a physics component before attempting to intialise attribute.");
-}
-
-bool GameObject::EvaluateStaticMeshInstances()
-{
-
-	return false;
 }
 
 void GameObject::Update(float delta_time)
@@ -91,57 +85,13 @@ void GameObject::SetMeshAsSphere(PrimitiveBuilder* primitive_builder)
 	set_mesh(primitive_builder->GetDefaultSphereMesh());
 }
 
-void GameObject::SetMeshFromDisc(PrimitiveBuilder* primitive_builder, std::string filepath)
+void GameObject::SetMeshFromDisc(AssetLoader* asset_loader, std::string filename)
 {
-	const char* scene_asset_filename = filepath.data();
-
-		gef::Scene* scene_assets_ = LoadSceneAssets(*platform_ptr, scene_asset_filename);
-
-		if (scene_assets_)
-		{
-			set_mesh(GetMeshFromSceneAssets(scene_assets_));
-		}
-		else
-		{
-			gef::DebugOut("Scene file %s failed to load\n", scene_asset_filename);
-		}
+	set_mesh(asset_loader->LoadMesh(filename));
 }
-
 
 void GameObject::Render(gef::Renderer3D* renderer)
 {
 	// Draws this object.
 	renderer->DrawMesh(*this);
-}
-
-gef::Scene* GameObject::LoadSceneAssets(gef::Platform& platform, const char* filename)
-{
-	gef::Scene* scene = new gef::Scene();
-
-	if (scene->ReadSceneFromFile(platform, filename))
-	{
-		// if scene file loads successful
-		// create material and mesh resources from the scene data
-		scene->CreateMaterials(platform);
-		scene->CreateMeshes(platform);
-	}
-	else
-	{
-		delete scene;
-		scene = NULL;
-	}
-
-	return scene;
-}
-
-gef::Mesh* GameObject::GetMeshFromSceneAssets(gef::Scene* scene)
-{
-	gef::Mesh* mesh = NULL;
-
-	// if the scene data contains at least one mesh
-	// return the first mesh
-	if (scene && scene->meshes.size() > 0)
-		mesh = scene->meshes.front();
-
-	return mesh;
 }

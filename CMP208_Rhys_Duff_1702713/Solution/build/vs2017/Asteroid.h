@@ -27,14 +27,7 @@ public:
 	/// @param[in] Pointer to the world physics object. 
 	static Asteroid* Create(gef::Platform& platform_, b2World* world_, bool is_dynamic);
 
-	/// @brief Initialises and sets the static mesh for the Actor.
-	/// @param[in] Takes a pointer to a primitive builder.
-	/// @param[in] Filepath to the .scn file on disc.
-	virtual void SetMeshFromDisc(PrimitiveBuilder* primitive_builder, std::string filepath) override;
-
-	// @brief The following function handles mesh loading when an object is set to static.
-	virtual inline bool EvaluateStaticMeshInstances() override;
-
+	
 private:
 
 };

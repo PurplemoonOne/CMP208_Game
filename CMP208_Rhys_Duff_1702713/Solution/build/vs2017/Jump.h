@@ -10,6 +10,11 @@ public:
 
 	}
 
+	void Action(AnimatedPawn* animated_pawn, float delta_time)
+	{
+		NULL;
+	}
+
 	~Jump(){}
 
 };

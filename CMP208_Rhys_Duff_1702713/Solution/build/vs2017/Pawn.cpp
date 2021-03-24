@@ -3,8 +3,8 @@
 #include "Pawn.h"
 
 Pawn::Pawn(gef::Platform& platform_, b2World* world_)
-
-	:GameObject(platform_, world_, true)//Pawn is dynamic by default.
+	:
+	GameObject(platform_, world_, true)//Pawn is dynamic by default.
 {
 
 }
@@ -20,16 +20,7 @@ Pawn* Pawn::Create(gef::Platform& platform_, b2World* world_)
 
 void Pawn::Update(float delta_time)
 {
-	GameObject::Update(delta_time);//Must call this to ensure GFX is updated with respect to the physics component.
-
-
-
-}
-
-void Pawn::BuildTransform()
-{
-	//May alter this function later.
-
-	set_transform(GetFinalTransform());
-
+	GameObject::Update(delta_time);
+	//Must call this to ensure GFX is 
+	//updated with respect to the physics component.
 }

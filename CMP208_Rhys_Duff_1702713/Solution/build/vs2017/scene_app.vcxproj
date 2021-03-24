@@ -214,6 +214,8 @@
     <ClCompile Include="..\..\primitive_builder.cpp" />
     <ClCompile Include="..\..\scene_app.cpp" />
     <ClCompile Include="AnimatedGameObject.cpp" />
+    <ClCompile Include="AnimatedPawn.cpp" />
+    <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="Asteroid.cpp" />
     <ClCompile Include="b2DebugDraw.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -223,6 +225,7 @@
     <ClCompile Include="KeyboardHandler.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="motion_clip_player.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="PawnController.cpp" />
@@ -248,10 +251,13 @@
     <ClInclude Include="AddForceToLeftEngine.h" />
     <ClInclude Include="AddForceToRightEngine.h" />
     <ClInclude Include="AnimatedGameObject.h" />
+    <ClInclude Include="AnimatedPawn.h" />
+    <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="Asteroid.h" />
     <ClInclude Include="b2DebugDraw.h" />
     <ClInclude Include="Context.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="motion_clip_player.h" />
     <ClInclude Include="UIButton.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ContactListener.h" />

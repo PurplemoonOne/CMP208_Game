@@ -28,8 +28,8 @@ namespace gef
 // in mouse context.
 struct MouseData
 {
-	gef::Vector2 *mouse_coordinates;
-	gef::TouchType mouse_left_button_state;
+	gef::Vector2 *coordinates;
+	gef::TouchType left_button_state;
 };
 
 /*
@@ -85,31 +85,17 @@ public:
 	/// @brief Getter to the touch/mouse manager
 	inline gef::InputManager* GetTouchInputManager() { return input_manager; }
 
-	/*..Fly Camera - Debug Mode..*/
-
-	/// @brief Grabs the mouse coordinates when left mouse button is down.
-	/// @returns A reference to the mouse coordinates contained in a vector 2.
-	inline const gef::Vector2& MouseLDownPositionCoordinates() { return touch_position_; }
-
-	/// @brief Checks if we can update the camera.
-	inline bool& CanUpdateCamera() { return can_get_mouse_coords; }
-
-	/// @brief Handles input for the scene camera.
-	/// @param[in] Takes a pointer to the scene's camera. 
-	/// @param[in] Delta time since the last frame.
-	void ControlCamera(Camera* scene_camera, float delta_time);
-
 	/*..TouchInput..*/
 
 	/// @brief Tracks and evaluates touch input.
 	void ProcessTouchInput();
 
 	// @brief return the mouse position and state for this frame.
-	inline const MouseData& GetMouseData() { return frame_mouse_data; }
+	inline const MouseData& GetMouseData() { return mouse_data; }
 
 private:
 
-	MouseData frame_mouse_data;
+	MouseData mouse_data;
 
 
 	/*..Pick bindings method..*/

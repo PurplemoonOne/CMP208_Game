@@ -5,6 +5,7 @@
 
 
 class GameObject;
+class AnimatedGameObject;
 
 class PhysicsComponent
 {
@@ -29,6 +30,7 @@ protected:
 	*/
 
 	PhysicsComponent(b2World* world_, GameObject* game_object, bool is_dynamic);
+	PhysicsComponent(b2World* world_, AnimatedGameObject* game_object, bool is_dynamic);
 
 public:
 
@@ -36,6 +38,7 @@ public:
 
 	/// @brief Returns a new Physics component.
 	static PhysicsComponent* Create(b2World* world_, GameObject* game_object, bool is_dynamic);
+	static PhysicsComponent* Create(b2World* world_, AnimatedGameObject* game_object, bool is_dynamic);
 
 	/// @brief update the attributes of the physics body.
 	/// @param[in] The bodies Denisty.
@@ -58,8 +61,12 @@ public:
 
 private:
 
+	inline void InitialisePhysicsBody(bool is_dynamic);
+
 	/*..Pointer to the game object that *this* is attached to..*/
 	GameObject* game_object;
+
+	AnimatedGameObject* animated_game_object;
 
 	/*..Attributes..*/
 	b2Vec2 body_scale;

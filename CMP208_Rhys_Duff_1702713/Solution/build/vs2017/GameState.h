@@ -14,6 +14,8 @@
 
 #include "UIButton.h"
 
+#include "AssetLoader.h"
+
 class GameState : public  State
 {
 public:
@@ -59,11 +61,12 @@ private:
 	//My Includes
 	Pawn* player;
 	void InitPlayer();
+
 	GameObject* floor;
 	void InitScene();
+
 	Planet* planet;
 
-	UIButton* button;
 
 	ContactListener scene_contact_listener;
 
@@ -75,10 +78,13 @@ private:
 
 	float fps_;
 
+
 	/*..Box 2D world..*/
 	b2World* world;
 
 	float yPos = 0.0f;
 
+	//Loading assets.
+	AssetLoader* asset_loader;
 };
 

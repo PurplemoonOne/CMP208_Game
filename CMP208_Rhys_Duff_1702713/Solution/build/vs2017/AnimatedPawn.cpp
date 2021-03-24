@@ -13,17 +13,11 @@ AnimatedPawn::~AnimatedPawn()
 
 AnimatedPawn* AnimatedPawn::Create(const gef::Skeleton& skeleton, gef::Platform& platform, b2World* world)
 {
-	return nullptr;
+	return new AnimatedPawn(skeleton, platform, world);
 }
 
-void AnimatedPawn::Render(gef::Renderer3D* renderer)
-{
-}
 
 void AnimatedPawn::Update(float delta_time)
 {
 }
 
-void AnimatedPawn::BuildTransform()
-{
-}

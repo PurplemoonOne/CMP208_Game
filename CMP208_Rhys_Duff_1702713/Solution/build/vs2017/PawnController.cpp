@@ -11,16 +11,18 @@
 /*..Camera..*/
 #include "Camera.h"
 
-//@brief Variable tracks how many pawn controllers are active. \n For this module there should only be ONE active.
-static uint16_t controller_counter = 0;
-
 PawnController::PawnController(gef::Platform& p_ptr, gef::InputManager* input_)
 	:
 	platform_ptr(&p_ptr),
 	input_manager(NULL),
 	active_touch_id_(-1),
-	touch_position_(gef::Vector2::kZero)
+	touch_position_(gef::Vector2::kZero),
+	touch_in_manager(nullptr)
 {
+	/*..Init data..*/
+	mouse_data.coordinates = nullptr;
+	mouse_data.left_button_state = gef::TouchType::TT_NONE;
+
 	/*..Create a new input manager..*/
 	input_manager = input_;
 
@@ -32,7 +34,6 @@ PawnController::PawnController(gef::Platform& p_ptr, gef::InputManager* input_)
 	controller = SCE_InputHandler::Create(input_manager, ptr_to_pawn);
 }
 
-
 PawnController::~PawnController()
 {
 	if (input_manager)
@@ -42,23 +43,9 @@ PawnController::~PawnController()
 	}
 }
 
-
-
 PawnController* PawnController::Create(gef::Platform& platform, gef::InputManager* input_)
 {
-	if (controller_counter == 0) 
-	{
-		controller_counter++;
-		return new PawnController(platform, input_);
-	}
-	else
-	{	
-		/*
-		*	There shouldn't more than one controller at a time.
-		*	In future however if developing a game supporting coop 
-		*	or a game running on a network may support more than one.
-		*/
-	}
+	return new PawnController(platform, input_);
 }
 
 void PawnController::PosessPawn(Pawn* pawn)
@@ -107,43 +94,13 @@ Event* PawnController::PickAction()
 }
 
 
-void PawnController::ControlCamera(Camera* scene_camera, float delta_time)
-{
-	gef::Keyboard* keyboard_ = input_manager->keyboard();
-
-
-	if (keyboard_)
-	{
-			
-			if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_W))
-			{
-			
-				scene_camera->MoveForward(delta_time);
-			}
-			else if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_S))
-			{
-				scene_camera->MoveBackward(delta_time);
-			}
-			else if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_D))
-			{
-				scene_camera->MoveRight(delta_time);
-			}
-			else if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_A))
-			{
-				scene_camera->MoveLeft(delta_time);
-			}
-
-		
-	}
-}
-
 void PawnController::ProcessTouchInput()
 {
 
 	const gef::TouchInputManager* touch_input = input_manager->touch_manager();
 
 	/*..This frames mouse information..*/
-	frame_mouse_data.mouse_coordinates = nullptr;
+	mouse_data.coordinates = nullptr;
 
 	if (touch_input && (touch_input->max_num_panels() > 0))
 	{
@@ -168,8 +125,8 @@ void PawnController::ProcessTouchInput()
 					touch_position_ = touch->position;
 					
 
-					frame_mouse_data.mouse_coordinates = &touch_position_;
-					frame_mouse_data.mouse_left_button_state = gef::TT_NEW;
+					mouse_data.coordinates = &touch_position_;
+					mouse_data.left_button_state = gef::TT_NEW;
 				}
 			}
 			else if (active_touch_id_ == touch->id)
@@ -179,10 +136,8 @@ void PawnController::ProcessTouchInput()
 				{
 					// update an active touch here
 					// we're just going to record the position of the touch
-
-
-					frame_mouse_data.mouse_coordinates = &touch_position_;
-					frame_mouse_data.mouse_left_button_state = gef::TT_ACTIVE;
+					mouse_data.coordinates = &touch_position_;
+					mouse_data.left_button_state = gef::TT_ACTIVE;
 
 				}
 				else if (touch->type == gef::TT_RELEASED)
@@ -193,8 +148,8 @@ void PawnController::ProcessTouchInput()
 					active_touch_id_ = -1;
 
 
-					frame_mouse_data.mouse_coordinates = &touch_position_;
-					frame_mouse_data.mouse_left_button_state = gef::TT_RELEASED;
+					mouse_data.coordinates = &touch_position_;
+					mouse_data.left_button_state = gef::TT_RELEASED;
 				}
 			}
 		}

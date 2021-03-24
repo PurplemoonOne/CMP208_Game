@@ -10,11 +10,13 @@ GameState::GameState(gef::Platform* platform_, gef::Renderer3D* renderer_,
 	pawn_controller(input_)
 {
 
+	// initialise primitive builder to make create some 3D geometry easier
+	primitive_builder_ = new PrimitiveBuilder(*platform);
+
+	asset_loader = new AssetLoader(primitive_builder_, *platform);
+
 	b2Vec2 gravity = b2Vec2(0.0f, -9.8f);
 	world = new b2World(gravity);
-
-	// initialise primitive builder to make create some 3D geometry easier
-	primitive_builder_ = new PrimitiveBuilder(*platform_);
 
 	InitPlayer();
 	InitScene();
@@ -31,7 +33,7 @@ GameState::GameState(gef::Platform* platform_, gef::Renderer3D* renderer_,
 	//Set the collision callback methods.
 	world->SetContactListener(&scene_contact_listener);
 
-	//button = UIButton::Create(platform_, std::string("Start"), gef::Vector2(200.0f, 200.0f));
+
 }
 
 GameState::~GameState()
@@ -45,22 +47,16 @@ void GameState::OnEnter()
 
 void GameState::Input(float delta_time)
 {
+	//Process Input
+	pawn_controller->ProcessInput(delta_time);
 }
 
 bool GameState::Update(float delta_time)
 {
 
 		////////////////////////////////////////////////////////////////////////////////////
-		//Process Input
-		pawn_controller->ProcessInput(delta_time);
+		Input(delta_time);
 
-		if (pawn_controller->GetInputManager()->keyboard()->IsKeyDown(gef::Keyboard::KeyCode::KC_ESCAPE))
-		{
-			return false;
-		}
-
-		pawn_controller->ControlCamera(camera, delta_time);
-	
 		t_camera->FocusOnObject(player);
 		t_camera->Update(delta_time);
 		//
@@ -73,8 +69,6 @@ bool GameState::Update(float delta_time)
 		floor->Update(delta_time);
 		player->Update(delta_time);
 		//planet->Update(delta_time);
-	
-		//button->Update(delta_time);
 	
 		//End Game Logic.
 		////////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +93,13 @@ bool GameState::Update(float delta_time)
 	
 		//End Physics Step.
 		////////////////////////////////////////////////////////////////////////////////////
+		bool continue_ = true;
+		if (pawn_controller->GetInputManager()->keyboard()->IsKeyDown(gef::Keyboard::KeyCode::KC_ESCAPE))
+		{
+			continue_ = false;
+		}
 
+		return continue_;
 }
 
 void GameState::Render()
@@ -122,7 +122,7 @@ void GameState::Render()
 
 	// start drawing sprites, don't clear the frame buffer
 	sprite_renderer->Begin(false);
-	//button->Render(sprite_renderer);
+	
 	DrawHUD();
 	sprite_renderer->End();
 }
@@ -184,7 +184,7 @@ void GameState::InitPlayer()
 	player->SetPosition(0.0f, 4.0f, 0.0f);
 	player->SetScale(1.0f, 1.0f, 1.0f);
 	player->SetObjectType(ObjectType::dynamic_pawn_);
-	player->SetMeshFromDisc(primitive_builder_, std::string("rocket.scn"));
+	player->SetMeshFromDisc(asset_loader, std::string("rocket.scn"));
 
 	/*..Attach a physics component to the object..*/
 	player->AttachPhysicsComponent(world);

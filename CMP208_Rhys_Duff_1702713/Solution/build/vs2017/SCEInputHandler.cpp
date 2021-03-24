@@ -10,6 +10,8 @@
 /*..Actions..*/
 #include "AddForceToRightEngine.h"
 
+//@brief Variable tracks how many pawn controllers are active. 
+static uint32 controller_counter = 0;
 
 SCE_InputHandler::SCE_InputHandler(gef::InputManager* input_manager_, Pawn* pawn_)
 	:input_manager(input_manager_),
@@ -111,7 +113,7 @@ Event* SCE_InputHandler::ControllerHandler()
 	if (sce_in_manager)
 	{
 
-		const gef::SonyController* sce_controller = sce_in_manager->GetController(0);
+		const gef::SonyController* sce_controller = sce_in_manager->GetController(controller_counter);
 
 		if (sce_controller->buttons_down() & gef_SONY_CTRL_CROSS)
 		{

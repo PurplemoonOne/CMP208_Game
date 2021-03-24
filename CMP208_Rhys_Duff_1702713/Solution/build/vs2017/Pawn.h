@@ -33,7 +33,6 @@ public:
 
 protected:
 
-	virtual void BuildTransform() override;
 
 };
 

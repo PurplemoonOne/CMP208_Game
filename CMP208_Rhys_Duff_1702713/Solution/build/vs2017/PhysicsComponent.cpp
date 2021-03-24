@@ -7,37 +7,18 @@ PhysicsComponent::PhysicsComponent(b2World* world_, GameObject* game_object_, bo
 	:world(world_),
 	game_object(game_object_)
 {
+	// Need to set the other animated GO to nullptr.
+	// It is kept private and therefore is safe.
+	animated_game_object = nullptr;
+	InitialisePhysicsBody(is_dynamic);
+}
 
-	/*..Grab the position and scale..*/
-	body_position = b2Vec2(game_object->GetPosition().x(),
-		game_object->GetPosition().y());
-
-	body_scale = b2Vec2(game_object->GetScale().x() / 2.0f,
-		game_object->GetScale().y() / 2.0f);
-
-
-	b2BodyDef body_definition;
-
-	/*..Initiliaside the body definition..*/
-
-	is_dynamic ? body_definition.type = b2_dynamicBody : body_definition.type = b2_staticBody;
-	body_definition.position = b2Vec2(body_position.x, body_position.y);
-	body_definition.angle = 0.0f;
-	body_definition.enabled = true;
-	
-	if (body_definition.type == b2_dynamicBody || body_definition.type == b2_kinematicBody)
-	{
-			/*..Only want to point to the game object data if the subject is a dynamic body..*/
-			body_definition.userData.pointer = reinterpret_cast<uintptr_t>(game_object);
-			body_definition.allowSleep = false;
-	}
-	else
-	{
-			body_definition.allowSleep = true;
-	}
-
-	/*..Finally create the main physics body for the game object..*/
-	physics_body = world->CreateBody(&body_definition);
+PhysicsComponent::PhysicsComponent(b2World* world_, AnimatedGameObject* game_object_, bool is_dynamic)
+	:world(world_),
+	animated_game_object(game_object_)
+{
+	game_object = nullptr;
+	InitialisePhysicsBody(is_dynamic);
 }
 
 void PhysicsComponent::Update()
@@ -50,6 +31,11 @@ PhysicsComponent::~PhysicsComponent()
 {
 }
 PhysicsComponent* PhysicsComponent::Create(b2World* world_, GameObject* game_object, bool is_dynamic)
+{
+	return new PhysicsComponent(world_, game_object, is_dynamic);
+}
+
+PhysicsComponent* PhysicsComponent::Create(b2World* world_, AnimatedGameObject* game_object, bool is_dynamic)
 {
 	return new PhysicsComponent(world_, game_object, is_dynamic);
 }
@@ -109,4 +95,39 @@ void PhysicsComponent::CreateFixture(Shape shape_, float density, float friction
 
 inline void PhysicsComponent::UpdatePhysicsParameters(float density, float weight, float friction)
 {
+}
+
+inline void PhysicsComponent::InitialisePhysicsBody(bool is_dynamic)
+{
+
+	/*..Grab the position and scale..*/
+	body_position = b2Vec2(game_object->GetPosition().x(),
+		game_object->GetPosition().y());
+
+	body_scale = b2Vec2(game_object->GetScale().x() / 2.0f,
+		game_object->GetScale().y() / 2.0f);
+
+
+	b2BodyDef body_definition;
+
+	/*..Initiliaside the body definition..*/
+
+	is_dynamic ? body_definition.type = b2_dynamicBody : body_definition.type = b2_staticBody;
+	body_definition.position = b2Vec2(body_position.x, body_position.y);
+	body_definition.angle = 0.0f;
+	body_definition.enabled = true;
+
+	if (body_definition.type == b2_dynamicBody || body_definition.type == b2_kinematicBody)
+	{
+		/*..Only want to point to the game object data if the subject is a dynamic body..*/
+		body_definition.userData.pointer = reinterpret_cast<uintptr_t>(game_object);
+		body_definition.allowSleep = false;
+	}
+	else
+	{
+		body_definition.allowSleep = true;
+	}
+
+	/*..Finally create the main physics body for the game object..*/
+	physics_body = world->CreateBody(&body_definition);
 }
