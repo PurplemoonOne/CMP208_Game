@@ -8,7 +8,17 @@
 /*..Collisions..*/
 #include "ObjectType.h"
 
-class AnimatedGameObject : public GameObject, public virtual gef::SkinnedMeshInstance
+/*
+*	As the name may suggest this class is to encapsulate an 
+*	animated object. 
+*
+*	Ofcourse the game object inherits from a mesh instance class just 
+*	as the skinned mesh instance does too. So marking a virtual inheritence 
+*	ensures only one mesh instance is inherited.
+* 
+*/
+
+class AnimatedGameObject : public virtual GameObject, public gef::SkinnedMeshInstance
 {
 protected:
 
@@ -23,7 +33,7 @@ public:
 	/// @brief Initialises and sets the static mesh for the Actor.
 	/// @param[in] Takes a pointer to a primitive builder.
 	/// @param[in] Filepath to the .scn file on disc.
-	virtual void SetMeshFromDisc(PrimitiveBuilder* primitive_builder, std::string filepath) override;
+	void SetMeshFromDisc(PrimitiveBuilder* primitive_builder, std::string filepath) override;
 
 	// @brief Loads an asset with a specified filepath.
 	// @param[in] A reference to the platform.
@@ -33,8 +43,6 @@ public:
 	// @brief Grab a mesh from the scene object. Returns a mesh from the front of the list.
 	// @param[in] Takes a pointer to the scene object.
 	//gef::Mesh* GameObject::GetMeshFromSceneAssets(gef::Scene* scene) override;
-
-
 
 
 	/*..Standard functions..*/
