@@ -7,6 +7,16 @@
 #include "DeathScreen.h"
 #include "PauseMenu.h"
 
+enum class States
+{
+	SPLASH = 0,
+	MAIN,
+	GAME,
+	PAUSE,
+	DEATH,
+	NULL_
+};
+
 // @brief Tracks the number of contexts running, MAX = 1.
 static UInt32 context_count = 0;
 
@@ -20,7 +30,7 @@ public:
 
 	// @brief Transitions to a new state specified by a string.
 	// @param[in] Takes a string to an existing state.
-	void Transition(std::string name);
+	void Transition(States name);
 	
 
 	//@brief return the application's current state.
@@ -29,7 +39,7 @@ public:
 private:
 
 	/*..Store our state instances in a map object..*/
-	std::map<std::string, State*> map;
+	std::map<States, State*> map;
 
 	/*..Pointer to our current state..*/
 	State* state;
@@ -38,7 +48,6 @@ private:
 	gef::Renderer3D* renderer;
 	gef::SpriteRenderer* sprite_renderer;
 	gef::Platform* platform;
-	gef::PNGLoader* png_loader;
 	gef::InputManager* input_manager;
 
 	PawnController* pawn_controller;

@@ -21,23 +21,23 @@ Context::Context(gef::Platform& platform_)
 
 		/*..Create our game states..*/
 		GameState* game = new GameState(platform, renderer, sprite_renderer, pawn_controller);
-		map["Game"] = game;
+		map[States::GAME] = game;
 		game = nullptr;
 
-		MainMenu* main_menu = new MainMenu(platform, renderer, sprite_renderer, png_loader, pawn_controller);
-		map["MainMenu"] = main_menu;
+		MainMenu* main_menu = new MainMenu(platform, renderer, sprite_renderer, pawn_controller);
+		map[States::MAIN] = main_menu;
 		main_menu = nullptr;
 
-		SplashScreen* splash_screen = new SplashScreen(platform, renderer, sprite_renderer, png_loader);
-		map["Splash"] = splash_screen;
+		SplashScreen* splash_screen = new SplashScreen(platform, renderer, sprite_renderer);
+		map[States::SPLASH] = splash_screen;
 		splash_screen = nullptr;
 
 		PauseMenu* pause_menu = new PauseMenu(platform, renderer, sprite_renderer, pawn_controller);
-		map["PauseMenu"] = pause_menu;
+		map[States::PAUSE] = pause_menu;
 		pause_menu = nullptr;
 
 		DeathScreen* death_screen = new DeathScreen(platform, renderer, sprite_renderer, pawn_controller);
-		map["Death"] = death_screen;
+		map[States::DEATH] = death_screen;
 		death_screen = nullptr;
 
 		context_count++;
@@ -55,28 +55,28 @@ Context::~Context()
 	// @note This method may a bit risky on cleaning up states.
 	// However I chose this method, over having a pointer to each state,
 	// to reduce overall size of 'this' file.
-	if (map.find("Game") != map.end()) {
-		delete map.at("Game");
+	if (map.find(States::GAME) != map.end()) {
+		delete map.at(States::GAME);
 	}
 
-	if (map.find("MainMenu") != map.end()) {
-		delete map.at("MainMenu");
+	if (map.find(States::MAIN) != map.end()) {
+		delete map.at(States::MAIN);
 	}
 
-	if (map.find("PauseMenu") != map.end()) {
-		delete map.at("PauseMenu");
+	if (map.find(States::PAUSE) != map.end()) {
+		delete map.at(States::PAUSE);
 	}
 
-	if (map.find("Death") != map.end()) {
-		delete map.at("Death");
+	if (map.find(States::DEATH) != map.end()) {
+		delete map.at(States::DEATH);
 	}
 
-	if (map.find("Splash") != map.end()) {
-		delete map.at("Splash");
+	if (map.find(States::SPLASH) != map.end()) {
+		delete map.at(States::SPLASH);
 	}
 }
 
-void Context::Transition(std::string name)
+void Context::Transition(States name)
 {
 	if (state != nullptr) {
 		this->state->OnExit();//Clear any data in the current state.

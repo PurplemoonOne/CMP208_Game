@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "GameObject.h"
+#include "AnimatedGameObject.h"
 
 class ThirdPersonCamera : public Camera
 {
@@ -18,7 +19,8 @@ public:
 	static ThirdPersonCamera* Create(gef::Platform* platform_);
 
 	/*..Public methods handling input..*/
-	void FocusOnObject(GameObject* game_object);
+	void FocusOnObject(gef::Vector4 target);
+
 
 private:
 

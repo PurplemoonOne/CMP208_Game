@@ -13,11 +13,6 @@ Asteroid::~Asteroid()
 {
 }
 
-void Asteroid::Render(gef::Renderer3D* renderer)
-{
-	
-}
-
 void Asteroid::Update(float delta_time)
 {
 }

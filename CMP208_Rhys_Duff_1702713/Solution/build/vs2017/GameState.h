@@ -3,7 +3,8 @@
 
 
 /*..Pawn Include..*/
-#include "Pawn.h"
+#include "SpaceShip.h"
+#include "Player.h"
 #include "Planet.h"
 /*..Camera..*/
 #include "Camera.h"
@@ -20,8 +21,7 @@ class GameState : public  State
 {
 public:
 
-	GameState(gef::Platform* platform_, gef::Renderer3D* renderer_, 
-		gef::SpriteRenderer* sprite_renderer_,PawnController* input);
+	GameState(gef::Platform* platform_, gef::Renderer3D* renderer_, gef::SpriteRenderer* sprite_renderer_, PawnController* input);
 	~GameState();
 
 	// @brief Called when we transition
@@ -59,14 +59,12 @@ private:
 	PrimitiveBuilder* primitive_builder_;
 
 	//My Includes
-	Pawn* player;
 	void InitPlayer();
-
-	GameObject* floor;
 	void InitScene();
 
-	Planet* planet;
-
+	std::vector<GameObject*> essential_objects;
+	std::vector<AnimatedGameObject*> essential_anim_objects;
+	std::vector<GameObject*> dynamic_objects;
 
 	ContactListener scene_contact_listener;
 
@@ -86,5 +84,9 @@ private:
 
 	//Loading assets.
 	AssetLoader* asset_loader;
+
+	gef::Mesh* ship_model;
+	void LoadSceneModels();
+	void CleanModels();
 };
 

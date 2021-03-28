@@ -17,7 +17,7 @@ class SCE_InputHandler
 {
 public:
 
-	static SCE_InputHandler* Create(gef::InputManager* input_manager_, Pawn* pawn_);
+	static SCE_InputHandler* Create(gef::InputManager* input_manager_);
 
 	/// @brief Processes the command that was entered via one of the input devices.
 	void ProcessSonyController(float delta_time);
@@ -27,7 +27,8 @@ public:
 
 	~SCE_InputHandler();
 
-	void PossessPawn(Pawn* pawn_) { pawn = nullptr; pawn = pawn_; }
+	void PossessPawn(Pawn* pawn_);
+	void PossessPawn(AnimatedPawn* pawn_);
 
 private:
 
@@ -35,13 +36,14 @@ private:
 	/// @return Command* Returns a command to be executed.
 	Event* ControllerHandler();
 
-	SCE_InputHandler(gef::InputManager* input_manager_, Pawn* pawn_);
+	SCE_InputHandler(gef::InputManager* input_manager_);
 
 	// Pointer to the input manager.
 	gef::InputManager* input_manager;
 
 	// Pointer to a pawn object.
 	Pawn* pawn;
+	AnimatedPawn* anim_pawn;
 
 	/*..Button objects..*/
 

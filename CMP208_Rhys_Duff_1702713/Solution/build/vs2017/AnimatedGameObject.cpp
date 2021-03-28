@@ -4,38 +4,29 @@
 /*..Asset Loader..*/
 #include "AssetLoader.h"
 
-AnimatedGameObject::AnimatedGameObject(const gef::Skeleton& skeleton_, gef::Platform& platform_, b2World* world, bool is_dynamic) 
+AnimatedGameObject::AnimatedGameObject(const gef::Skeleton& skeleton_, gef::Platform& platform_, bool is_dynamic_, b2World* world)
 	:
+	SkinnedMeshInstance(skeleton_),
+	SceneComponent(platform_),
 	platform(&platform_),
 	skeleton(&skeleton_),
-	SkinnedMeshInstance(*skeleton),
-	SceneComponent(*platform),
-	object_type(ObjectType::dynamic_),
-	physics_component(nullptr)
+	physics_component(nullptr),
+	world_ptr(world),
+	is_dynamic(is_dynamic_)
 {
 	/*..Create a new motion player to maintain animations..*/
 	animation_player = new MotionClipPlayer();
 	animation_player->Init(this->bind_pose());
+	object_type = ObjectType::static_;
 }
 
 AnimatedGameObject::~AnimatedGameObject()
 {
 }
 
-AnimatedGameObject* AnimatedGameObject::Create(const gef::Skeleton& skeleton, gef::Platform& platform, b2World* world, bool is_dynamic)
+AnimatedGameObject* AnimatedGameObject::Create(const gef::Skeleton& skeleton, gef::Platform& platform, bool is_dynamic, b2World* world)
 {
-	return new AnimatedGameObject(skeleton, platform, world, is_dynamic);
-}
-
-void AnimatedGameObject::SetMeshFromDisc(AssetLoader* asset_loader, std::string filename)
-{
-	set_mesh(asset_loader->LoadMesh(filename));
-}
-
-
-void AnimatedGameObject::Render(gef::Renderer3D* renderer)
-{
-	renderer->DrawSkinnedMesh(*this, this->bone_matrices(), true);
+	return new AnimatedGameObject(skeleton, platform, is_dynamic, world);
 }
 
 void AnimatedGameObject::Update(float delta_time)
@@ -59,6 +50,11 @@ void AnimatedGameObject::AnimationUpdate(float delta_time)
 void AnimatedGameObject::BuildTransform()
 {
 	set_transform(GetFinalTransform());
+}
+
+void AnimatedGameObject::SetMesh(gef::Mesh* mesh_)
+{
+	set_mesh(mesh_);
 }
 
 void AnimatedGameObject::AttachPhysicsComponent(b2World* world_)

@@ -27,10 +27,10 @@ class GameObject : public SceneComponent, public gef::MeshInstance
 protected:
 
 	/// @brief Actor constructor.
-	/// @param[in] Pointer to a primitive builder
+	/// @param[in] Pointer to a primitive builder.
 	/// @param[in] Reference to the current platform.
 	/// @param[in] Dictates whether the game object is dynamic at construction time.
-	GameObject(gef::Platform& platform_, b2World* world_, bool is_dynamic);
+	GameObject(gef::Platform& platform_, b2World* world_ = 0, bool is_dynamic = false);
 
 
 	/// @brief Default constructor.
@@ -43,7 +43,7 @@ public:
 	/// @param[in] Pointer to a primitive builder. 
 	/// @param[in] Reference to the current platform.
 	/// @param[in] Pointer to the world physics object. 
-	static GameObject* Create(gef::Platform& platform_, b2World* world_, bool is_dynamic);
+	static GameObject* Create(gef::Platform& platform_, b2World* world_ = 0, bool is_dynamic = false);
 
 
 
@@ -57,17 +57,10 @@ public:
 	/// @param[in] Takes a pointer to a primitive builder.
 	virtual void SetMeshAsSphere(PrimitiveBuilder* primitive_builder);
 
-	/// @brief Initialises and sets the static mesh for the Actor.
-	/// @param[in] Takes a pointer to a primitive builder.
-	/// @param[in] Filepath to the .scn file on disc.
-	virtual void SetMeshFromDisc(AssetLoader* asset_loader, std::string filename);
-
+	// @brief Applies a custom mesh to the object.
+	virtual void SetMesh(gef::Mesh* mesh_);
 
 	/*..Standard functions..*/
-
-	/// @brief Renders this actor.
-	/// @param[in] Takes the scene 3D renderer.
-	virtual void Render(gef::Renderer3D* renderer);
 
 	/// @brief Updates the gameobjets behaviour.
 	/// @param[in] Change in time since the last frame.
@@ -75,9 +68,6 @@ public:
 
 	/// @brief Builds the objects transform 
 	virtual void BuildTransform();
-
-
-
 
 	/*..Collisions..*/
 
@@ -87,9 +77,6 @@ public:
 
 	// @brief returns a const reference to the object type.
 	const ObjectType& GetObjectType() const { return object_type; }
-
-
-
 
 	/*..Physics..*/
 
@@ -109,6 +96,8 @@ public:
 	// @param[in] Whether this object is a collider or a trigger. Triggers aren't included in physics calculations.
 	void InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor);
 
+	gef::Scene* asset;
+
 protected:
 
 	/// @brief Update the GFX on the game object if a physics component is added.
@@ -119,16 +108,16 @@ protected:
 	ObjectType object_type;
 
 	/// @brief this objects physics component. By default it's NULL.
-	PhysicsComponent* physics_component = nullptr;
+	PhysicsComponent* physics_component;
 
 	gef::Platform* platform;
 
 private:
 
-	b2World* world_ptr = nullptr;
+	b2World* world_ptr;
 
 	// @brief Setting this true will create a physics component.
-	bool is_dynamic = false;
+	bool is_dynamic;
 
 };
 

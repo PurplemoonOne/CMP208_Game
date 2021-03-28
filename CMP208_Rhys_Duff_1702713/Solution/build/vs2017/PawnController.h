@@ -81,6 +81,7 @@ public:
 	/// @brief Pass a pawn to gain control of that pawn.
 	/// @param[in] Takes a pointer to a pawn in the scene.
 	void PosessPawn(Pawn* pawn);
+	void PosessPawn(AnimatedPawn* pawn);
 
 	/// @brief Getter to the touch/mouse manager
 	inline gef::InputManager* GetTouchInputManager() { return input_manager; }
@@ -123,7 +124,8 @@ private:
 	gef::Platform* platform_ptr;
 
 	/// @brief Pointer to the current player in the scene.
-	Pawn* ptr_to_pawn;
+	Pawn* pawn;
+	AnimatedPawn* anim_pawn;
 
 	/// @brief Tracks whether we can grab the mouse coordinates checking if we are pressing left mouse button.
 	bool can_get_mouse_coords = false;

@@ -30,8 +30,8 @@ PawnController::PawnController(gef::Platform& p_ptr, gef::InputManager* input_)
 	if (input_manager && input_manager->touch_manager() && (input_manager->touch_manager()->max_num_panels() > 0))
 		input_manager->touch_manager()->EnablePanel(0);
 
-	keyboard = KeyboardHandler::Create(input_manager, ptr_to_pawn);
-	controller = SCE_InputHandler::Create(input_manager, ptr_to_pawn);
+	keyboard = KeyboardHandler::Create(input_manager);
+	controller = SCE_InputHandler::Create(input_manager);
 }
 
 PawnController::~PawnController()
@@ -48,16 +48,28 @@ PawnController* PawnController::Create(gef::Platform& platform, gef::InputManage
 	return new PawnController(platform, input_);
 }
 
-void PawnController::PosessPawn(Pawn* pawn)
+void PawnController::PosessPawn(Pawn* pawn_)
 {
 	//First stop pointing to current posessed pawn.
-	ptr_to_pawn = nullptr;
+	anim_pawn = nullptr;
+	pawn = nullptr;
 
 	//Change pointer to point to new pawn.
-	ptr_to_pawn = pawn;
+	pawn = pawn_;
 
-	keyboard->PossessPawn(pawn);
-	controller->PossessPawn(pawn);
+	keyboard->PossessPawn(pawn_);
+	controller->PossessPawn(pawn_);
+}
+
+void PawnController::PosessPawn(AnimatedPawn* pawn_)
+{
+	pawn = nullptr;
+	anim_pawn = nullptr;
+
+	anim_pawn = pawn_;
+
+	keyboard->PossessPawn(anim_pawn);
+	controller->PossessPawn(anim_pawn);
 }
 
 void PawnController::ProcessInput(float delta_time)

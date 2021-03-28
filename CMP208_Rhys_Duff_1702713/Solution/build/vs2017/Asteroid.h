@@ -14,9 +14,6 @@ public:
 
 	~Asteroid();
 
-	/// @brief Renders this actor.
-	/// @param[in] Takes the scene 3D renderer.
-	virtual void Render(gef::Renderer3D* renderer) override;
 
 	/// @brief Updates the gameobjets behaviour.
 	/// @param[in] Change in time since the last frame.

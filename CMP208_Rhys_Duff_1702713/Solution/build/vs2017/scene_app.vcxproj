@@ -207,17 +207,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\main_d3d11.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|PSVita'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|PSVita'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\..\main_d3d11.cpp" />
     <ClCompile Include="..\..\primitive_builder.cpp" />
     <ClCompile Include="..\..\scene_app.cpp" />
     <ClCompile Include="AnimatedGameObject.cpp" />
     <ClCompile Include="AnimatedPawn.cpp" />
+    <ClCompile Include="AnimDriver.cpp" />
     <ClCompile Include="AssetLoader.cpp" />
     <ClCompile Include="Asteroid.cpp" />
-    <ClCompile Include="b2DebugDraw.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Context.cpp" />
     <ClCompile Include="DeathScreen.cpp" />
@@ -225,6 +222,7 @@
     <ClCompile Include="KeyboardHandler.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="motion_clip_player.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="Pawn.cpp" />
@@ -235,6 +233,7 @@
     </ClCompile>
     <ClCompile Include="PhysicsComponent.cpp" />
     <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="SCEInputHandler.cpp" />
     <ClCompile Include="SceneComponent.cpp" />
     <ClCompile Include="GameState.cpp" />
@@ -252,12 +251,15 @@
     <ClInclude Include="AddForceToRightEngine.h" />
     <ClInclude Include="AnimatedGameObject.h" />
     <ClInclude Include="AnimatedPawn.h" />
+    <ClInclude Include="AnimDriver.h" />
+    <ClInclude Include="AnimState.h" />
     <ClInclude Include="AssetLoader.h" />
     <ClInclude Include="Asteroid.h" />
-    <ClInclude Include="b2DebugDraw.h" />
     <ClInclude Include="Context.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="motion_clip_player.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="UIButton.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ContactListener.h" />

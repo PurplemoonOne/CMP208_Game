@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Move.h"
 
 namespace gef
 {
@@ -18,7 +19,7 @@ public:
 	// @brief Creates a new Keyboard handler for the pawn controller class.
 	// @param[in] Pointer to the input manager.
 	// @param[in] Pointer to the pawn class.
-	static KeyboardHandler* Create(gef::InputManager* input_, Pawn* pawn_);
+	static KeyboardHandler* Create(gef::InputManager* input_);
 
 	/// @brief Function responsible for binding keys.
 	void BindKeys(Keys* key, Event* action);
@@ -28,7 +29,13 @@ public:
 
 	~KeyboardHandler();
 
-	void PossessPawn(Pawn* pawn_) { pawn = nullptr; pawn = pawn_; }
+	// @brief Take control of a pawn.
+	// @param[in] Pointer to a pawn.
+	void PossessPawn(Pawn* pawn_); 
+
+	// @brief Take control of an animated pawn.
+	// @param[in] Pointer to a animated pawn.
+	void PossessPawn(AnimatedPawn* pawn_);
 
 private:
 
@@ -37,13 +44,14 @@ private:
 	/// @brief Handles input from the keyboard 
 	Event* KeyEvents();
 
-	KeyboardHandler(gef::InputManager* input_, Pawn* pawn_);
+	KeyboardHandler(gef::InputManager* input_);
 
 	/*..Pointer to the input manager..*/
 	gef::InputManager* input_manager;
 
 	/*..Pointer to the player..*/
 	Pawn* pawn;
+	AnimatedPawn* anim_pawn;
 
 	/*..w,a,s,d..*/
 
@@ -65,6 +73,8 @@ private:
 	Keys* l_alt;
 	Keys* ctrl;
 
+	MoveLeft move_left;
+	MoveRight move_right;
 
 };
 

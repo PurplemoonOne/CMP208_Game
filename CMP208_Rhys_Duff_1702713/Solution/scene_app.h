@@ -9,11 +9,6 @@
 
 #include "ContactListener.h"
 
-
-
-//Debug Physics
-#include "b2DebugDraw.h"
-
 #include "PawnController.h"
 
 // FRAMEWORK FORWARD DECLARATIONS

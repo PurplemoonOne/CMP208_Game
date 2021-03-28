@@ -9,11 +9,15 @@ GameObject::GameObject(gef::Platform& platform_, b2World* world_, bool is_dynami
 
 	: SceneComponent(platform_),
 	is_dynamic(is_dynamic_),
-	platform(&platform_)
+	platform(&platform_),
+	physics_component(nullptr),
+	object_type(ObjectType::static_)
 {
 	position = gef::Vector4::kZero;
 	rotation = gef::Vector4::kZero;
 	scale = gef::Vector4::kZero;
+
+
 }
 
 GameObject* GameObject::Create(gef::Platform& platform_, b2World* world_, bool is_dynamic)
@@ -30,6 +34,7 @@ void GameObject::AttachPhysicsComponent(b2World* world_)
 
 void GameObject::InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor)
 {
+	//If no friction is applied, assumes to be static.
 	if (physics_component)
 		physics_component->CreateFixture(shape_, density, friction, mass, is_sensor);
 
@@ -85,13 +90,8 @@ void GameObject::SetMeshAsSphere(PrimitiveBuilder* primitive_builder)
 	set_mesh(primitive_builder->GetDefaultSphereMesh());
 }
 
-void GameObject::SetMeshFromDisc(AssetLoader* asset_loader, std::string filename)
+void GameObject::SetMesh(gef::Mesh* mesh_)
 {
-	set_mesh(asset_loader->LoadMesh(filename));
+	set_mesh(mesh_);
 }
 
-void GameObject::Render(gef::Renderer3D* renderer)
-{
-	// Draws this object.
-	renderer->DrawMesh(*this);
-}

@@ -15,11 +15,11 @@ ThirdPersonCamera* ThirdPersonCamera::Create(gef::Platform* platform_)
 	return new ThirdPersonCamera(platform_);
 }
 
-void ThirdPersonCamera::FocusOnObject(GameObject* game_object)
+void ThirdPersonCamera::FocusOnObject(gef::Vector4 target)
 {
-
-	camera_target = gef::Vector4(game_object->GetPosition().x(), game_object->GetPosition().y(), game_object->GetPosition().z());
-	//camera_up = gef::Vector4(game_object->GetPosition().x(), game_object->GetPosition().y(), game_object->GetPosition().z());
-
+	position = (target + gef::Vector4(0.0f, 6.0f, 10.0f));
+	camera_target = target;
 }
+
+
 

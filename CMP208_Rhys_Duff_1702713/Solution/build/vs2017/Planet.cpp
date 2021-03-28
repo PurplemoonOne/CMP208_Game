@@ -7,6 +7,7 @@ Planet::Planet(gef::Platform& platform_, b2World* world_, float radius_)
 	:GameObject(platform_, world_, false),
 	radius(radius_)
 {
+	SetScale(radius, radius, radius);
 }
 
 Planet* Planet::Create(gef::Platform& platform_, b2World* world_, float radius)

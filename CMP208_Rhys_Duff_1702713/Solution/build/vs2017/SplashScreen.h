@@ -5,15 +5,15 @@
 #include "graphics/sprite.h"
 #include "graphics/image_data.h"
 
-/*..Assests..*/
-#include "assets/png_loader.h"
+class AssetLoader;
 
 // @brief Initial screen displayed on start up.
 class SplashScreen : public State
 {
 public:
 
-	  SplashScreen(gef::Platform* platform_, gef::Renderer3D* renderer_, gef::SpriteRenderer* sprite_renderer_, gef::PNGLoader* png_loader_);
+	// @brief Simply displays and image for a few seconds.
+	  SplashScreen(gef::Platform* platform_, gef::Renderer3D* renderer_, gef::SpriteRenderer* sprite_renderer_);
 	  ~SplashScreen();
 
 	virtual void OnEnter() override;
@@ -30,7 +30,10 @@ private:
 	gef::Sprite logo;
 
 	gef::Platform* platform;
+
 	gef::SpriteRenderer* sprite_renderer;
+
+	AssetLoader* asset_loader;
 
 	float timer;
 };

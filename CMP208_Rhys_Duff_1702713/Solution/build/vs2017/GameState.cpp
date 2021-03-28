@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "GameState.h"
 
+#include "Context.h"
+
 GameState::GameState(gef::Platform* platform_, gef::Renderer3D* renderer_, 
 	gef::SpriteRenderer* sprite_renderer_,PawnController* input_)
 	:
@@ -13,7 +15,7 @@ GameState::GameState(gef::Platform* platform_, gef::Renderer3D* renderer_,
 	// initialise primitive builder to make create some 3D geometry easier
 	primitive_builder_ = new PrimitiveBuilder(*platform);
 
-	asset_loader = new AssetLoader(primitive_builder_, *platform);
+	asset_loader = new AssetLoader(*platform, primitive_builder_);
 
 	b2Vec2 gravity = b2Vec2(0.0f, -9.8f);
 	world = new b2World(gravity);
@@ -38,16 +40,26 @@ GameState::GameState(gef::Platform* platform_, gef::Renderer3D* renderer_,
 
 GameState::~GameState()
 {
+
+	CleanModels();
+	CleanUpFont();
+
+	delete world;
+	world = nullptr;
 }
 
 void GameState::OnEnter()
 {
-	gef::DebugOut("This is the Game state\n");
+	
 }
 
 void GameState::Input(float delta_time)
 {
 	//Process Input
+	Player* player = (Player*)essential_anim_objects[0];
+
+	player->BroadcastInput(false);
+
 	pawn_controller->ProcessInput(delta_time);
 }
 
@@ -57,25 +69,27 @@ bool GameState::Update(float delta_time)
 		////////////////////////////////////////////////////////////////////////////////////
 		Input(delta_time);
 
-		t_camera->FocusOnObject(player);
+		t_camera->FocusOnObject(essential_anim_objects[0]->GetPosition());
 		t_camera->Update(delta_time);
 		//
 		////////////////////////////////////////////////////////////////////////////////////
 	
-			////////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////////
 		//Game Logic.
 	
-		/*..Player update..*/
-		floor->Update(delta_time);
-		player->Update(delta_time);
-		//planet->Update(delta_time);
+		for (auto& object : essential_objects)
+		{
+			object->Update(delta_time);
+		}
 	
+		for (auto& anim_object : essential_anim_objects)
+		{
+			anim_object->AnimationUpdate(delta_time);
+			anim_object->Update(delta_time);
+		}
+
 		//End Game Logic.
 		////////////////////////////////////////////////////////////////////////////////////
-	
-	
-	
-	
 		////////////////////////////////////////////////////////////////////////////////////
 		//Physics Step.
 	
@@ -94,9 +108,9 @@ bool GameState::Update(float delta_time)
 		//End Physics Step.
 		////////////////////////////////////////////////////////////////////////////////////
 		bool continue_ = true;
-		if (pawn_controller->GetInputManager()->keyboard()->IsKeyDown(gef::Keyboard::KeyCode::KC_ESCAPE))
+		if (pawn_controller->GetInputManager()->keyboard()->IsKeyReleased(gef::Keyboard::KeyCode::KC_ESCAPE))
 		{
-			continue_ = false;
+			context->Transition(States::PAUSE);
 		}
 
 		return continue_;
@@ -110,12 +124,16 @@ void GameState::Render()
 	// draw 3d geometry
 	renderer->Begin();
 
+	
+	for (auto& object : essential_objects)
+	{
+		renderer->DrawMesh(*object);
+	}
 
-	floor->Render(renderer);
-
-	//planet->Render(renderer_3d_);
-	player->Render(renderer);
-
+	for (auto& object : essential_anim_objects)
+	{
+		renderer->DrawSkinnedMesh(*object, object->bone_matrices());
+	}
 
 	renderer->End();
 
@@ -139,6 +157,8 @@ void GameState::InitFont()
 
 void GameState::CleanUpFont()
 {
+	delete font_;
+	font_ = nullptr;
 }
 
 void GameState::DrawHUD()
@@ -167,7 +187,7 @@ void GameState::SetupLights()
 	gef::Default3DShaderData& default_shader_data = renderer->default_shader_data();
 
 	// set the ambient light
-	default_shader_data.set_ambient_light_colour(gef::Colour(0.25f, 0.25f, 0.25f, 1.0f));
+	default_shader_data.set_ambient_light_colour(gef::Colour(0.45f, 0.25f, 0.45f, 1.0f));
 
 	// add a point light that is almost white, but with a blue tinge
 	// the position of the light is set far away so it acts light a directional light
@@ -179,59 +199,87 @@ void GameState::SetupLights()
 
 void GameState::InitPlayer()
 {
-	// setup the mesh for the player - Note: No need to call seperate functions to instantiate mesh and physics.
-	player = SpaceShip::Create(*platform, world);
-	player->SetPosition(0.0f, 4.0f, 0.0f);
+	gef::Scene* scn_ = asset_loader->LoadSceneAssets(platform, "../assets/Robot/robot.scn");
+
+	//Sort out model loading, streamline it.
+	Player* player = Player::Create(*asset_loader->LoadSkeleton(scn_), *platform, world);
+
+	player->asset = scn_;
+	player->SetPosition(6.0f, 0.0f, 0.0f);
+	player->SetRotation(0.0f, 90.0f, 0.0f);
 	player->SetScale(1.0f, 1.0f, 1.0f);
 	player->SetObjectType(ObjectType::dynamic_pawn_);
-	player->SetMeshFromDisc(asset_loader, std::string("rocket.scn"));
+	player->set_mesh(asset_loader->LoadMesh(scn_));
+	player->idle = asset_loader->LoadAnimation("../assets/Robot/Animation/@idle01.scn", "");
+	player->walk = asset_loader->LoadAnimation("../assets/Robot/Animation/@walk.scn", "");
+
+	if (player->idle)
+	{
+		player->AnimationPlayer()->set_clip(player->idle);
+		player->AnimationPlayer()->set_anim_time(0.0f);
+		player->AnimationPlayer()->set_looping(true);
+	}
+
+	essential_anim_objects.push_back(player);
+	pawn_controller->PosessPawn(player);
+
+	// setup the mesh for the player - Note: No need to call seperate functions to instantiate mesh and physics.
+	SpaceShip* space_ship = SpaceShip::Create(*platform, world);
+	space_ship->SetPosition(4.0f, 0.0f, 0.0f);
+	space_ship->SetScale(1.0f, 1.0f, 1.0f);
+	space_ship->SetObjectType(ObjectType::dynamic_pawn_);
+	space_ship->SetMesh(asset_loader->LoadMesh("../assets/CamoStellar/camo.scn"));
 
 	/*..Attach a physics component to the object..*/
-	player->AttachPhysicsComponent(world);
+	//space_ship->AttachPhysicsComponent(world);
+	//
+	//space_ship->InitialisePhysicsFixture(PhysicsComponent::Shape::BOX,
+	//	0.4f, //Density
+	//	0.5f, //Friction
+	//	1.0f, //Mass
+	//	false //Is trigger
+	//);
 
-	player->InitialisePhysicsFixture(PhysicsComponent::Shape::BOX,
-		0.4f, //Density
-		0.5f, //Friction
-		1.0f, //Mass
-		false //Is trigger
-	);
+	essential_objects.push_back(space_ship);
 }
 
 void GameState::InitScene()
 {
-		//Floor
-		floor = GameObject::Create(*platform, world, false);
-		floor->SetObjectType(ObjectType::environment_);
-		floor->SetPosition(0.0f, -2.0f, 0.0f);
-		floor->SetScale(10.0f, 1.0f, 1.0f);
-		floor->SetMeshAsCube(primitive_builder_);
-		floor->AttachPhysicsComponent(world);
+		/*
+		//Planet
+		
+		Planet* planet = Planet::Create(*platform, world, 1.0f);
+		planet->SetPosition(0.0f, -0.5f, 0.0f);
+		planet->SetScale(1.0f, 1.0f, 1.0f);
 	
-		floor->InitialisePhysicsFixture(PhysicsComponent::Shape::BOX,
-			0.0f, //Density
-			1.0f, //Friction
-			0.5,  //Mass
-			false //Is trigger
-		);
+		planet->set_mesh(asset_loader->LoadMesh("world.scn"));
+		planet->AttachPhysicsComponent(world);
+		planet->InitialisePhysicsFixture(PhysicsComponent::Shape::CIRCLE,
+			0.0f,
+			1.0f,
+			1.0f,
+			false);
 
-	//	//Planet
-	//	planet = Planet::Create(platform_, world, 1.0f);
-	//	planet->SetPosition(0.0f, -4.0f, 0.0f);
-	//	//planet->SetScale(10.0f, 10.0f, 10.0f);
-	//
-	//	planet->AttachPhysicsComponent(world);
-	//
-	//	planet->SetMeshAsSphere(primitive_builder_);
-	//
-	//	planet->InitialisePhysicsFixture(PhysicsComponent::Shape::CIRCLE,
-	//		0.0f,
-	//		1.0f,
-	//		1.0f,
-	//		false);
+		essential_objects.push_back(planet);
+		*/
+
+	gef::Scene* scn_ = asset_loader->LoadSceneAssets(platform, "../assets/Structures/building_short_long.scn");
+
+
 }
 
 void GameState::InitInput()
 {
 	//Now controls the player.
-	pawn_controller->PosessPawn(player);
+	
+}
+
+void GameState::LoadSceneModels()
+{
+
+}
+
+void GameState::CleanModels()
+{
+
 }

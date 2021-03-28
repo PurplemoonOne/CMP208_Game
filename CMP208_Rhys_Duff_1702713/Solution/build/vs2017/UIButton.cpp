@@ -36,13 +36,13 @@ void UIButton::Update(float delta_time)
 	switch (button_state)
 	{
 	case ButtonState::CLICKED:
-		//Animate clicked.
+
 		break;
 	case ButtonState::HOVER:
-	
+
 		break;
 	default:
-	
+
 		break;
 	}
 

@@ -13,9 +13,10 @@
 //@brief Variable tracks how many pawn controllers are active. 
 static uint32 controller_counter = 0;
 
-SCE_InputHandler::SCE_InputHandler(gef::InputManager* input_manager_, Pawn* pawn_)
+SCE_InputHandler::SCE_InputHandler(gef::InputManager* input_manager_)
 	:input_manager(input_manager_),
-	pawn(pawn_)
+	pawn(nullptr),
+	anim_pawn(nullptr)
 {
 	cross = new Button();
 	circle = new Button();
@@ -92,6 +93,20 @@ SCE_InputHandler::~SCE_InputHandler()
 	left_stick_button= nullptr;
 }
 
+void SCE_InputHandler::PossessPawn(Pawn* pawn_)
+{
+	anim_pawn = nullptr;
+	pawn = nullptr;
+	pawn = pawn_;
+}
+
+void SCE_InputHandler::PossessPawn(AnimatedPawn* pawn_)
+{
+	pawn = nullptr;
+	anim_pawn = nullptr;
+	anim_pawn = pawn_;
+}
+
 void SCE_InputHandler::BindButtons()
 {
 
@@ -101,9 +116,9 @@ void SCE_InputHandler::BindButtons()
 	left_trigger->action = &add_force_l;
 }
 
-SCE_InputHandler* SCE_InputHandler::Create(gef::InputManager* input_manager_, Pawn* pawn_)
+SCE_InputHandler* SCE_InputHandler::Create(gef::InputManager* input_manager_)
 {
-	return new SCE_InputHandler(input_manager_, pawn_);
+	return new SCE_InputHandler(input_manager_);
 }
 
 Event* SCE_InputHandler::ControllerHandler()
