@@ -109,12 +109,12 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..;..\..\..\gef_abertay;..\..\..\Box2D\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../Includes;.;..\..;..\..\..\gef_abertay;..\..\..\Box2D\include</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -129,7 +129,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..;..\..\..\gef_abertay;..\..\..\Box2D\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../Includes;.;..\..;..\..\..\gef_abertay;..\..\..\Box2D\include</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -144,13 +144,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..;..\..\..\gef_abertay;..\..\..\Box2D\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../Includes;.;..\..;..\..\..\gef_abertay;..\..\..\Box2D\include</AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,7 +169,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.;..\..;..\..\..\gef_abertay;..\..\..\Box2D\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)../../Includes;.;..\..;..\..\..\gef_abertay;..\..\..\Box2D\include</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -207,84 +207,114 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\main_d3d11.cpp" />
-    <ClCompile Include="..\..\primitive_builder.cpp" />
-    <ClCompile Include="..\..\scene_app.cpp" />
-    <ClCompile Include="AnimatedGameObject.cpp" />
-    <ClCompile Include="AnimatedPawn.cpp" />
-    <ClCompile Include="AnimDriver.cpp" />
-    <ClCompile Include="AssetLoader.cpp" />
-    <ClCompile Include="Asteroid.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Context.cpp" />
-    <ClCompile Include="DeathScreen.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="KeyboardHandler.cpp" />
-    <ClCompile Include="MainMenu.cpp" />
-    <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="motion_clip_player.cpp" />
-    <ClCompile Include="PauseMenu.cpp" />
-    <ClCompile Include="Pawn.cpp" />
-    <ClCompile Include="PawnController.cpp" />
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="..\..\Includes\Animation\AnimDriver.cpp" />
+    <ClCompile Include="..\..\Includes\Animation\WalkAnim.cpp" />
+    <ClCompile Include="..\..\Includes\Camera\Camera.cpp" />
+    <ClCompile Include="..\..\Includes\Camera\ThirdPersonCamera.cpp" />
+    <ClCompile Include="..\..\Includes\GameObjects\AnimatedGameObject.cpp" />
+    <ClCompile Include="..\..\Includes\GameObjects\AnimatedPawn.cpp" />
+    <ClCompile Include="..\..\Includes\GameObjects\Asteroid.cpp" />
+    <ClCompile Include="..\..\Includes\GameObjects\GameObject.cpp" />
+    <ClCompile Include="..\..\Includes\GameObjects\Pawn.cpp" />
+    <ClCompile Include="..\..\Includes\GameObjects\Planet.cpp" />
+    <ClCompile Include="..\..\Includes\GameObjects\Player.cpp" />
+    <ClCompile Include="..\..\Includes\GameObjects\SceneComponent.cpp" />
+    <ClCompile Include="..\..\Includes\GameObjects\SpaceShip.cpp" />
+    <ClCompile Include="..\..\Includes\Input\KeyboardHandler.cpp" />
+    <ClCompile Include="..\..\Includes\Input\PawnController.cpp" />
+    <ClCompile Include="..\..\Includes\Input\SCEInputHandler.cpp" />
+    <ClCompile Include="..\..\Includes\main_d3d11.cpp" />
+    <ClCompile Include="..\..\Includes\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch.h</PrecompiledHeaderFile>
     </ClCompile>
-    <ClCompile Include="PhysicsComponent.cpp" />
-    <ClCompile Include="Planet.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="SCEInputHandler.cpp" />
-    <ClCompile Include="SceneComponent.cpp" />
-    <ClCompile Include="GameState.cpp" />
-    <ClCompile Include="SpaceShip.cpp" />
-    <ClCompile Include="SplashScreen.cpp" />
-    <ClCompile Include="State.cpp" />
-    <ClCompile Include="ThirdPersonCamera.cpp" />
-    <ClCompile Include="UIButton.cpp" />
-    <ClCompile Include="UserInterface.cpp" />
+    <ClCompile Include="..\..\Includes\Physics\PhysicsComponent.cpp" />
+    <ClCompile Include="..\..\Includes\scene_app.cpp" />
+    <ClCompile Include="..\..\Includes\States\Context.cpp" />
+    <ClCompile Include="..\..\Includes\States\DeathScreen.cpp" />
+    <ClCompile Include="..\..\Includes\States\GameState.cpp" />
+    <ClCompile Include="..\..\Includes\States\MainMenu.cpp" />
+    <ClCompile Include="..\..\Includes\States\Options.cpp" />
+    <ClCompile Include="..\..\Includes\States\PauseMenu.cpp" />
+    <ClCompile Include="..\..\Includes\States\SplashScreen.cpp" />
+    <ClCompile Include="..\..\Includes\UserInterface\Slider.cpp" />
+    <ClCompile Include="..\..\Includes\UserInterface\UIButton.cpp" />
+    <ClCompile Include="..\..\Includes\UserInterface\UserInterface.cpp" />
+    <ClCompile Include="..\..\Includes\Utilities\AssetLoader.cpp" />
+    <ClCompile Include="..\..\Includes\Vendor\audio_3d.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Vendor\audio_emitter.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Vendor\audio_listener.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Vendor\motion_clip_player.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Vendor\primitive_builder.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\primitive_builder.h" />
-    <ClInclude Include="..\..\scene_app.h" />
-    <ClInclude Include="AddForceToLeftEngine.h" />
-    <ClInclude Include="AddForceToRightEngine.h" />
-    <ClInclude Include="AnimatedGameObject.h" />
-    <ClInclude Include="AnimatedPawn.h" />
-    <ClInclude Include="AnimDriver.h" />
-    <ClInclude Include="AnimState.h" />
-    <ClInclude Include="AssetLoader.h" />
-    <ClInclude Include="Asteroid.h" />
-    <ClInclude Include="Context.h" />
-    <ClInclude Include="Menu.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="motion_clip_player.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="UIButton.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="ContactListener.h" />
-    <ClInclude Include="DeathScreen.h" />
-    <ClInclude Include="Event.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="UserInterface.h" />
-    <ClInclude Include="Jump.h" />
-    <ClInclude Include="KeyboardHandler.h" />
-    <ClInclude Include="MainMenu.h" />
-    <ClInclude Include="Move.h" />
-    <ClInclude Include="ObjectType.h" />
-    <ClInclude Include="PauseMenu.h" />
-    <ClInclude Include="Pawn.h" />
-    <ClInclude Include="PawnController.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="PhysicsComponent.h" />
-    <ClInclude Include="Planet.h" />
-    <ClInclude Include="SCEInputHandler.h" />
-    <ClInclude Include="SceneComponent.h" />
-    <ClInclude Include="GameState.h" />
-    <ClInclude Include="SpaceShip.h" />
-    <ClInclude Include="SplashScreen.h" />
-    <ClInclude Include="State.h" />
-    <ClInclude Include="ThirdPersonCamera.h" />
+    <ClInclude Include="..\..\Includes\Animation\AnimDriver.h" />
+    <ClInclude Include="..\..\Includes\Animation\AnimState.h" />
+    <ClInclude Include="..\..\Includes\Animation\WalkAnim.h" />
+    <ClInclude Include="..\..\Includes\Camera\Camera.h" />
+    <ClInclude Include="..\..\Includes\Camera\ThirdPersonCamera.h" />
+    <ClInclude Include="..\..\Includes\GameObjects\AnimatedGameObject.h" />
+    <ClInclude Include="..\..\Includes\GameObjects\AnimatedPawn.h" />
+    <ClInclude Include="..\..\Includes\GameObjects\Asteroid.h" />
+    <ClInclude Include="..\..\Includes\GameObjects\GameObject.h" />
+    <ClInclude Include="..\..\Includes\GameObjects\ObjectType.h" />
+    <ClInclude Include="..\..\Includes\GameObjects\Pawn.h" />
+    <ClInclude Include="..\..\Includes\GameObjects\Planet.h" />
+    <ClInclude Include="..\..\Includes\GameObjects\Player.h" />
+    <ClInclude Include="..\..\Includes\GameObjects\SceneComponent.h" />
+    <ClInclude Include="..\..\Includes\GameObjects\SpaceShip.h" />
+    <ClInclude Include="..\..\Includes\Gameplay\AddForceToLeftEngine.h" />
+    <ClInclude Include="..\..\Includes\Gameplay\AddForceToRightEngine.h" />
+    <ClInclude Include="..\..\Includes\Gameplay\Event.h" />
+    <ClInclude Include="..\..\Includes\Gameplay\Jump.h" />
+    <ClInclude Include="..\..\Includes\Gameplay\Move.h" />
+    <ClInclude Include="..\..\Includes\Input\KeyboardHandler.h" />
+    <ClInclude Include="..\..\Includes\Input\PawnController.h" />
+    <ClInclude Include="..\..\Includes\Input\SCEInputHandler.h" />
+    <ClInclude Include="..\..\Includes\pch.h" />
+    <ClInclude Include="..\..\Includes\Physics\ContactListener.h" />
+    <ClInclude Include="..\..\Includes\Physics\PhysicsComponent.h" />
+    <ClInclude Include="..\..\Includes\scene_app.h" />
+    <ClInclude Include="..\..\Includes\States\Context.h" />
+    <ClInclude Include="..\..\Includes\States\DeathScreen.h" />
+    <ClInclude Include="..\..\Includes\States\GameState.h" />
+    <ClInclude Include="..\..\Includes\States\MainMenu.h" />
+    <ClInclude Include="..\..\Includes\States\Options.h" />
+    <ClInclude Include="..\..\Includes\States\PauseMenu.h" />
+    <ClInclude Include="..\..\Includes\States\SplashScreen.h" />
+    <ClInclude Include="..\..\Includes\States\State.h" />
+    <ClInclude Include="..\..\Includes\UserInterface\Slider.h" />
+    <ClInclude Include="..\..\Includes\UserInterface\UIButton.h" />
+    <ClInclude Include="..\..\Includes\UserInterface\UserInterface.h" />
+    <ClInclude Include="..\..\Includes\Utilities\AssetLoader.h" />
+    <ClInclude Include="..\..\Includes\Vendor\audio_3d.h" />
+    <ClInclude Include="..\..\Includes\Vendor\audio_emitter.h" />
+    <ClInclude Include="..\..\Includes\Vendor\audio_listener.h" />
+    <ClInclude Include="..\..\Includes\Vendor\motion_clip_player.h" />
+    <ClInclude Include="..\..\Includes\Vendor\primitive_builder.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

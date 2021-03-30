@@ -61,9 +61,6 @@
     <Filter Include="Header Files\Input">
       <UniqueIdentifier>{cb4011e5-fffc-4409-8130-648d63fa514f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Collisions">
-      <UniqueIdentifier>{95444680-3204-4796-97f7-adf4bbd5e087}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Main">
       <UniqueIdentifier>{86726c98-a89e-4e18-8a87-aa441cfaffa9}</UniqueIdentifier>
     </Filter>
@@ -73,228 +70,255 @@
     <Filter Include="Header Files\Animation">
       <UniqueIdentifier>{fff911b9-90f8-4743-a6ca-fed8f82eb27b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{1302e810-6db8-4bd5-8640-9a8610c2b61e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{9e584e0c-4d1f-4af1-9a7a-509114637734}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MainMenu.cpp">
-      <Filter>Source Files\States</Filter>
+    <ClCompile Include="..\..\Includes\UserInterface\UIButton.cpp">
+      <Filter>Source Files\User Interface</Filter>
     </ClCompile>
-    <ClCompile Include="Menu.cpp">
-      <Filter>Source Files\States</Filter>
+    <ClCompile Include="..\..\Includes\UserInterface\UserInterface.cpp">
+      <Filter>Source Files\User Interface</Filter>
     </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>Source Files\States</Filter>
+    <ClCompile Include="..\..\Includes\Vendor\motion_clip_player.cpp">
+      <Filter>Source Files\Vendor</Filter>
     </ClCompile>
-    <ClCompile Include="SplashScreen.cpp">
-      <Filter>Source Files\States</Filter>
+    <ClCompile Include="..\..\Includes\Vendor\primitive_builder.cpp">
+      <Filter>Source Files\Vendor</Filter>
     </ClCompile>
-    <ClCompile Include="PauseMenu.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathScreen.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="GameState.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatedGameObject.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatedPawn.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Asteroid.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Pawn.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="SpaceShip.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsComponent.cpp">
+    <ClCompile Include="..\..\Includes\Physics\PhysicsComponent.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="Planet.cpp">
+    <ClCompile Include="..\..\Includes\GameObjects\Asteroid.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="AssetLoader.cpp">
-      <Filter>Source Files\Vendor</Filter>
-    </ClCompile>
-    <ClCompile Include="motion_clip_player.cpp">
-      <Filter>Source Files\Vendor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\primitive_builder.cpp">
-      <Filter>Source Files\Vendor</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyboardHandler.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="PawnController.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="SCEInputHandler.cpp">
-      <Filter>Source Files\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Cameras</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdPersonCamera.cpp">
-      <Filter>Source Files\Cameras</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneComponent.cpp">
+    <ClCompile Include="..\..\Includes\GameObjects\GameObject.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="UIButton.cpp">
-      <Filter>Source Files\User Interface</Filter>
+    <ClCompile Include="..\..\Includes\GameObjects\Pawn.cpp">
+      <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="UserInterface.cpp">
-      <Filter>Source Files\User Interface</Filter>
+    <ClCompile Include="..\..\Includes\GameObjects\Planet.cpp">
+      <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Context.cpp">
+    <ClCompile Include="..\..\Includes\GameObjects\Player.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\GameObjects\SpaceShip.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\main_d3d11.cpp">
+      <Filter>Source Files\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\pch.cpp">
+      <Filter>Source Files\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\scene_app.cpp">
+      <Filter>Source Files\Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Input\KeyboardHandler.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Input\PawnController.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Input\SCEInputHandler.cpp">
+      <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Camera\Camera.cpp">
+      <Filter>Source Files\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Camera\ThirdPersonCamera.cpp">
+      <Filter>Source Files\Cameras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Animation\AnimDriver.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\GameObjects\AnimatedGameObject.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\GameObjects\AnimatedPawn.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\States\Context.cpp">
       <Filter>Source Files\States</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files\Main</Filter>
+    <ClCompile Include="..\..\Includes\States\DeathScreen.cpp">
+      <Filter>Source Files\States</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\scene_app.cpp">
-      <Filter>Source Files\Main</Filter>
+    <ClCompile Include="..\..\Includes\States\GameState.cpp">
+      <Filter>Source Files\States</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\main_d3d11.cpp">
-      <Filter>Source Files\Main</Filter>
+    <ClCompile Include="..\..\Includes\States\MainMenu.cpp">
+      <Filter>Source Files\States</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
+    <ClCompile Include="..\..\Includes\States\PauseMenu.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\States\SplashScreen.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\GameObjects\SceneComponent.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
+    <ClCompile Include="..\..\Includes\UserInterface\Slider.cpp">
+      <Filter>Source Files\User Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\States\Options.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Animation\WalkAnim.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Vendor\audio_3d.cpp">
       <Filter>Source Files\Vendor</Filter>
     </ClCompile>
-    <ClCompile Include="AnimDriver.cpp">
-      <Filter>Source Files\Animation</Filter>
+    <ClCompile Include="..\..\Includes\Vendor\audio_emitter.cpp">
+      <Filter>Source Files\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Vendor\audio_listener.cpp">
+      <Filter>Source Files\Vendor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\Utilities\AssetLoader.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DeathScreen.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="GameState.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="Context.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="MainMenu.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="PauseMenu.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="SplashScreen.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
-    <ClInclude Include="AddForceToLeftEngine.h">
-      <Filter>Header Files\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="AddForceToRightEngine.h">
-      <Filter>Header Files\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="Move.h">
-      <Filter>Header Files\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="Jump.h">
-      <Filter>Header Files\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="Event.h">
-      <Filter>Header Files\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="AssetLoader.h">
+    <ClInclude Include="..\..\Includes\Vendor\motion_clip_player.h">
       <Filter>Header Files\Vendor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\primitive_builder.h">
+    <ClInclude Include="..\..\Includes\Vendor\primitive_builder.h">
       <Filter>Header Files\Vendor</Filter>
     </ClInclude>
-    <ClInclude Include="motion_clip_player.h">
-      <Filter>Header Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="Pawn.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="SpaceShip.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Planet.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Asteroid.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectType.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="UIButton.h">
+    <ClInclude Include="..\..\Includes\UserInterface\UIButton.h">
       <Filter>Header Files\User Interface</Filter>
     </ClInclude>
-    <ClInclude Include="UserInterface.h">
+    <ClInclude Include="..\..\Includes\UserInterface\UserInterface.h">
       <Filter>Header Files\User Interface</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdPersonCamera.h">
-      <Filter>Header Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatedGameObject.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatedPawn.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneComponent.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsComponent.h">
+    <ClInclude Include="..\..\Includes\Physics\ContactListener.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="SCEInputHandler.h">
-      <Filter>Header Files\Input</Filter>
+    <ClInclude Include="..\..\Includes\Physics\PhysicsComponent.h">
+      <Filter>Header Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="PawnController.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyboardHandler.h">
-      <Filter>Header Files\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="ContactListener.h">
-      <Filter>Header Files\Collisions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\scene_app.h">
-      <Filter>Header Files\Main</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Header Files\Main</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files\Vendor</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
+    <ClInclude Include="..\..\Includes\GameObjects\Asteroid.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="AnimState.h">
+    <ClInclude Include="..\..\Includes\GameObjects\GameObject.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\GameObjects\ObjectType.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\GameObjects\Pawn.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\GameObjects\Planet.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\GameObjects\Player.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\GameObjects\SpaceShip.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\pch.h">
+      <Filter>Header Files\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\scene_app.h">
+      <Filter>Header Files\Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Input\KeyboardHandler.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Input\PawnController.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Input\SCEInputHandler.h">
+      <Filter>Header Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Gameplay\AddForceToLeftEngine.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Gameplay\AddForceToRightEngine.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Gameplay\Event.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Gameplay\Jump.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Gameplay\Move.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Camera\Camera.h">
+      <Filter>Header Files\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Camera\ThirdPersonCamera.h">
+      <Filter>Header Files\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Animation\AnimDriver.h">
       <Filter>Header Files\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="AnimDriver.h">
+    <ClInclude Include="..\..\Includes\Animation\AnimState.h">
       <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\States\Context.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\States\DeathScreen.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\States\GameState.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\States\MainMenu.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\States\PauseMenu.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\States\SplashScreen.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\States\State.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\GameObjects\SceneComponent.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\GameObjects\AnimatedGameObject.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\GameObjects\AnimatedPawn.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\UserInterface\Slider.h">
+      <Filter>Header Files\User Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\States\Options.h">
+      <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Animation\WalkAnim.h">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Vendor\audio_3d.h">
+      <Filter>Header Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Vendor\audio_emitter.h">
+      <Filter>Header Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Vendor\audio_listener.h">
+      <Filter>Header Files\Vendor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Utilities\AssetLoader.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
