@@ -3,74 +3,119 @@
 #include "Context.h"
 #include "system/platform.h"
 
-Options::Options()
+Options::Options(gef::Platform* platform)
 {
+	back = false;
 
+	// Create volume sliders.
+	
+	float y_positions[] =
+	{
+		((platform->height() / 2.0f) - ((platform->height() / 4.0f))),
+		((platform->height() / 2.0f)),
+		((platform->height() / 2.0f) + ((platform->height() / 4.0f)))
+	};
 
+	for (int index = 0; index < 3; ++index)
+	{
+		Slider* slider = Slider::Create("", gef::Vector2(platform->width() / 2.0f, y_positions[index]));
+		gef::ImageData slider_img_data;
+		slider->set_height(32.0f);
+		slider->set_width(32.0f);
+
+		sliders.push_back(slider);
+	}
 }
 
 Options::~Options()
 {
+	for (auto slider : sliders)
+	{
+		delete slider;
+		slider = nullptr;
+	}
+
+	sliders.clear();
+	sliders.resize(0);
 }
 
 void Options::OnEnter()
 {
+	gef::Platform* platform = context->GetPlatform();
+
 	float centre_x = ((context->GetPlatform()->width() / 2.0f));
 
 
-	std::string tags[] = { "Continue",  "Back" };
-	float y_positions[] =
-	{
-		((context->GetPlatform()->height() / 2.0f) - ((context->GetPlatform()->height() / 4.0f))),
-		((context->GetPlatform()->height() / 2.0f) + ((context->GetPlatform()->height() / 4.0f)))
-	};
+	// Create back button.
+	button = UIButton::Create("Back", gef::Vector2(100.0f,
+		context->GetPlatform()->height() - context->GetPlatform()->height() / 8.0f)
+	);
 
-	for (uint32 index = 0; index < 2; ++index)
-	{
-		UIButton* button = UIButton::Create(tags[index], gef::Vector2(centre_x, y_positions[index]));
-		this->context->GetAssetLoader()->png_loader.Load("ButtonTest.png", *platform, image);								//Fill image data with a loaded png.
-
-		gef::Texture* texture = gef::Texture::Create(*platform, image);														//Create a texture using the populated image data.
-		button->set_texture(texture);
-		button->InitFont(context->GetPlatform());
-		buttons.push_back(button);
-	}
-
-	Slider* slider = Slider::Create("Volume", gef::Vector2(100.0f, 100.0f));
-
-	
+	gef::ImageData image_data;
+	context->GetAssetLoader()->png_loader.Load("buttons/exit-pressed.png", *context->GetPlatform(), image_data);
+	gef::Texture* back_button_tex = gef::Texture::Create(*context->GetPlatform(), image_data);
+	button->set_height(50.0f);
+	button->set_width(100.0f);
+	button->set_texture(back_button_tex);
 
 }
 
 void Options::Input(float delta_time)
 {
-	//Evaluate input for each button.
-	for (auto& button : buttons)
+	PawnController* input = context->GetInput();
+
+	input->GetInputManager()->Update();
+	input->ProcessTouchInput();
+
+	if (button->IsHover(input) && input->GetMouseData().left_button_state == MouseState::CLICKED)
 	{
-		button->EvaluateButtonState(this->context->GetInput());
+		back = true;
 	}
+
+
+	for (auto& slider : sliders)
+	{
+		if (slider->IsHover(input) && input->GetMouseData().left_button_state == MouseState::IS_DOWN)
+		{
+			slider->UpdatePosition(input->GetMouseData());
+		}
+	}
+	
+
 }
 
 bool Options::Update(float delta_time)
 {
-	for (auto& button : buttons)
+
+	for (auto& slider : sliders)
 	{
-		button->Update(delta_time);
+		slider->Update(delta_time);
+	}
+	
+	button->Update(delta_time);
+
+	if (back)
+	{
+		context->Transition(States::MAIN);
 	}
 
-	return false;
+	return true;
 }
 
 void Options::Render()
 {
 	gef::SpriteRenderer* sprite_renderer = this->context->SpriteRenderer();
 
-	sprite_renderer->Begin(false);
+	sprite_renderer->Begin(true);
 
-	for (auto& button : buttons)
+
+	for (auto& slider : sliders)
 	{
-		button->Render(sprite_renderer);
+		slider->Render(sprite_renderer);
 	}
+
+		button->Render(sprite_renderer);
+		
 
 	sprite_renderer->End();
 
@@ -78,4 +123,8 @@ void Options::Render()
 
 void Options::OnExit()
 {
+	delete button;
+	button = false;
+
+	back = false;
 }

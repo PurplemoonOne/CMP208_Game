@@ -15,7 +15,7 @@ protected:
 	// @param[in] Takes a reference to the current platform.
 	// @param[in] A pointer to the physics world for simulating physics.
 	// @param[in] The planet's radius.
-	Planet(gef::Platform& platform_, b2World* world_, float radius = 1.0f);
+	Planet(gef::Platform& platform_, float radius = 1.0f);
 
 public:
 
@@ -24,7 +24,7 @@ public:
 	// @param[in] Takes a reference to the current platform.
 	// @param[in] A pointer to the physics world for simulating physics.
 	// @param[in] The planet's radius.
-	static Planet* Create(gef::Platform& platform_, b2World* world_, float radius = 1.0f);
+	static Planet* Create(gef::Platform& platform_,  float radius = 1.0f);
 
 	// @brief Updates the planet's attributes.
 	// @param[in] Delta time since the last frame.

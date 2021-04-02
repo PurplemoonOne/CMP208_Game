@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "Player.h"
 
-Player::Player(const gef::Skeleton& skeleton, gef::Platform& platform, b2World* world)
-	:AnimatedPawn(skeleton, platform, world),
+Player::Player(const gef::Skeleton& skeleton, gef::Platform& platform)
+	:AnimatedPawn(skeleton, platform),
 	max_health(100.0f),
 	health(0.0f),
 	max_stamina(100.0f),
@@ -19,9 +19,9 @@ Player::Player(const gef::Skeleton& skeleton, gef::Platform& platform, b2World* 
 	stamina = max_stamina;
 }
 
-Player* Player::Create(const gef::Skeleton& skeleton, gef::Platform& platform, b2World* world)
+Player* Player::Create(const gef::Skeleton& skeleton, gef::Platform& platform)
 {
-	return new Player(skeleton, platform, world);
+	return new Player(skeleton, platform);
 }
 
 void Player::Update(float delta_time)

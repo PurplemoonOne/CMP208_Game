@@ -3,12 +3,41 @@
 Audio3D::Audio3D(gef::AudioManager* audio_manager) :
 	audio_manager_(audio_manager)
 {
-
+	sfx_volume = 100.0f;
+	master_volume = 100.0f;
+	music_volume = 100.0f;
 }
 
 void Audio3D::AddEmitter(const AudioEmitter& emitter)
 {
 	emitters_.push_back(emitter);
+}
+
+inline void Audio3D::SetMasterVolume(float value)
+{
+	 master_volume = value; 
+
+	 audio_manager_->SetMasterVolume(master_volume);
+}
+
+inline void Audio3D::SetMusicVolume(float value)
+{
+	music_volume = value;
+
+	gef::VolumeInfo volume_info;
+	volume_info.volume = music_volume;
+ 
+	audio_manager_->SetMusicVolumeInfo(volume_info);
+}
+
+inline void Audio3D::SetSFXVolume(float value, int id)
+{
+	sfx_volume = value;
+
+	gef::VolumeInfo volume_info;
+	volume_info.volume = sfx_volume;
+
+	audio_manager_->SetSampleVoiceVolumeInfo(id, volume_info);
 }
 
 
@@ -62,7 +91,7 @@ void Audio3D::Update()
 				if (emitter->playing())
 				{
 					// Set the sound volume based on the distance from the emitter
-					float volume = 1.0f - (distance / emitter->radius());
+					float volume = (1.0f - (distance / emitter->radius())) * sfx_volume;
 
 					//		    Set the sound pan based on angle between x-axis and listener->emitter vector
 					const gef::Vector4 x_axis(1.0f, 0.0, 0.0f);

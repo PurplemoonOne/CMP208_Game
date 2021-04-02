@@ -136,7 +136,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <AdditionalDependencies>box2d.lib;gef.lib;libpng.lib;zlib.lib;gef_d3d11.lib;gef_win32.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;dxguid.lib;dinput8.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../build/vs2017/$(Platform)/$(Configuration)/</AdditionalLibraryDirectories>
     </Link>
@@ -213,10 +213,8 @@
     <ClCompile Include="..\..\Includes\Camera\ThirdPersonCamera.cpp" />
     <ClCompile Include="..\..\Includes\GameObjects\AnimatedGameObject.cpp" />
     <ClCompile Include="..\..\Includes\GameObjects\AnimatedPawn.cpp" />
-    <ClCompile Include="..\..\Includes\GameObjects\Asteroid.cpp" />
     <ClCompile Include="..\..\Includes\GameObjects\GameObject.cpp" />
     <ClCompile Include="..\..\Includes\GameObjects\Pawn.cpp" />
-    <ClCompile Include="..\..\Includes\GameObjects\Planet.cpp" />
     <ClCompile Include="..\..\Includes\GameObjects\Player.cpp" />
     <ClCompile Include="..\..\Includes\GameObjects\SceneComponent.cpp" />
     <ClCompile Include="..\..\Includes\GameObjects\SpaceShip.cpp" />
@@ -278,11 +276,9 @@
     <ClInclude Include="..\..\Includes\Camera\ThirdPersonCamera.h" />
     <ClInclude Include="..\..\Includes\GameObjects\AnimatedGameObject.h" />
     <ClInclude Include="..\..\Includes\GameObjects\AnimatedPawn.h" />
-    <ClInclude Include="..\..\Includes\GameObjects\Asteroid.h" />
     <ClInclude Include="..\..\Includes\GameObjects\GameObject.h" />
     <ClInclude Include="..\..\Includes\GameObjects\ObjectType.h" />
     <ClInclude Include="..\..\Includes\GameObjects\Pawn.h" />
-    <ClInclude Include="..\..\Includes\GameObjects\Planet.h" />
     <ClInclude Include="..\..\Includes\GameObjects\Player.h" />
     <ClInclude Include="..\..\Includes\GameObjects\SceneComponent.h" />
     <ClInclude Include="..\..\Includes\GameObjects\SpaceShip.h" />

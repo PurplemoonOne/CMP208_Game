@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "SpaceShip.h"
 
-SpaceShip::SpaceShip(gef::Platform& platform_, b2World* world_)
-	:Pawn(platform_, world_)
+SpaceShip::SpaceShip(gef::Platform& platform_)
+	:Pawn(platform_)
 {
 	hull_integrity = 100.0f;
 	velocity = 25.0f;
@@ -16,9 +16,9 @@ SpaceShip::~SpaceShip()
 {
 }
 
-SpaceShip* SpaceShip::Create(gef::Platform& platform_, b2World* world_)
+SpaceShip* SpaceShip::Create(gef::Platform& platform_)
 {
-	return new SpaceShip(platform_, world_);
+	return new SpaceShip(platform_);
 }
 
 void SpaceShip::Update(float delta_time)

@@ -6,11 +6,11 @@ class Player : public AnimatedPawn
 {
 protected:
 
-	Player(const gef::Skeleton& skeleton, gef::Platform& platform, b2World* world = 0);
+	Player(const gef::Skeleton& skeleton, gef::Platform& platform);
 
 public:
 
-	static Player* Create(const gef::Skeleton& skeleton, gef::Platform& platform, b2World* world = 0);
+	static Player* Create(const gef::Skeleton& skeleton, gef::Platform& platform);
 
 	void Update(float delta_time) override;
 	

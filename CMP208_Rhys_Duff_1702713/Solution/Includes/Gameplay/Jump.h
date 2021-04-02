@@ -12,16 +12,21 @@ public:
 
 	void Action(AnimatedPawn* animated_pawn, float delta_time)
 	{
-		Player* player = static_cast<Player*>(animated_pawn);
+		
+
+	}
+
+	virtual void Action(b2Body* body, float delta_time)
+	{
+		Player* player = reinterpret_cast<Player*>(body->GetUserData().pointer);
 
 		if (player)
 		{
 			player->BroadcastInput(true);
 
-			animated_pawn->GetPhysicsBody()->PhysicsBodyComponent()->ApplyForceToCenter(b2Vec2(0.0f, 10.0f), true);
-			
-		}
+			body->ApplyForceToCenter(b2Vec2(0.0f, 10.0f), true);
 
+		}
 	}
 
 	~Jump(){}

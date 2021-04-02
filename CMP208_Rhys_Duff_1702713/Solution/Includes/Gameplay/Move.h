@@ -39,6 +39,11 @@ public:
 
 	}
 
+	virtual void Action(b2Body* body, float delta_time)
+	{
+
+	}
+
 	~MoveRight(){}
 };
 
@@ -72,6 +77,11 @@ public:
 			//Change animation.
 			player->AnimationPlayer()->set_clip(player->walk);
 		}
+
+	}
+
+	virtual void Action(b2Body* body, float delta_time)
+	{
 
 	}
 

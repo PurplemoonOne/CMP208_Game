@@ -5,8 +5,7 @@
 /*..graphics headers..*/
 #include <graphics/mesh_instance.h>
 
-/*..Physics Component..*/
-#include "Physics/PhysicsComponent.h"
+class PhysicsComponent;
 
 #include "ObjectType.h"
 
@@ -27,23 +26,20 @@ class GameObject : public SceneComponent, public gef::MeshInstance
 protected:
 
 	/// @brief Actor constructor.
-	/// @param[in] Pointer to a primitive builder.
 	/// @param[in] Reference to the current platform.
-	/// @param[in] Dictates whether the game object is dynamic at construction time.
-	GameObject(gef::Platform& platform_, b2World* world_ = 0, bool is_dynamic = false);
+	GameObject(gef::Platform& platform_);
 
+
+public:
 
 	/// @brief Default constructor.
 	~GameObject() {}
-public:
 
 	/*..Creation..*/
 
 	/// @brief Returns a new Actor object which is allocated on to the heap.
-	/// @param[in] Pointer to a primitive builder. 
 	/// @param[in] Reference to the current platform.
-	/// @param[in] Pointer to the world physics object. 
-	static GameObject* Create(gef::Platform& platform_, b2World* world_ = 0, bool is_dynamic = false);
+	static GameObject* Create(gef::Platform& platform_);
 
 
 
@@ -80,13 +76,22 @@ public:
 
 	/*..Physics..*/
 
-	typedef PhysicsComponent::Shape PolyShape;
+
+	//----------------------------------Important!--------------------------------------------//
+	// @note the following methods have been commented out for peformance reasons. 
+	// I thought I would keep them in as well as the definitions to show design iteration.
+
+	// @note Currently the physics components are stored in a vector and pushed in tandem 
+	// with the game object vector. This is so they have a 1:1 correlation when it comes to 
+	// looping over the objects.
+
+
 
 	// @brief Returns a pointer to the physics object
-	inline PhysicsComponent* GetPhysicsBody() const { if (physics_component) { return physics_component; } }
+	//inline PhysicsComponent* GetPhysicsBody() const { if (physics_component) { return physics_component; } }
 
 	/// @brief Call this to attach a physics component to the game object.
-	void AttachPhysicsComponent(b2World* world_);
+	//void AttachPhysicsComponent(b2World* world_);
 
 	// @brief Initialise the characteristics this game object will have.
 	// @param[in] The shape of the physics collider.
@@ -94,30 +99,20 @@ public:
 	// @param[in] The amount of friction to act upon this object when sliding against a surface.
 	// @param[in] The amount of 'matter' this object will contain, affects force calculations.
 	// @param[in] Whether this object is a collider or a trigger. Triggers aren't included in physics calculations.
-	void InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor);
+	//void InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor);
 
-	gef::Scene* asset;
+	/// @brief Update the GFX on the game object if a physics component is added.
+	// @param[in] Takes a pointer to a physics body.
+	inline void UpdateMesh(PhysicsComponent* physics_component);
 
 protected:
 
-	/// @brief Update the GFX on the game object if a physics component is added.
-	inline void UpdateMesh();
-
 	/*..Protected variables..*/
-
 	ObjectType object_type;
 
 	/// @brief this objects physics component. By default it's NULL.
-	PhysicsComponent* physics_component;
+	//PhysicsComponent* physics_component;
 
-	gef::Platform* platform;
-
-private:
-
-	b2World* world_ptr;
-
-	// @brief Setting this true will create a physics component.
-	bool is_dynamic;
 
 };
 

@@ -5,13 +5,13 @@ class SpaceShip final : public Pawn
 {
 protected:
 
-	SpaceShip(gef::Platform& platform_, b2World* world_);
+	SpaceShip(gef::Platform& platform_);
 
 public:
 
 	~SpaceShip();
 
-	static SpaceShip* Create(gef::Platform& platform_, b2World* world_);
+	static SpaceShip* Create(gef::Platform& platform_);
 
 	/// @brief Updates this objects attributes.
 	/// @param[in] Delta time tracks the time since last frame.

@@ -9,7 +9,7 @@ class Options : public State
 {
 public:
 
-	Options();
+	Options(gef::Platform* platform);
 	~Options();
 
 	virtual void OnEnter() override;
@@ -20,8 +20,11 @@ public:
 
 private:
 
-	std::vector<UIButton*> buttons;
-	gef::ImageData image;
+	bool back;
 
+
+	gef::ImageData image;
+	std::vector<Slider*> sliders;
+	UIButton* button;
 };
 

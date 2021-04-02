@@ -28,7 +28,7 @@ public:
 
 protected:
 
-	gef::Platform* platform;
+
 	Context* context;
 
 };

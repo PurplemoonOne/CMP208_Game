@@ -9,12 +9,10 @@
 /*..Base Class..*/
 #include "GameObjects/SceneComponent.h"
 
-/*..Physics Component..*/
-#include "Physics/PhysicsComponent.h"
-
-
 
 #include "Animation/AnimDriver.h"
+
+class PhysicsComponent;
 
 /*..Forward Declarations..*/
 namespace gef
@@ -30,13 +28,13 @@ class AnimatedGameObject : public gef::SkinnedMeshInstance, public SceneComponen
 {
 protected:
 
-	AnimatedGameObject(const gef::Skeleton& skeleton, gef::Platform& platform, bool is_dynamic, b2World* world = 0);
+	AnimatedGameObject(const gef::Skeleton& skeleton, gef::Platform& platform);
 
 public:
 
 	~AnimatedGameObject();
 
-	static AnimatedGameObject* Create(const gef::Skeleton& skeleton, gef::Platform& platform, bool is_dynamic, b2World* world = 0);
+	static AnimatedGameObject* Create(const gef::Skeleton& skeleton, gef::Platform& platform);
 
 
 	/*..Standard functions..*/
@@ -68,13 +66,15 @@ public:
 
 	/*..Physics..*/
 
-	typedef PhysicsComponent::Shape PolyShape;
+
+	// @note See the GameObject class on why the following functions remain as comments.
+
 
 	// @brief Returns a pointer to the physics object
-	inline PhysicsComponent* GetPhysicsBody() const { if (physics_component) { return physics_component; } }
+	//inline PhysicsComponent* GetPhysicsBody() const { if (physics_component) { return physics_component; } }
 
 	/// @brief Call this to attach a physics component to the game object.
-	void AttachPhysicsComponent(b2World* world_);
+	//void AttachPhysicsComponent(b2World* world_);
 
 	// @brief Initialise the characteristics this game object will have.
 	// @param[in] The shape of the physics collider.
@@ -82,39 +82,31 @@ public:
 	// @param[in] The amount of friction to act upon this object when sliding against a surface.
 	// @param[in] The amount of 'matter' this object will contain, affects force calculations.
 	// @param[in] Whether this object is a collider or a trigger. Triggers aren't included in physics calculations.
-	void InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor);
+	//void InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor);
 
-	gef::Scene* asset;
 
 	// @brief Returns a pointer to the motion player.
 	inline MotionClipPlayer* AnimationPlayer() { return animation_player; }
 
+	/// @brief Update the GFX on the game object if a physics component is added.
+	virtual inline void UpdateMesh(PhysicsComponent* physics_component);
+
 protected:
 
-	/// @brief Update the GFX on the game object if a physics component is added.
-	inline void UpdateMesh();
 
 	/*..Protected variables..*/
 
 	ObjectType object_type;
 
 	/// @brief this objects physics component. By default it's NULL.
-	PhysicsComponent* physics_component;
-
-	gef::Platform* platform;
+	//PhysicsComponent* physics_component;
 
 	MotionClipPlayer* animation_player;
 
 	AnimDriver* animation_driver;
 
-private:
-
 	const gef::Skeleton* skeleton;
 
-	b2World* world_ptr;
-
-	// @brief Setting this true will create a physics component.
-	bool is_dynamic;
 
 };
 

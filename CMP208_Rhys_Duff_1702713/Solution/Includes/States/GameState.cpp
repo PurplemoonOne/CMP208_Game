@@ -3,10 +3,23 @@
 
 #include "Context.h"
 
-GameState::GameState(gef::Platform* platform_)
+GameState::GameState(gef::Platform* platform_, AssetLoader* asset_loader)
 {
-	
+	b2Vec2 gravity = b2Vec2(0.0f, -9.8f);
+	world = new b2World(gravity);
 
+	// initialise primitive builder
+	primitive_builder_ = new PrimitiveBuilder(*platform_);
+
+	InitInput();
+	InitPlayer(asset_loader, platform_);
+	InitScene(asset_loader, platform_);
+
+	//Set the collision callback methods.
+	world->SetContactListener(&scene_contact_listener);
+
+	delete primitive_builder_;
+	primitive_builder_ = nullptr;
 }
 
 GameState::~GameState()
@@ -15,12 +28,16 @@ GameState::~GameState()
 	CleanModels();
 	CleanUpFont();
 
+	if(world != nullptr)
 	delete world;
 	world = nullptr;
 }
 
 void GameState::OnEnter()
 {
+	// initialise primitive builder
+	primitive_builder_ = new PrimitiveBuilder(*context->GetPlatform());
+
 	// grab the data for the default shader used for rendering 3D geometry
 	gef::Default3DShaderData& default_shader_data = context->Renderer()->default_shader_data();
 
@@ -34,45 +51,34 @@ void GameState::OnEnter()
 	default_point_light.set_position(gef::Vector4(-500.0f, 400.0f, 700.0f));
 	default_shader_data.AddPointLight(default_point_light);
 
-	// initialise primitive builder
-	primitive_builder_ = new PrimitiveBuilder(*context->GetPlatform());
+	InitAudio();
+	InitFont();
 
-	b2Vec2 gravity = b2Vec2(0.0f, -9.8f);
-	world = new b2World(gravity);
-
-	InitPlayer();
-	InitScene();
-	InitInput();
+	context->GetInput()->PosessPawn(static_cast<AnimatedPawn*>(player));
 
 	t_camera = ThirdPersonCamera::Create(context->GetPlatform());
 	t_camera->InitialisePerspectiveMatrices();
-
-	InitFont();
-	SetupLights();
-
-	//Set the collision callback methods.
-	world->SetContactListener(&scene_contact_listener);
-
 }
 
 void GameState::Input(float delta_time)
 {
+	PawnController* input = this->context->GetInput();
+
+	input->GetInputManager()->Update();
 	
-	
-	this->context->GetInput()->PosessPawn(static_cast<AnimatedPawn*>(essential_anim_objects[0]));
-
-	//Process Input
-	Player* player = static_cast<Player*>(essential_anim_objects[0]);
-	player->BroadcastInput(false);
-	this->context->GetInput()->ProcessInput(delta_time);
 
 
 
-	if (this->context->GetInput()->GetInputManager()->keyboard()->IsKeyDown(gef::Keyboard::KeyCode::KC_ESCAPE))
+	gef::Keyboard* keyboard = input->GetInputManager()->keyboard();
+
+	if (keyboard && keyboard->IsKeyPressed(gef::Keyboard::KeyCode::KC_ESCAPE))
 	{
 		context->Transition(States::PAUSE);
 	}
-	
+
+	//Process Input
+	player->BroadcastInput(false);
+	input->ProcessInput(delta_time);
 }
 
 bool GameState::Update(float delta_time)
@@ -80,25 +86,32 @@ bool GameState::Update(float delta_time)
 
 		////////////////////////////////////////////////////////////////////////////////////
 
-		t_camera->SetTarget(essential_anim_objects[0]->GetPosition());
+		t_camera->SetTarget(player->GetPosition());
 		t_camera->Update(delta_time);
 		//
 		////////////////////////////////////////////////////////////////////////////////////
 	
 		////////////////////////////////////////////////////////////////////////////////////
 		//Game Logic.
-	
-		for (auto& object : essential_objects)
-		{
-			object->Update(delta_time);
-		}
-	
-		for (auto& anim_object : essential_anim_objects)
-		{
-			anim_object->AnimationUpdate(delta_time);
-			anim_object->Update(delta_time);
-		}
 
+		//Audio
+		context->GetAudio3D()->listener().SetTransform(player->transform());
+		context->GetAudio3D()->Update();
+
+
+		//Update the scenes game objects and their respective physics bodies.
+		for (int index = 0; index < environment_objects.size(); ++index)
+		{
+			physics_components.at(index)->Update();
+
+			environment_objects.at(index)->Update(delta_time);
+		}
+	
+
+		//Update the player.
+		player->AnimationUpdate(delta_time);
+		player->UpdateMesh(player_phys);
+		player->Update(delta_time);
 		//End Game Logic.
 		////////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////////////////////////////////////////////////////////////
@@ -136,15 +149,13 @@ void GameState::Render()
 	renderer->Begin();
 
 	
-	for (auto& object : essential_objects)
+	for (auto& object : environment_objects)
 	{
 		renderer->DrawMesh(*object);
 	}
 
-	for (auto& object : essential_anim_objects)
-	{
-		renderer->DrawSkinnedMesh(*object, object->bone_matrices());
-	}
+	renderer->DrawSkinnedMesh(*player, player->bone_matrices());
+
 
 	renderer->End();
 
@@ -159,11 +170,16 @@ void GameState::Render()
 
 void GameState::OnExit()
 {
+	delete font_;
+	font_ = nullptr;
+
+	delete primitive_builder_;
+	primitive_builder_ = nullptr;
 }
 
 void GameState::InitFont()
 {
-	font_ = new gef::Font(*platform);
+	font_ = new gef::Font(*context->GetPlatform());
 	font_->Load("comic_sans");
 }
 
@@ -201,19 +217,17 @@ void GameState::SetupLights()
 
 }
 
-void GameState::InitPlayer()
+void GameState::InitPlayer(AssetLoader* asset_loader, gef::Platform* platform)
 {
-	AssetLoader* asset_loader = context->GetAssetLoader();
-
 	gef::Scene* scn_ = asset_loader->LoadSceneAssets(platform, "../assets/Robot/robot.scn");
 
 	//Sort out model loading, streamline it.
-	Player* player = Player::Create(*asset_loader->LoadSkeleton(scn_), *platform, world);
+	player = Player::Create(*asset_loader->LoadSkeleton(scn_), *platform);
 
-	player->asset = scn_;
 	player->SetPosition(6.0f, 0.0f, 0.0f);
 	player->SetRotation(0.0f, 90.0f, 0.0f);
 	player->SetScale(1.0f, 1.0f, 1.0f);
+
 	player->SetObjectType(ObjectType::dynamic_pawn_);
 	player->set_mesh(asset_loader->LoadMesh(scn_));
 	player->idle = asset_loader->LoadAnimation("../assets/Robot/Animation/@idle01.scn", "");
@@ -226,39 +240,45 @@ void GameState::InitPlayer()
 		player->AnimationPlayer()->set_looping(true);
 	}
 
-	essential_anim_objects.push_back(player);
-
 
 }
 
-void GameState::InitScene()
+void GameState::InitScene(AssetLoader* asset_loader, gef::Platform* platform)
 {
-		/*
-		//Planet
-		
-		Planet* planet = Planet::Create(*platform, world, 1.0f);
-		planet->SetPosition(0.0f, -0.5f, 0.0f);
-		planet->SetScale(1.0f, 1.0f, 1.0f);
-	
-		planet->set_mesh(asset_loader->LoadMesh("world.scn"));
-		planet->AttachPhysicsComponent(world);
-		planet->InitialisePhysicsFixture(PhysicsComponent::Shape::CIRCLE,
-			0.0f,
-			1.0f,
-			1.0f,
-			false);
+	GameObject* ground = GameObject::Create(*platform);
+	ground->SetPosition(0.0f, -1.0f, 0.0f);
+	ground->SetScale(10.0f, 1.0f, 10.0f);
 
-		essential_objects.push_back(planet);
-		*/
+	environment_objects.push_back(ground);
+
+	PhysicsComponent* ground_body = PhysicsComponent::Create(world, ground, false);
+	ground_body->CreateFixture(PhysicsComponent::Shape::BOX, 0.0f, 0.1f, 1.0f, false);
+	
+	physics_components.push_back(ground_body);
+
 }
 
 void GameState::InitInput()
 {
-	//Now controls the player.
-	
+
+
+
 }
 
-void GameState::LoadSceneModels()
+void GameState::InitAudio()
+{
+	UInt32 id = context->AudioManager()->LoadSample("box_collected.wav", *context->GetPlatform());
+
+	AudioEmitter audio_emitter;
+	audio_emitter.Init(id, true);
+
+	audio_emitter.set_position(gef::Vector4(5.5f, 0.0f, 0.0f));
+	audio_emitter.set_radius(100.0f);
+
+	context->GetAudio3D()->AddEmitter(audio_emitter);
+}
+
+void GameState::LoadSceneModels(AssetLoader* asset_loader, gef::Platform* platform)
 {
 //	GameObject* tracer_bike = GameObject::Create(*platform);
 //
@@ -268,14 +288,12 @@ void GameState::LoadSceneModels()
 //	tracer_bike->SetScale(1.0f, 1.0f, 1.0f);
 //	essential_objects.push_back(tracer_bike);
 
-	AssetLoader* asset_loader = context->GetAssetLoader();
-
 	GameObject* town = GameObject::Create(*platform);
 	town->SetObjectType(ObjectType::static_);
 	town->SetPosition(0.0f, 0.0f, 8.0f);
 	town->SetMesh(asset_loader->LoadMesh("..assets/Structures/town_block_a.scn"));
 	town->SetScale(1.0f, 1.0f, 1.0f);
-	essential_objects.push_back(town);
+	environment_objects.push_back(town);
 
 	gef::Scene* scn_ = asset_loader->LoadSceneAssets(platform, "..assets/Structures/cloud_a.scn");
 
@@ -285,7 +303,7 @@ void GameState::LoadSceneModels()
 		cloud->SetMesh(asset_loader->LoadMesh(scn_));
 		cloud->SetPosition(rand() % 0 + 10, 4.0f, rand() % -2 + 9);
 		cloud->SetScale(1.0f, 1.0f, 1.0f);
-		essential_objects.push_back(cloud);
+		environment_objects.push_back(cloud);
 	}
 
 	

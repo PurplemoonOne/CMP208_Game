@@ -3,8 +3,8 @@
 
 static uint32_t mesh_instance_count = 0;
 
-Asteroid::Asteroid(gef::Platform& platform_, b2World* world_, bool is_dynamic)
-	:GameObject(platform_, world_, is_dynamic)
+Asteroid::Asteroid(gef::Platform& platform_)
+	:GameObject(platform_)
 {
 	mesh_instance_count++;
 }
@@ -17,8 +17,8 @@ void Asteroid::Update(float delta_time)
 {
 }
 
-Asteroid* Asteroid::Create(gef::Platform& platform_, b2World* world_, bool is_dynamic)
+Asteroid* Asteroid::Create(gef::Platform& platform_)
 {
-	return new Asteroid(platform_, world_, is_dynamic);
+	return new Asteroid(platform_);
 }
 

@@ -3,16 +3,16 @@
 
 #include "Vendor/primitive_builder.h"
 
-Planet::Planet(gef::Platform& platform_, b2World* world_, float radius_)
-	:GameObject(platform_, world_, false),
+Planet::Planet(gef::Platform& platform_, float radius_)
+	:GameObject(platform_),
 	radius(radius_)
 {
 	SetScale(radius, radius, radius);
 }
 
-Planet* Planet::Create(gef::Platform& platform_, b2World* world_, float radius)
+Planet* Planet::Create(gef::Platform& platform_, float radius)
 {
-	return new Planet(platform_, world_, radius);
+	return new Planet(platform_, radius);
 }
 
 void Planet::Update(float delta_time)

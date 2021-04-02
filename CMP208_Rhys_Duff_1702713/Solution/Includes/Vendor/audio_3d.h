@@ -17,9 +17,17 @@ public:
 
 	inline AudioListener& listener() { return listener_; }
 
+	inline void SetMasterVolume(float value);
+	inline void SetMusicVolume(float value);
+	inline void SetSFXVolume(float value, int id); 
+
 private:
 	gef::AudioManager* audio_manager_;
 	AudioListener listener_;
+
+	float sfx_volume;
+	float master_volume;
+	float music_volume;
 
 	std::vector<AudioEmitter> emitters_;
 //	AudioEmitter emitters_[20];

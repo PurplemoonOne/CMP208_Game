@@ -8,11 +8,9 @@ UIButton::UIButton(std::string text_, gef::Vector2 position)
 	:
 	text(text_)
 {
-
-	set_width(100.0f);
-	set_height(50.0f);
-
-	set_position(position.x, position.y, 0.0f);
+	mouse_data = nullptr;
+	font = nullptr;
+	position_ = gef::Vector4(position.x, position.y, 0.0f);
 	CalculateAnchors();
 }
 
@@ -35,18 +33,19 @@ void UIButton::InitFont(gef::Platform* platform_)
 
 void UIButton::Update(float delta_time)
 {
+	CalculateAnchors();
 
-	switch (button_state)
+	if (mouse_data)
 	{
-	case ButtonState::CLICKED:
+		switch (mouse_data->left_button_state)
+		{
+		case MouseState::CLICKED:
 
-		break;
-	case ButtonState::HOVER:
+			break;
+		default:
 
-		break;
-	default:
-
-		break;
+			break;
+		}
 	}
 
 }
@@ -55,7 +54,7 @@ void UIButton::Render(gef::SpriteRenderer* sprite_renderer)
 {
 	sprite_renderer->DrawSprite(*this);
 
-	if (font)
+	if (font != nullptr)
 	{
 		font->RenderText
 		(
@@ -70,43 +69,24 @@ void UIButton::Render(gef::SpriteRenderer* sprite_renderer)
 
 }
 
-ButtonState UIButton::EvaluateButtonState(PawnController* pawn_controller)
+bool UIButton::IsHover(PawnController* pawn_controller)
 {
-	button_state = ButtonState::NULL_;
+	bool validate = false;
 
-	pawn_controller->ProcessTouchInput();
+	const MouseData* mouse_data = &pawn_controller->GetMouseData();
 
-	mouse_data = &pawn_controller->GetMouseData();
+		//Check if we're hovering over button
+		if ((mouse_data->coordinates.x > anchors.bottom_left.x) && // > bottom left x
+			(mouse_data->coordinates.y < anchors.top_right.y) && // < top right y
 
-	bool clicked = mouse_data->left_button_state == gef::TouchType::TT_ACTIVE ?
-		true : false;
-
-	bool align = false;
-
-	if (mouse_data->coordinates != nullptr)
-	{
-		//Check if we're  hovering over button
-		if ((mouse_data->coordinates->x > anchors.bottom_left.x) && // > bottom left x
-			(mouse_data->coordinates->y < anchors.top_right.y) && // < top right y
-
-			(mouse_data->coordinates->x < anchors.bottom_right.x) && // < bottom right x
-			(mouse_data->coordinates->y > anchors.bottom_right.y)	 // > bottom right y
+			(mouse_data->coordinates.x < anchors.bottom_right.x) && // < bottom right x
+			(mouse_data->coordinates.y > anchors.bottom_right.y)	 // > bottom right y
 			)
 		{
-			align = true;
+			validate = true;
 		}
-	}
-
-	//If we clicked this region of space return true.
-	if (clicked && align) {
-		button_state = ButtonState::CLICKED;
-	}
-	else if (align){
-		button_state = ButtonState::HOVER;
-	}
-	//Else NULL_ but we assigned that.
-
-	return button_state;
+	
+	return validate;
 }
 
 void UIButton::CalculateAnchors()

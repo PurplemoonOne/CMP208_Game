@@ -3,14 +3,15 @@
 #include "GameObject.h"
 
 /*..Asset Loader..*/
-#include "Vendor/AssetLoader.h"
+#include "Utilities/AssetLoader.h"
 
-GameObject::GameObject(gef::Platform& platform_, b2World* world_, bool is_dynamic_)
+/*..Physics Component..*/
+#include "Physics/PhysicsComponent.h"
 
-	: SceneComponent(platform_),
-	is_dynamic(is_dynamic_),
-	platform(&platform_),
-	physics_component(nullptr),
+GameObject::GameObject(gef::Platform& platform_)
+	: 
+	SceneComponent(platform_),
+	
 	object_type(ObjectType::static_)
 {
 	position = gef::Vector4::kZero;
@@ -20,35 +21,30 @@ GameObject::GameObject(gef::Platform& platform_, b2World* world_, bool is_dynami
 
 }
 
-GameObject* GameObject::Create(gef::Platform& platform_, b2World* world_, bool is_dynamic)
+GameObject* GameObject::Create(gef::Platform& platform_)
 {
-	return new GameObject(platform_, world_, is_dynamic);
+	return new GameObject(platform_);
 }
 
-
-void GameObject::AttachPhysicsComponent(b2World* world_)
-{
-	world_ptr = world_;
-	physics_component = PhysicsComponent::Create(world_, this, is_dynamic);
-}
-
-void GameObject::InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor)
-{
-	//If no friction is applied, assumes to be static.
-	if (physics_component)
-		physics_component->CreateFixture(shape_, density, friction, mass, is_sensor);
-
-	else
-		gef::DebugOut("Error, Create a physics component before attempting to intialise attribute.");
-}
+//See the header file on why these methods are commented.
+// 
+//void GameObject::AttachPhysicsComponent(b2World* world_)
+//{
+//	physics_component = PhysicsComponent::Create(world_, this, is_dynamic);
+//}
+//
+//void GameObject::InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor)
+//{
+//	//If no friction is applied, assumes to be static.
+//	if (physics_component)
+//		physics_component->CreateFixture(shape_, density, friction, mass, is_sensor);
+//
+//	else
+//		gef::DebugOut("Error, Create a physics component before attempting to intialise attribute.");
+//}
 
 void GameObject::Update(float delta_time)
 {
-	if (physics_component) {
-		UpdateMesh();
-	}
-
-
 	//////////////////////////////////////////////////////////
 	//Gameplay scripts go here.
 
@@ -67,7 +63,7 @@ void GameObject::BuildTransform()
 	set_transform(GetFinalTransform());
 }
 
-inline void GameObject::UpdateMesh()
+inline void GameObject::UpdateMesh(PhysicsComponent* physics_component)
 {
 	//We need to update the GFX to reflect the changes made
 	//from the simulation.
@@ -77,6 +73,8 @@ inline void GameObject::UpdateMesh()
 		physics_component->PhysicsBodyComponent()->GetPosition().y,
 		0.0f);
 	SetRotation(0.0f, 0.0f, physics_component->PhysicsBodyComponent()->GetAngle());
+
+	BuildTransform();
 }
 
 void GameObject::SetMeshAsCube(PrimitiveBuilder* primitive_builder)

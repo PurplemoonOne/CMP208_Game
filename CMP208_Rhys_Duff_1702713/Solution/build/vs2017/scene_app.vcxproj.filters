@@ -93,16 +93,10 @@
     <ClCompile Include="..\..\Includes\Physics\PhysicsComponent.cpp">
       <Filter>Source Files\Physics</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Includes\GameObjects\Asteroid.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Includes\GameObjects\GameObject.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Includes\GameObjects\Pawn.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Includes\GameObjects\Planet.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Includes\GameObjects\Player.cpp">
@@ -206,9 +200,6 @@
     <ClInclude Include="..\..\Includes\Physics\PhysicsComponent.h">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Includes\GameObjects\Asteroid.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Includes\GameObjects\GameObject.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
@@ -216,9 +207,6 @@
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Includes\GameObjects\Pawn.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Includes\GameObjects\Planet.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Includes\GameObjects\Player.h">

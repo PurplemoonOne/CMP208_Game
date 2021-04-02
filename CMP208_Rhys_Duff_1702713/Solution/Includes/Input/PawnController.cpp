@@ -20,8 +20,8 @@ PawnController::PawnController(gef::Platform& p_ptr, gef::InputManager* input_)
 	touch_in_manager(nullptr)
 {
 	/*..Init data..*/
-	mouse_data.coordinates = nullptr;
-	mouse_data.left_button_state = gef::TouchType::TT_NONE;
+
+	mouse_data.left_button_state = MouseState::NULL_;
 
 	/*..Create a new input manager..*/
 	input_manager = input_;
@@ -75,6 +75,7 @@ void PawnController::PosessPawn(AnimatedPawn* pawn_)
 void PawnController::ProcessInput(float delta_time)
 {
 	input_manager->Update();
+
 	ProcessTouchInput();
 	keyboard->ProcessKeybaord(delta_time);
 	controller->ProcessSonyController(delta_time);
@@ -112,7 +113,6 @@ void PawnController::ProcessTouchInput()
 	const gef::TouchInputManager* touch_input = input_manager->touch_manager();
 
 	/*..This frames mouse information..*/
-	mouse_data.coordinates = nullptr;
 
 	if (touch_input && (touch_input->max_num_panels() > 0))
 	{
@@ -136,9 +136,8 @@ void PawnController::ProcessTouchInput()
 					// we're just going to record the position of the touch
 					touch_position_ = touch->position;
 					
-
-					mouse_data.coordinates = &touch_position_;
-					mouse_data.left_button_state = gef::TT_NEW;
+					mouse_data.coordinates = touch_position_;
+					mouse_data.left_button_state = MouseState::CLICKED;
 				}
 			}
 			else if (active_touch_id_ == touch->id)
@@ -148,8 +147,10 @@ void PawnController::ProcessTouchInput()
 				{
 					// update an active touch here
 					// we're just going to record the position of the touch
-					mouse_data.coordinates = &touch_position_;
-					mouse_data.left_button_state = gef::TT_ACTIVE;
+					touch_position_ = touch->position;
+
+					mouse_data.coordinates = touch_position_;
+					mouse_data.left_button_state = MouseState::IS_DOWN;
 
 				}
 				else if (touch->type == gef::TT_RELEASED)
@@ -160,8 +161,8 @@ void PawnController::ProcessTouchInput()
 					active_touch_id_ = -1;
 
 
-					mouse_data.coordinates = &touch_position_;
-					mouse_data.left_button_state = gef::TT_RELEASED;
+					mouse_data.coordinates = touch_position_;
+					mouse_data.left_button_state = MouseState::RELEASED;
 				}
 			}
 		}

@@ -2,6 +2,7 @@
 
 #include "PhysicsComponent.h"
 #include "Gameobjects/GameObject.h"
+#include "GameObjects/AnimatedGameObject.h"
 
 PhysicsComponent::PhysicsComponent(b2World* world_, GameObject* game_object_, bool is_dynamic)
 	:world(world_),
@@ -99,13 +100,22 @@ inline void PhysicsComponent::UpdatePhysicsParameters(float density, float weigh
 
 inline void PhysicsComponent::InitialisePhysicsBody(bool is_dynamic)
 {
+	if (game_object != nullptr) {
+		/*..Grab the position and scale..*/
+		body_position = b2Vec2(game_object->GetPosition().x(),
+			game_object->GetPosition().y());
 
-	/*..Grab the position and scale..*/
-	body_position = b2Vec2(game_object->GetPosition().x(),
-		game_object->GetPosition().y());
+		body_scale = b2Vec2(game_object->GetScale().x() / 2.0f,
+			game_object->GetScale().y() / 2.0f);
+	}
+	else if (animated_game_object != nullptr) {
+		
+		body_position = b2Vec2(animated_game_object->GetPosition().x(),
+			animated_game_object->GetPosition().y());
 
-	body_scale = b2Vec2(game_object->GetScale().x() / 2.0f,
-		game_object->GetScale().y() / 2.0f);
+		body_scale = b2Vec2(animated_game_object->GetScale().x() / 2.0f,
+			animated_game_object->GetScale().y() / 2.0f);
+	}
 
 
 	b2BodyDef body_definition;

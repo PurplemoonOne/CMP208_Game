@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "AnimatedPawn.h"
 
-AnimatedPawn::AnimatedPawn(const gef::Skeleton& skeleton, gef::Platform& platform, b2World* world)
+AnimatedPawn::AnimatedPawn(const gef::Skeleton& skeleton, gef::Platform& platform)
 	:
-	AnimatedGameObject(skeleton, platform, true, world)
+	AnimatedGameObject(skeleton, platform)
 {
 }
 
@@ -11,9 +11,9 @@ AnimatedPawn::~AnimatedPawn()
 {
 }
 
-AnimatedPawn* AnimatedPawn::Create(const gef::Skeleton& skeleton, gef::Platform& platform, b2World* world)
+AnimatedPawn* AnimatedPawn::Create(const gef::Skeleton& skeleton, gef::Platform& platform)
 {
-	return new AnimatedPawn(skeleton, platform, world);
+	return new AnimatedPawn(skeleton, platform);
 }
 
 

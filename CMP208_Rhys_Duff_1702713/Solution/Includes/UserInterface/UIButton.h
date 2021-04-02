@@ -21,13 +21,6 @@ struct AnchorData
 	gef::Vector2 bottom_right;
 };
 
-enum class ButtonState
-{
-	CLICKED = 0,
-	HOVER,
-	NULL_
-};
-
 class MouseData;
 
 class UIButton : public gef::Sprite
@@ -40,26 +33,31 @@ public:
 
 	~UIButton();
 
+	// @brief Create a new Button object.
 	static UIButton* Create(std::string text, gef::Vector2 position);
 
-
-
+	// @brief Create a new font object.
 	void InitFont(gef::Platform* platform_);
+
+	// @brief Standard class functions.
 
 	virtual void Update(float delta_time);
 
 	virtual void Render(gef::SpriteRenderer* sprite_renderer);
 	
-	// @brief Method to check if moue button has been clicked.
-	virtual ButtonState EvaluateButtonState(PawnController* pawn_controller);
+	// @brief Method to check if mouse is hovering over the button.
+	bool IsHover(PawnController* pawn_controller);
+
+	// @brief Class Getters.
+
 
 	inline const gef::Font* GetFont() { return font; }
 
 	inline const std::string& GetText() { return text; }
 
+
 protected:
 
-	// @brief Pointer to the mouse data.
 	const MouseData* mouse_data;
 
 	// @brief Display text.
@@ -74,6 +72,6 @@ protected:
 
 	void CalculateAnchors();
 
-	ButtonState button_state;
+
 
 };

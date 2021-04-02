@@ -24,12 +24,22 @@ namespace gef
 	class Font;
 }
 
+enum class MouseState
+{
+	CLICKED = 0,
+	IS_DOWN,
+	RELEASED,
+	NULL_
+};
+
+
 // @brief small wrapper to obtain touch information
 // in mouse context.
 struct MouseData
 {
-	gef::Vector2 *coordinates;
-	gef::TouchType left_button_state;
+	gef::Vector2 coordinates;
+	MouseState left_button_state;
+	MouseState right_button_state;
 };
 
 /*

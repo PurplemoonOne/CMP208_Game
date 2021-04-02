@@ -2,9 +2,9 @@
 //This file.
 #include "Pawn.h"
 
-Pawn::Pawn(gef::Platform& platform_, b2World* world_)
+Pawn::Pawn(gef::Platform& platform_)
 	:
-	GameObject(platform_, world_, true)//Pawn is dynamic by default.
+	GameObject(platform_)//Pawn is dynamic by default.
 {
 
 }
@@ -13,9 +13,9 @@ Pawn::~Pawn()
 {
 }
 
-Pawn* Pawn::Create(gef::Platform& platform_, b2World* world_)
+Pawn* Pawn::Create(gef::Platform& platform_)
 {
-	return new Pawn(platform_, world_);
+	return new Pawn(platform_);
 }
 
 void Pawn::Update(float delta_time)

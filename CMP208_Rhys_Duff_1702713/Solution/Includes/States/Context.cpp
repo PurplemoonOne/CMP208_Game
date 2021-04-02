@@ -20,6 +20,8 @@ Context::Context(gef::Platform& platform_)
 
 		audio_manager = gef::AudioManager::Create();
 
+		audio_3d = new Audio3D(audio_manager);
+
 		asset_loader = new AssetLoader(*platform);
 
 
@@ -32,7 +34,7 @@ Context::Context(gef::Platform& platform_)
 		map[States::MAIN] = main_menu;
 		main_menu = nullptr;
 
-		GameState* game = new GameState(platform);
+		GameState* game = new GameState(platform, asset_loader);
 		map[States::GAME] = game;
 		game = nullptr;
 
@@ -44,7 +46,7 @@ Context::Context(gef::Platform& platform_)
 		map[States::DEATH] = death_screen;
 		death_screen = nullptr;
 
-		Options* options = new Options();
+		Options* options = new Options(platform);
 		map[States::OPTIONS] = options;
 		options = nullptr;
 

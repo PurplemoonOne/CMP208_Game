@@ -7,6 +7,7 @@
 #include "Options.h"
 
 #include "audio/audio_manager.h"
+#include "Vendor/audio_3d.h"
 
 enum class States
 {
@@ -47,9 +48,11 @@ public:
 
 	inline gef::SpriteRenderer* SpriteRenderer() const { return sprite_renderer; }
 
+	inline gef::Platform* GetPlatform() const { return platform; }
+
 	inline gef::AudioManager* AudioManager() const { return audio_manager; }
 
-	inline gef::Platform* GetPlatform() const { return platform; }
+	inline Audio3D* GetAudio3D() const { return audio_3d; }
 
 private:
 
@@ -65,6 +68,8 @@ private:
 	gef::Platform* platform;
 	gef::InputManager* input_manager;
 	gef::AudioManager* audio_manager;
+	
+	Audio3D* audio_3d;
 	PawnController* pawn_controller;
 	AssetLoader* asset_loader;
 };
