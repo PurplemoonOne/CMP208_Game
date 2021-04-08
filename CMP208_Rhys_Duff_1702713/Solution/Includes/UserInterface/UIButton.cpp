@@ -4,13 +4,13 @@
 #include "Input/PawnController.h"
 
 
-UIButton::UIButton(std::string text_, gef::Vector2 position)
+UIButton::UIButton(std::string text_, gef::Vector4 position, float depth)
 	:
 	text(text_)
 {
 	mouse_data = nullptr;
 	font = nullptr;
-	position_ = gef::Vector4(position.x, position.y, 0.0f);
+	position_ = gef::Vector4(position.x(), position.y(), depth);
 	CalculateAnchors();
 }
 
@@ -20,9 +20,9 @@ UIButton::~UIButton()
 	font = nullptr;
 }
 
-UIButton* UIButton::Create(std::string text, gef::Vector2 position)
+UIButton* UIButton::Create(std::string text, gef::Vector4 position, float depth)
 {
-	return new UIButton(text, position);
+	return new UIButton(text, position, depth);
 }
 
 void UIButton::InitFont(gef::Platform* platform_)

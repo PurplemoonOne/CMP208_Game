@@ -3,75 +3,66 @@
 
 #include "Context.h"
 
-GameState::GameState(gef::Platform* platform_, AssetLoader* asset_loader)
+GameState::GameState(gef::Platform* platform_, GraphicsData* asset_loader)
+	:
+	player(nullptr),
+	world(nullptr),
+	level(nullptr)
 {
-	b2Vec2 gravity = b2Vec2(0.0f, -9.8f);
-	world = new b2World(gravity);
-
-	// initialise primitive builder
-	primitive_builder_ = new PrimitiveBuilder(*platform_);
-
-	InitInput();
-	InitPlayer(asset_loader, platform_);
-	InitScene(asset_loader, platform_);
-
-	//Set the collision callback methods.
-	world->SetContactListener(&scene_contact_listener);
-
-	delete primitive_builder_;
-	primitive_builder_ = nullptr;
+	font_ = nullptr;
+	renderer = gef::Renderer3D::Create(*platform_);
 }
 
 GameState::~GameState()
 {
-
-	CleanModels();
+	//Kill the font.
 	CleanUpFont();
 
-	if(world != nullptr)
-	delete world;
-	world = nullptr;
+	if (player) {
+		delete player;
+		player = nullptr;
+	}
+	if (world) {
+		delete world;
+		world = nullptr;
+	}
 }
 
 void GameState::OnEnter()
 {
-	// initialise primitive builder
-	primitive_builder_ = new PrimitiveBuilder(*context->GetPlatform());
+	gef::Platform* platform = context->GetPlatform();
+	AssetLoader* asset_loader = context->GFXData()->GetAssetLoader();
 
-	// grab the data for the default shader used for rendering 3D geometry
-	gef::Default3DShaderData& default_shader_data = context->Renderer()->default_shader_data();
-
-	// set the ambient light
-	default_shader_data.set_ambient_light_colour(gef::Colour(0.45f, 0.25f, 0.45f, 1.0f));
-
-	// add a point light that is almost white, but with a blue tinge
-	// the position of the light is set far away so it acts light a directional light
-	gef::PointLight default_point_light;
-	default_point_light.set_colour(gef::Colour(0.7f, 0.7f, 1.0f, 1.0f));
-	default_point_light.set_position(gef::Vector4(-500.0f, 400.0f, 700.0f));
-	default_shader_data.AddPointLight(default_point_light);
-
-	InitAudio();
+	//Physics & Player.
+	InitialiseScene();
+	//Lighting
+	SetupLights();
+	//Audio
+	LoadLevelSoundEffects();
+	//Font
 	InitFont();
-
-	context->GetInput()->PosessPawn(static_cast<AnimatedPawn*>(player));
-
-	t_camera = ThirdPersonCamera::Create(context->GetPlatform());
-	t_camera->InitialisePerspectiveMatrices();
+	//Camera
+	InitCamera();
+	//Skybox
+	InitSkybox();
+	//Set the collision callback methods.
+	world->SetContactListener(&scene_contact_listener);
+	//Posses the player's physics body.
+	context->GetInput()->PossessPhysObject(player_phys);
 }
 
 void GameState::Input(float delta_time)
 {
-	PawnController* input = this->context->GetInput();
+	PawnController* input = context->GetInput();
 
+	//Update input devices.
 	input->GetInputManager()->Update();
 	
 
 
-
 	gef::Keyboard* keyboard = input->GetInputManager()->keyboard();
 
-	if (keyboard && keyboard->IsKeyPressed(gef::Keyboard::KeyCode::KC_ESCAPE))
+	if (keyboard->IsKeyPressed(gef::Keyboard::KeyCode::KC_ESCAPE))
 	{
 		context->Transition(States::PAUSE);
 	}
@@ -85,9 +76,12 @@ bool GameState::Update(float delta_time)
 {
 
 		////////////////////////////////////////////////////////////////////////////////////
-
-		t_camera->SetTarget(player->GetPosition());
-		t_camera->Update(delta_time);
+		//
+		if (t_camera != nullptr)
+		{
+			t_camera->SetTarget(player->GetPosition());
+			t_camera->Update(delta_time);
+		}
 		//
 		////////////////////////////////////////////////////////////////////////////////////
 	
@@ -95,23 +89,34 @@ bool GameState::Update(float delta_time)
 		//Game Logic.
 
 		//Audio
-		context->GetAudio3D()->listener().SetTransform(player->transform());
-		context->GetAudio3D()->Update();
+		//context->GetAudio3D()->listener().SetTransform(player->transform());
+		//context->GetAudio3D()->Update();
 
+		//For each partition - update the gameobjects and it's physics component.
+		UpdateLevel(delta_time);
 
 		//Update the scenes game objects and their respective physics bodies.
 		for (int index = 0; index < environment_objects.size(); ++index)
 		{
-			physics_components.at(index)->Update();
+			if (environment_objects.at(index) != nullptr)
+			{
+				physics_components.at(index)->Update();
 
-			environment_objects.at(index)->Update(delta_time);
+				environment_objects.at(index)->Update(delta_time, physics_components.at(index));
+			}
 		}
 	
 
 		//Update the player.
-		player->AnimationUpdate(delta_time);
-		player->UpdateMesh(player_phys);
-		player->Update(delta_time);
+		if (player != nullptr)
+		{
+			player->Update(delta_time, player_phys);
+		}
+
+		skybox->SetPosition(player->GetPosition().x(), player->GetPosition().y(), player->GetPosition().z());
+		skybox->Update(delta_time);
+
+		
 		//End Game Logic.
 		////////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////////////////////////////////////////////////////////////
@@ -132,31 +137,55 @@ bool GameState::Update(float delta_time)
 		//End Physics Step.
 		////////////////////////////////////////////////////////////////////////////////////
 
+		//If the player has fallen of the world end the game.
+		if (player && player->GetPosition().y() < -2.0f)
+		{
+			context->Reset(true);
+			context->Transition(States::DEATH);
+		}
 
 		return true;
 }
 
 void GameState::Render()
 {
-	gef::Renderer3D* renderer = this->context->Renderer();
 	gef::SpriteRenderer* sprite_renderer = this->context->SpriteRenderer();
 
 
-	// projection
+	//Set the correct view matrices for our camera.
 	t_camera->SetSceneMatrices(renderer);
 
-	// draw 3d geometry
+	// Being rendering all of our 3D geometry.
 	renderer->Begin();
 
-	
-	for (auto& object : environment_objects)
+	//Draw the gfx contained in a chunk.
+	if (level != nullptr)
 	{
-		renderer->DrawMesh(*object);
+		for (auto& chunk : level->chunks)
+		{
+			for (int j = 0; j < chunk->game_objects.size(); ++j)
+			{
+				if (chunk->game_objects[j] != nullptr)
+				{
+					renderer->DrawMesh(*chunk->game_objects[j]);
+				}
+			}
+		}
 	}
 
+	for (auto& object : environment_objects)
+	{
+		if (object != nullptr)
+		{
+			renderer->DrawMesh(*object);
+		}
+		
+	}
+
+	if(player != nullptr)
 	renderer->DrawSkinnedMesh(*player, player->bone_matrices());
 
-
+	//End rendering.
 	renderer->End();
 
 
@@ -170,11 +199,14 @@ void GameState::Render()
 
 void GameState::OnExit()
 {
+	// Clean up shaders.
+	renderer->default_shader_data().CleanUp();
+
 	delete font_;
 	font_ = nullptr;
 
-	delete primitive_builder_;
-	primitive_builder_ = nullptr;
+
+	ResetScene();
 }
 
 void GameState::InitFont()
@@ -214,22 +246,166 @@ void GameState::DrawHUD(gef::SpriteRenderer* sprite_renderer)
 
 void GameState::SetupLights()
 {
+	// grab the data for the default shader used for rendering 3D geometry
+	gef::Default3DShaderData& default_shader_data = renderer->default_shader_data();
+	// set the ambient light
+	default_shader_data.set_ambient_light_colour(gef::Colour(0.25f, 0.25f, 0.25f, 1.0f));
+	// add a point light that is almost white, but with a blue tinge
+	// the position of the light is set far away so it acts light a directional light
+	gef::PointLight default_point_light;
+	default_point_light.set_colour(gef::Colour(0.7f, 0.7f, 1.0f, 1.0f));
+	default_point_light.set_position(gef::Vector4(-500.0f, 400.0f, 700.0f));
+	default_shader_data.AddPointLight(default_point_light);
+}
+
+void GameState::InitialiseScene()
+{
+	gef::Platform* platform = context->GetPlatform();
+	AssetLoader* asset_loader = context->GFXData()->GetAssetLoader();
+
+	if (context->IsReset())
+	{
+		b2Vec2 gravity = b2Vec2(0.0f, -9.8f);
+		world = new b2World(gravity);
+
+		primitive_builder_ = new PrimitiveBuilder(*platform);
+
+		InitPlayer(platform);
+
+		//Set the collision callback methods.
+		world->SetContactListener(&scene_contact_listener);
+
+		//level = new LevelGenerator(platform);
+		//level->GenerateWorld();
+		//level->GenerateWorldPlatforms(primitive_builder_, world);
+
+	
+		GameObject* ground = GameObject::Create(*platform);
+		ground->SetMeshAsCube(primitive_builder_);
+		ground->SetObjectType(ObjectType::environment_);
+		ground->SetPosition(0.0f, -2, 0.0f);
+		ground->SetScale(100.0f, 1.0f, 2.0f);
+		environment_objects.push_back(ground);
+
+		// Physics body.
+		PhysicsComponent* ground_body = PhysicsComponent::Create(world, ground, false);
+		ground_body->CreateFixture(PhysicsComponent::Shape::BOX, 0.0f, 0.1f, 1.0f, false);
+		physics_components.push_back(ground_body);
+
+		//Avoiding memory leaks.
+		//Only Transitioning to the main menu 
+		//Resets the data.
+		context->Reset(false);
+	}
+}
+
+void GameState::InitSkybox()
+{
+	gef::Platform* platform = context->GetPlatform();
+	skybox = GameObject::Create(*context->GetPlatform());
+	skybox->SetPosition(0.0f, 0.0f, 0.0f);
+	skybox->SetScale(10.0f, 10.0f, 10.0f);
+
+
+	//gef::Scene* scn_ = context->GetAssetLoader()->LoadSceneAssets(platform, "../assets/skybox.scn");
+	context->GFXData()->GetAssetLoader()->LoadMesh("../assets/skybox.scn");
+}
+
+void GameState::InitCamera()
+{
+	//Setup the camera.
+	t_camera = ThirdPersonCamera::Create(context->GetPlatform());
+	t_camera->InitialisePerspectiveMatrices();
 
 }
 
-void GameState::InitPlayer(AssetLoader* asset_loader, gef::Platform* platform)
+void GameState::ResetScene()
 {
-	gef::Scene* scn_ = asset_loader->LoadSceneAssets(platform, "../assets/Robot/robot.scn");
+	// @note If context is nullptr then we haven't transitioned to this state
+	if (context->IsReset())
+	{
+		delete level;
+		level = nullptr;
 
-	//Sort out model loading, streamline it.
-	player = Player::Create(*asset_loader->LoadSkeleton(scn_), *platform);
+		delete t_camera;
+		t_camera = nullptr;
 
-	player->SetPosition(6.0f, 0.0f, 0.0f);
+		delete player;
+		player = nullptr;
+
+		delete player_phys;
+		player_phys = nullptr;
+
+		delete primitive_builder_;
+		primitive_builder_ = nullptr;
+
+		if (skybox)
+		{
+			delete skybox;
+			skybox = nullptr;
+		}
+
+		for (auto& enviro : environment_objects)
+		{
+			delete enviro;
+			enviro = nullptr;
+		}
+
+		for (auto& physics : physics_components)
+		{
+			delete physics;
+			physics = nullptr;
+		}
+
+		renderer->default_shader_data().CleanUp();
+	}
+	CleanUpFont();
+}
+
+void GameState::UpdateLevel(float delta_time)
+{
+	if (level != nullptr)
+	{
+		for (auto& chunk : level->chunks)
+		{
+			for (int j = 0; j < chunk->game_objects.size(); ++j)
+			{
+				//Ensure we're not dealing with a NULL object - there are some.
+				if (chunk->game_objects.at(j) != nullptr)
+				{
+					if (chunk->phys_components.at(j) != nullptr)
+					{
+						//Update the chunks.
+						chunk->phys_components.at(j)->Update();
+
+						//Get the physics component for better readability.
+						PhysicsComponent* phys_component = chunk->phys_components.at(j);
+						chunk->game_objects.at(j)->Update(delta_time, phys_component);
+					}
+				}
+			}
+		}
+	}
+}
+
+void GameState::InitPlayer(gef::Platform* platform)
+{
+	//Create pointers to the asset_loader and graphics data class.
+	AssetLoader* asset_loader = context->GFXData()->GetAssetLoader();
+	GraphicsData* gfx_data = context->GFXData();
+
+	/*..Create our player..*/
+	player = Player::Create(*asset_loader->LoadSkeleton("../assets/Robot/robot.scn"), *platform);
+	/*..Store our mesh in the data class..*/
+	gfx_data->InsertModel(ModelID::Player, asset_loader->LoadMesh("../assets/Robot/robot.scn"));
+	/*..Using the player ID assign a pointer to the mesh..*/
+	player->set_mesh(gfx_data->GetMesh(ModelID::Player));
+
+	player->SetPosition(0.0f, 2.0f, 0.0f);
 	player->SetRotation(0.0f, 90.0f, 0.0f);
 	player->SetScale(1.0f, 1.0f, 1.0f);
 
 	player->SetObjectType(ObjectType::dynamic_pawn_);
-	player->set_mesh(asset_loader->LoadMesh(scn_));
 	player->idle = asset_loader->LoadAnimation("../assets/Robot/Animation/@idle01.scn", "");
 	player->walk = asset_loader->LoadAnimation("../assets/Robot/Animation/@walk.scn", "");
 
@@ -240,77 +416,18 @@ void GameState::InitPlayer(AssetLoader* asset_loader, gef::Platform* platform)
 		player->AnimationPlayer()->set_looping(true);
 	}
 
-
+	player_phys = PhysicsComponent::Create(world, player, true);
+	player_phys->CreateFixture(PhysicsComponent::Shape::BOX, 0.3f, 0.4f, 0.5f, false);
 }
 
-void GameState::InitScene(AssetLoader* asset_loader, gef::Platform* platform)
+
+void GameState::LoadLevelSoundEffects()
 {
-	GameObject* ground = GameObject::Create(*platform);
-	ground->SetPosition(0.0f, -1.0f, 0.0f);
-	ground->SetScale(10.0f, 1.0f, 10.0f);
-
-	environment_objects.push_back(ground);
-
-	PhysicsComponent* ground_body = PhysicsComponent::Create(world, ground, false);
-	ground_body->CreateFixture(PhysicsComponent::Shape::BOX, 0.0f, 0.1f, 1.0f, false);
-	
-	physics_components.push_back(ground_body);
-
-}
-
-void GameState::InitInput()
-{
-
-
-
-}
-
-void GameState::InitAudio()
-{
-	UInt32 id = context->AudioManager()->LoadSample("box_collected.wav", *context->GetPlatform());
-
-	AudioEmitter audio_emitter;
-	audio_emitter.Init(id, true);
-
-	audio_emitter.set_position(gef::Vector4(5.5f, 0.0f, 0.0f));
-	audio_emitter.set_radius(100.0f);
-
-	context->GetAudio3D()->AddEmitter(audio_emitter);
+	//Load SFX
 }
 
 void GameState::LoadSceneModels(AssetLoader* asset_loader, gef::Platform* platform)
 {
-//	GameObject* tracer_bike = GameObject::Create(*platform);
-//
-//	tracer_bike->SetMesh(asset_loader->LoadMesh("../assets/Ships/Tracer/tracer.scn"));
-//	tracer_bike->SetPosition(0.0f, 0.0f, 0.0f);
-//	tracer_bike->SetObjectType(ObjectType::static_);
-//	tracer_bike->SetScale(1.0f, 1.0f, 1.0f);
-//	essential_objects.push_back(tracer_bike);
-
-	GameObject* town = GameObject::Create(*platform);
-	town->SetObjectType(ObjectType::static_);
-	town->SetPosition(0.0f, 0.0f, 8.0f);
-	town->SetMesh(asset_loader->LoadMesh("..assets/Structures/town_block_a.scn"));
-	town->SetScale(1.0f, 1.0f, 1.0f);
-	environment_objects.push_back(town);
-
-	gef::Scene* scn_ = asset_loader->LoadSceneAssets(platform, "..assets/Structures/cloud_a.scn");
-
-	for (int i = 0; i < 12; ++i)
-	{
-		GameObject* cloud = GameObject::Create(*platform);
-		cloud->SetMesh(asset_loader->LoadMesh(scn_));
-		cloud->SetPosition(rand() % 0 + 10, 4.0f, rand() % -2 + 9);
-		cloud->SetScale(1.0f, 1.0f, 1.0f);
-		environment_objects.push_back(cloud);
-	}
-
-	
-
+	//Load Scene
 }
 
-void GameState::CleanModels()
-{
-
-}

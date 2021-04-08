@@ -29,7 +29,7 @@ public:
 
 	/// @brief Updates this objects attributes.
 	/// @param[in] Delta time tracks the time since last frame.
-	virtual void Update(float delta_time) override;
+	virtual void Update(float delta_time, PhysicsComponent* physics = 0) override;
 
 protected:
 

@@ -22,9 +22,13 @@ private:
 
 	bool back;
 
+	void UpdateVolume();
+	void CleanSprites();
 
 	gef::ImageData image;
 	std::vector<Slider*> sliders;
+	gef::Sprite* backdrop;
+	float slider_values[3];
 	UIButton* button;
 };
 

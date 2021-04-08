@@ -102,9 +102,6 @@
     <ClCompile Include="..\..\Includes\GameObjects\Player.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Includes\GameObjects\SpaceShip.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Includes\main_d3d11.cpp">
       <Filter>Source Files\Main</Filter>
     </ClCompile>
@@ -180,6 +177,21 @@
     <ClCompile Include="..\..\Includes\Utilities\AssetLoader.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="LevelGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Collectable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Includes\Vendor\motion_clip_player.h">
@@ -210,9 +222,6 @@
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Includes\GameObjects\Player.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Includes\GameObjects\SpaceShip.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Includes\pch.h">
@@ -307,6 +316,24 @@
     </ClInclude>
     <ClInclude Include="..\..\Includes\Utilities\AssetLoader.h">
       <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Includes\Gameplay\Gameplay.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collectable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsData.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

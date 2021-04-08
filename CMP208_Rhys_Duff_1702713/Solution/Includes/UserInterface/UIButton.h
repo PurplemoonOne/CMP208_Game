@@ -27,14 +27,14 @@ class UIButton : public gef::Sprite
 {
 protected:
 
-	UIButton(std::string text, gef::Vector2 position);
+	UIButton(std::string text, gef::Vector4 position, float depth);
 
 public:
 
 	~UIButton();
 
 	// @brief Create a new Button object.
-	static UIButton* Create(std::string text, gef::Vector2 position);
+	static UIButton* Create(std::string text, gef::Vector4 position, float depth);
 
 	// @brief Create a new font object.
 	void InitFont(gef::Platform* platform_);
@@ -55,6 +55,7 @@ public:
 
 	inline const std::string& GetText() { return text; }
 
+	void CalculateAnchors();
 
 protected:
 
@@ -69,8 +70,6 @@ protected:
 
 	// @brief Anchors representing our 4 corners of the button.
 	AnchorData anchors;
-
-	void CalculateAnchors();
 
 
 

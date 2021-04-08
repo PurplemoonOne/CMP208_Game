@@ -39,6 +39,9 @@ public:
 	 // @brief Handles the loading of png files.
 	 gef::PNGLoader png_loader;
 
+	 // @brief Wrapper function for handling loading textures.
+	 gef::Texture* Texture(std::string filename, gef::Platform* platform);
+
 private:
 
 	/*..Attributes associated with this class.*/

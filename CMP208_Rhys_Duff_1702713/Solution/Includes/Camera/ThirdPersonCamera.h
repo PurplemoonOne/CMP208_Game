@@ -18,6 +18,8 @@ public:
 	// @brief returns a new ThirdPersonCamera.
 	static ThirdPersonCamera* Create(gef::Platform* platform_);
 
+	/*..Public methods handling input..*/
+	virtual void SetTarget(gef::Vector4 target) override;
 
 private:
 

@@ -58,10 +58,10 @@ public:
 	/// @brief Updates the camera's properties.
 	/// @param[in] Mouse position on the screen.
 	/// @param[in] Time since last frame.
-	void Update(float delta_time) override;
+	void Update(float delta_time);
 
 	/*..Public methods handling input..*/
-	void SetTarget(gef::Vector4 target);
+	virtual void SetTarget(gef::Vector4 target);
 
 
 protected:

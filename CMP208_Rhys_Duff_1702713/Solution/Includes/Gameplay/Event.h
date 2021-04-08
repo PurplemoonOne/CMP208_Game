@@ -5,14 +5,7 @@ class Pawn;
 class b2Body;
 class AnimatedPawn;
 class State;
-
-enum EventStatus
-{
-	E_PRESSED = 0,
-	E_ACTIVE,
-	E_RELEASED
-};
-
+class PhysicsComponent;
 
 class Event
 {
@@ -35,7 +28,7 @@ public:
 	/// @brief Executes the action bound to the key. (or button)
 	/// @param[in] Pointer to the animated pawn in which the action is associated with.
 	/// @param[in] Delta time since last frame.
-	virtual void Action(b2Body* pawn, float delta_time) = 0;
+	virtual void Action(PhysicsComponent* pawn, float delta_time) = 0;
 
 
 	virtual ~Event() {}
@@ -46,12 +39,12 @@ class Keys
 {
 public:
 	Event* action;
-	EventStatus event_status;
+	bool bound;
 };
 
 class Button
 {
 public:
 	Event* action;
-	EventStatus event_status;
+	bool bound;
 };

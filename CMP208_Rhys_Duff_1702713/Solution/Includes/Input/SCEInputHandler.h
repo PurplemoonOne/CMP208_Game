@@ -10,33 +10,29 @@ class Button;
 class Event;
 class Pawn;
 
-#include "Gameplay/AddForceToLeftEngine.h"
-#include "Gameplay/AddForceToRightEngine.h"
+#include "Gameplay/Gameplay.h"
 
 class SCE_InputHandler
 {
+private:
+
+	SCE_InputHandler(gef::InputManager* input_manager_, Events& events);
+
 public:
 
-	static SCE_InputHandler* Create(gef::InputManager* input_manager_);
-
-	/// @brief Processes the command that was entered via one of the input devices.
-	void ProcessSonyController(float delta_time);
+	static SCE_InputHandler* Create(gef::InputManager* input_manager_, Events& events);
 
 	/// @brief Function responsible for binding buttons.
 	void BindButtons();
 
 	~SCE_InputHandler();
 
-	void PossessPawn(Pawn* pawn_);
-	void PossessPawn(AnimatedPawn* pawn_);
-
-private:
 
 	/// @brief Handles controller input, returns an action based on what button was pressed.
 	/// @return Command* Returns a command to be executed.
 	Event* ControllerHandler();
 
-	SCE_InputHandler(gef::InputManager* input_manager_);
+private:
 
 	// Pointer to the input manager.
 	gef::InputManager* input_manager;
@@ -44,6 +40,7 @@ private:
 	// Pointer to a pawn object.
 	Pawn* pawn;
 	AnimatedPawn* anim_pawn;
+	PhysicsComponent* phys_object;
 
 	/*..Button objects..*/
 
@@ -70,10 +67,6 @@ private:
 
 	Button* options;
 	Button* start;
-
-	/*..Action Mappings..*/
-	AddForceToRightEngine add_force_r;
-	AddForceToLeftEngine add_force_l;
 
 };
 

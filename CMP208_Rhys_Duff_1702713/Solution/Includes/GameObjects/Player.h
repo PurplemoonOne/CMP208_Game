@@ -1,6 +1,7 @@
 #pragma once
 #include "AnimatedPawn.h"
 
+class GameObject;
 
 class Player : public AnimatedPawn
 {
@@ -10,9 +11,11 @@ protected:
 
 public:
 
+	~Player();
+
 	static Player* Create(const gef::Skeleton& skeleton, gef::Platform& platform);
 
-	void Update(float delta_time) override;
+	void Update(float delta_time, PhysicsComponent* physics = 0) override;
 	
 	// @brief Return the current health value.
 	inline const void SetHealth(float value) { health = value; }
@@ -36,12 +39,23 @@ public:
 	void BroadcastInput(bool value);
 	float current_velocity;
 
+	inline void SetCanJump(bool value) { can_jump = value; }
+	inline const bool& CanJump() { return can_jump; }
+
+
+	virtual void OnCollision(ObjectType game_object) override;
+	virtual void EndCollision(ObjectType game_object) override;
+
+
 	gef::Animation* walk;
 	gef::Animation* idle;
+	gef::Animation* jump;
 
 private:
 
 	bool is_moving;
+	bool is_airborne;
+	bool can_jump;
 
 
 	/*..Player attributes..*/

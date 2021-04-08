@@ -5,6 +5,8 @@
 #include <maths/vector4.h>
 
 
+class PhysicsComponent;
+
 namespace gef
 {
 	class Platform;
@@ -28,7 +30,7 @@ public:
 
 	// @brief Update this objects attributes.
 	// @param[in] Delta time since last frame.
-	virtual void Update(float delta_time);
+	virtual void Update(float delta_time, PhysicsComponent* physics_component = 0);
 
 public:
 

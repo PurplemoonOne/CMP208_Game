@@ -20,13 +20,16 @@
 
 #include "Utilities/AssetLoader.h"
 
+#include "LevelGenerator.h"
+
 class AudioEmitter;
+class GraphicsData;
 
 class GameState : public  State
 {
 public:
-
-	GameState(gef::Platform* platform_, AssetLoader* asset_loader);
+		
+	GameState(gef::Platform* platform_, GraphicsData* asset_loader);
 	~GameState();
 
 	// @brief Called when we transition
@@ -48,39 +51,40 @@ public:
 	virtual void OnExit() override;
 
 private:
+	gef::Renderer3D* renderer;
+
 	float fps_;
 
-
+	/*..Initialisers..*/
 	void InitFont();
-	void InitInput();
-	void InitAudio();
+	void LoadLevelSoundEffects();
 	void CleanUpFont();
 	void DrawHUD(gef::SpriteRenderer* sprite_renderer);
 	void SetupLights();
+	void InitialiseScene();
+	void InitSkybox();
+	void InitCamera();
+	void ResetScene();
+
+	void UpdateLevel(float delta_time);
 
 	gef::Font* font_;
 
 	PrimitiveBuilder* primitive_builder_;
 
 	//My Includes
-	void InitPlayer(AssetLoader* asset_loader, gef::Platform* platform);
-	void InitScene(AssetLoader* asset_loader, gef::Platform* platform);
+	void InitPlayer(gef::Platform* platform);
 
 
 	//Gameobjects
 	std::vector<GameObject*> environment_objects;
 	std::vector<PhysicsComponent*> physics_components;
-
-	std::vector<GameObject*> dynamic_objects;
-
-
 	Player* player;
 	PhysicsComponent* player_phys;
-
+	GameObject* skybox;
 	ContactListener scene_contact_listener;
 
 	//Camera
-	Camera* camera;
 	ThirdPersonCamera* t_camera;
 
 	/*..Box 2D world..*/
@@ -88,8 +92,9 @@ private:
 
 	float yPos = 0.0f;
 
-	gef::Mesh* ship_model;
+	LevelGenerator* level;
+
 	void LoadSceneModels(AssetLoader* asset_loader, gef::Platform* platform);
-	void CleanModels();
+
 };
 

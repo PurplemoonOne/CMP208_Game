@@ -4,7 +4,9 @@
 Context::Context(gef::Platform& platform_)
 	:
 	platform(&platform_),
-	state(nullptr)
+	state(nullptr),
+	is_game_running(false),
+	reset(false)
 {
 	// @note Create the essential objects required to interact with our application.
 	// Only one context can be instantiated and run.
@@ -15,15 +17,12 @@ Context::Context(gef::Platform& platform_)
 		pawn_controller = PawnController::Create(*platform, input_manager);
 
 		/*..Initialise Renderers..*/
-		renderer = gef::Renderer3D::Create(*platform);
 		sprite_renderer = gef::SpriteRenderer::Create(*platform);
 
-		audio_manager = gef::AudioManager::Create();
-
-		audio_3d = new Audio3D(audio_manager);
-
-		asset_loader = new AssetLoader(*platform);
-
+		/*..Initialise Audio..*/
+		audio = Audio::Create(*platform);
+		/*..Asset loader..*/
+		graphics_data = GraphicsData::Create(platform);
 
 		/*..Create our game states..*/
 		SplashScreen* splash_screen = new SplashScreen(platform);
@@ -34,7 +33,9 @@ Context::Context(gef::Platform& platform_)
 		map[States::MAIN] = main_menu;
 		main_menu = nullptr;
 
-		GameState* game = new GameState(platform, asset_loader);
+		GameState* game = new GameState(platform, graphics_data);
+		reset = true;//When we transition for the first time we'll need to instantiate stuff.
+		// @note 'reset' is set false on enter. Preventing memory leaks.
 		map[States::GAME] = game;
 		game = nullptr;
 

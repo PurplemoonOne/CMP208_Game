@@ -17,8 +17,14 @@ AnimatedPawn* AnimatedPawn::Create(const gef::Skeleton& skeleton, gef::Platform&
 }
 
 
-void AnimatedPawn::Update(float delta_time)
+void AnimatedPawn::Update(float delta_time, PhysicsComponent* physics)
 {
+	if (physics)
+	{
+		UpdateMesh(physics);
+	}
+
+
 	AnimatedGameObject::Update(delta_time);
 }
 

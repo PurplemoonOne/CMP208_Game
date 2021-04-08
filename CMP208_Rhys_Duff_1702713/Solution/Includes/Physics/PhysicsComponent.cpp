@@ -9,7 +9,6 @@ PhysicsComponent::PhysicsComponent(b2World* world_, GameObject* game_object_, bo
 	game_object(game_object_)
 {
 	// Need to set the other animated GO to nullptr.
-	// It is kept private and therefore is safe.
 	animated_game_object = nullptr;
 	InitialisePhysicsBody(is_dynamic);
 }
@@ -127,15 +126,31 @@ inline void PhysicsComponent::InitialisePhysicsBody(bool is_dynamic)
 	body_definition.angle = 0.0f;
 	body_definition.enabled = true;
 
-	if (body_definition.type == b2_dynamicBody || body_definition.type == b2_kinematicBody)
+	if (game_object)
 	{
-		/*..Only want to point to the game object data if the subject is a dynamic body..*/
-		body_definition.userData.pointer = reinterpret_cast<uintptr_t>(game_object);
-		body_definition.allowSleep = false;
+		if (body_definition.type == b2_dynamicBody || body_definition.type == b2_kinematicBody)
+		{
+			/*..Only want to point to the game object data if the subject is a dynamic body..*/
+			body_definition.userData.pointer = reinterpret_cast<uintptr_t>(game_object);
+			body_definition.allowSleep = false;
+		}
+		else
+		{
+			body_definition.allowSleep = true;
+		}
 	}
-	else
+	else if(animated_game_object)
 	{
-		body_definition.allowSleep = true;
+		if (body_definition.type == b2_dynamicBody || body_definition.type == b2_kinematicBody)
+		{
+			/*..Only want to point to the game object data if the subject is a dynamic body..*/
+			body_definition.userData.pointer = reinterpret_cast<uintptr_t>(animated_game_object);
+			body_definition.allowSleep = false;
+		}
+		else
+		{
+			body_definition.allowSleep = true;
+		}
 	}
 
 	/*..Finally create the main physics body for the game object..*/

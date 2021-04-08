@@ -217,7 +217,6 @@
     <ClCompile Include="..\..\Includes\GameObjects\Pawn.cpp" />
     <ClCompile Include="..\..\Includes\GameObjects\Player.cpp" />
     <ClCompile Include="..\..\Includes\GameObjects\SceneComponent.cpp" />
-    <ClCompile Include="..\..\Includes\GameObjects\SpaceShip.cpp" />
     <ClCompile Include="..\..\Includes\Input\KeyboardHandler.cpp" />
     <ClCompile Include="..\..\Includes\Input\PawnController.cpp" />
     <ClCompile Include="..\..\Includes\Input\SCEInputHandler.cpp" />
@@ -267,6 +266,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="Collectable.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="GraphicsData.cpp" />
+    <ClCompile Include="LevelGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Includes\Animation\AnimDriver.h" />
@@ -281,10 +285,10 @@
     <ClInclude Include="..\..\Includes\GameObjects\Pawn.h" />
     <ClInclude Include="..\..\Includes\GameObjects\Player.h" />
     <ClInclude Include="..\..\Includes\GameObjects\SceneComponent.h" />
-    <ClInclude Include="..\..\Includes\GameObjects\SpaceShip.h" />
     <ClInclude Include="..\..\Includes\Gameplay\AddForceToLeftEngine.h" />
     <ClInclude Include="..\..\Includes\Gameplay\AddForceToRightEngine.h" />
     <ClInclude Include="..\..\Includes\Gameplay\Event.h" />
+    <ClInclude Include="..\..\Includes\Gameplay\Gameplay.h" />
     <ClInclude Include="..\..\Includes\Gameplay\Jump.h" />
     <ClInclude Include="..\..\Includes\Gameplay\Move.h" />
     <ClInclude Include="..\..\Includes\Input\KeyboardHandler.h" />
@@ -311,6 +315,11 @@
     <ClInclude Include="..\..\Includes\Vendor\audio_listener.h" />
     <ClInclude Include="..\..\Includes\Vendor\motion_clip_player.h" />
     <ClInclude Include="..\..\Includes\Vendor\primitive_builder.h" />
+    <ClInclude Include="Audio.h" />
+    <ClInclude Include="Collectable.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="GraphicsData.h" />
+    <ClInclude Include="LevelGenerator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

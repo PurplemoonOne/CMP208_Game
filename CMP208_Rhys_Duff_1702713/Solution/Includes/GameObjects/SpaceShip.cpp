@@ -21,7 +21,11 @@ SpaceShip* SpaceShip::Create(gef::Platform& platform_)
 	return new SpaceShip(platform_);
 }
 
-void SpaceShip::Update(float delta_time)
+void SpaceShip::Update(float delta_time, PhysicsComponent* physics)
 {
+	if (physics) {
+		UpdateMesh(physics);
+	}
+
 	Pawn::Update(delta_time);
 }

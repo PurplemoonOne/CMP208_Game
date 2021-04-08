@@ -16,7 +16,7 @@ GameObject::GameObject(gef::Platform& platform_)
 {
 	position = gef::Vector4::kZero;
 	rotation = gef::Vector4::kZero;
-	scale = gef::Vector4::kZero;
+	scale = gef::Vector4::kOne;
 
 
 }
@@ -43,8 +43,13 @@ GameObject* GameObject::Create(gef::Platform& platform_)
 //		gef::DebugOut("Error, Create a physics component before attempting to intialise attribute.");
 //}
 
-void GameObject::Update(float delta_time)
+void GameObject::Update(float delta_time, PhysicsComponent* physics_component)
 {
+	if (physics_component != nullptr)
+	{
+		UpdateMesh(physics_component);
+	}
+
 	//////////////////////////////////////////////////////////
 	//Gameplay scripts go here.
 
@@ -69,12 +74,11 @@ inline void GameObject::UpdateMesh(PhysicsComponent* physics_component)
 	//from the simulation.
 	physics_component->Update();
 
-	SetPosition(physics_component->PhysicsBodyComponent()->GetPosition().x, 
-		physics_component->PhysicsBodyComponent()->GetPosition().y,
+	SetPosition(physics_component->PhysicsBody()->GetPosition().x, 
+		physics_component->PhysicsBody()->GetPosition().y,
 		0.0f);
-	SetRotation(0.0f, 0.0f, physics_component->PhysicsBodyComponent()->GetAngle());
+	SetRotation(GetRotation().x(), GetRotation().y(), physics_component->PhysicsBody()->GetAngle());
 
-	BuildTransform();
 }
 
 void GameObject::SetMeshAsCube(PrimitiveBuilder* primitive_builder)
@@ -93,3 +97,14 @@ void GameObject::SetMesh(gef::Mesh* mesh_)
 	set_mesh(mesh_);
 }
 
+void GameObject::OnCollision(ObjectType game_object)
+{
+
+	
+
+}
+
+void GameObject::EndCollision(ObjectType game_object)
+{
+	
+}

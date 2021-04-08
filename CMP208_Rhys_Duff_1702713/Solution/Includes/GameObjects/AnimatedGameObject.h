@@ -41,11 +41,7 @@ public:
 
 	/// @brief Updates the gameobjets behaviour.
 	/// @param[in] Change in time since the last frame.
-	virtual void Update(float delta_time);
-
-	// @brief Updates the animation.
-	// @note seperate function allowing to run on a different thread.
-	virtual void AnimationUpdate(float delta_time);
+	virtual void Update(float delta_time, PhysicsComponent* physics = 0) override;
 
 	/// @brief Builds the objects transform 
 	virtual void BuildTransform();
@@ -58,6 +54,10 @@ public:
 
 	// @brief returns a const reference to the object type.
 	const ObjectType& GetObjectType() const { return object_type; }
+
+
+	virtual void OnCollision(ObjectType game_object);
+	virtual void EndCollision(ObjectType game_object);
 
 	/*..GFX..*/
 	// @brief Applies a custom mesh to the object.
@@ -88,10 +88,11 @@ public:
 	// @brief Returns a pointer to the motion player.
 	inline MotionClipPlayer* AnimationPlayer() { return animation_player; }
 
-	/// @brief Update the GFX on the game object if a physics component is added.
-	virtual inline void UpdateMesh(PhysicsComponent* physics_component);
 
 protected:
+
+	/// @brief Update the GFX on the game object if a physics component is added.
+	virtual inline void UpdateMesh(PhysicsComponent* physics_component);
 
 
 	/*..Protected variables..*/

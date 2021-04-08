@@ -13,7 +13,7 @@
 //@brief Variable tracks how many pawn controllers are active. 
 static uint32 controller_counter = 0;
 
-SCE_InputHandler::SCE_InputHandler(gef::InputManager* input_manager_)
+SCE_InputHandler::SCE_InputHandler(gef::InputManager* input_manager_, Events& events)
 	:input_manager(input_manager_),
 	pawn(nullptr),
 	anim_pawn(nullptr)
@@ -93,32 +93,16 @@ SCE_InputHandler::~SCE_InputHandler()
 	left_stick_button= nullptr;
 }
 
-void SCE_InputHandler::PossessPawn(Pawn* pawn_)
-{
-	anim_pawn = nullptr;
-	pawn = nullptr;
-	pawn = pawn_;
-}
-
-void SCE_InputHandler::PossessPawn(AnimatedPawn* pawn_)
-{
-	pawn = nullptr;
-	anim_pawn = nullptr;
-	anim_pawn = pawn_;
-}
-
 void SCE_InputHandler::BindButtons()
 {
 
 
-	/*..Asign the actions to the buttons..*/
-	right_trigger->action = &add_force_r;
-	left_trigger->action = &add_force_l;
+
 }
 
-SCE_InputHandler* SCE_InputHandler::Create(gef::InputManager* input_manager_)
+SCE_InputHandler* SCE_InputHandler::Create(gef::InputManager* input_manager_, Events& events)
 {
-	return new SCE_InputHandler(input_manager_);
+	return new SCE_InputHandler(input_manager_, events);
 }
 
 Event* SCE_InputHandler::ControllerHandler()
@@ -148,16 +132,4 @@ Event* SCE_InputHandler::ControllerHandler()
 		}
 	}
 
-}
-
-void SCE_InputHandler::ProcessSonyController(float delta_time)
-{
-	input_manager->Update();
-
-	Event* event_ = ControllerHandler();
-
-	if (event_ != nullptr)
-	{
-		event_->Action(pawn, delta_time);
-	}
 }

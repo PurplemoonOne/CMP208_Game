@@ -22,7 +22,7 @@ SplashScreen::~SplashScreen()
 void SplashScreen::OnEnter()
 {
 	gef::ImageData image;
-	context->GetAssetLoader()->png_loader.Load("FoundationLogo.png", *context->GetPlatform(), image);
+	context->GFXData()->GetAssetLoader()->png_loader.Load("FoundationLogo.png", *context->GetPlatform(), image);
 
 	gef::Texture* texture = gef::Texture::Create(*context->GetPlatform(), image);
 
@@ -32,13 +32,13 @@ void SplashScreen::OnEnter()
 	logo.set_width((float)context->GetPlatform()->width());
 
 
-	track_id = context->AudioManager()->LoadMusic("Splash.wav", *context->GetPlatform());
+	track_id = context->GetAudio()->AudioManager()->LoadMusic("Splash.wav", *context->GetPlatform());
 
 	gef::VolumeInfo vol_info;
 	vol_info.volume = 100.0f;
 
-	context->AudioManager()->SetMusicVolumeInfo(vol_info);
-	context->AudioManager()->PlayMusic();
+	context->GetAudio()->AudioManager()->SetMusicVolumeInfo(vol_info);
+	context->GetAudio()->AudioManager()->PlayMusic();
 }
 
 void SplashScreen::Input(float delta_time)
@@ -78,6 +78,11 @@ void SplashScreen::OnExit()
 {
 	//Re-set some variables.
 	timer = 0;
-
+	
+	if (logo.texture())
+	{
+		delete logo.texture();
+		logo.set_texture(nullptr);
+	}
 
 }

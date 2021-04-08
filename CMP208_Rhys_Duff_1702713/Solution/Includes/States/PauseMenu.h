@@ -7,6 +7,7 @@
 #include "UserInterface/UIButton.h"
 
 class AssetLoader;
+class Camera;
 
 // @brief Initial screen displayed on start up.
 class PauseMenu : public State
@@ -26,11 +27,14 @@ private:
 
 	gef::ImageData image;
 
-	std::vector<UIButton*> buttons;
+	std::array<UIButton*, 6> buttons;
 
 	bool game_state;
 	bool options;
 	bool exit;
 
 	float session_clock;
+
+	void SetupLights();
+
 };

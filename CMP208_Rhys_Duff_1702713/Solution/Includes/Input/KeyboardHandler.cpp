@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "pch.h"
 #include "KeyboardHandler.h"
 #include "Gameplay/Event.h"
 
@@ -6,8 +7,10 @@
 #include "input/input_manager.h"
 #include "input/keyboard.h"
 
-KeyboardHandler::KeyboardHandler(gef::InputManager* input_)
-	:input_manager(input_),
+KeyboardHandler::KeyboardHandler(gef::InputManager* input_, Events& events_)
+	:
+	input_manager(input_),
+	events(&events_),
 	pawn(nullptr),
 	anim_pawn(nullptr),
 	w(nullptr),
@@ -20,30 +23,20 @@ KeyboardHandler::KeyboardHandler(gef::InputManager* input_)
 	right(nullptr),
 	shift(nullptr),
 	l_alt(nullptr),
-	ctrl(nullptr)
+	ctrl(nullptr),
+	space_bar(nullptr)
 {
 	a = new Keys();
 	d = new Keys();
+	space_bar = new Keys();
 
-	a->action = &move_left;
-	d->action = &move_right;
+	a->action = &events->move_left;
+	d->action = &events->move_right;
+	space_bar->action = &events->jump;
 }
 
 KeyboardHandler::~KeyboardHandler()
 {
-}
-
-void KeyboardHandler::PossessPawn(Pawn* pawn_)
-{
-	anim_pawn = nullptr;
-	pawn = nullptr; 
-	pawn = pawn_;
-}
-void KeyboardHandler::PossessPawn(AnimatedPawn* pawn_)
-{
-	pawn = nullptr;
-	anim_pawn = nullptr;
-	anim_pawn = pawn_;
 }
 
 Event* KeyboardHandler::KeyEvents()
@@ -55,75 +48,67 @@ Event* KeyboardHandler::KeyEvents()
 
 		if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_W))
 		{
+			if(w)
 			return w->action;
 		}
 		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_S))
 		{
+			if(s)
 			return s->action;
 		}
 		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_A))
 		{
+			if(a)
 			return a->action;
 		}
 		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_D))
 		{
+			if(d)
 			return d->action;
 		}
 		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_UP))
 		{
+			if(up)
 			return up->action;
 		}
 		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_DOWN))
 		{
+			if(down)
 			return down->action;
 		}
 		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_RIGHT))
 		{
+			if(right)
 			return right->action;
 		}
 		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_LEFT))
 		{
+			if(left)
 			return left->action;
 		}
 		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_LALT))
 		{
+			if(l_alt)
 			return l_alt->action;
 		}
 		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_LCONTROL))
 		{
+			if(ctrl)
 			return ctrl->action;
 		}
-		else
+		else if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_SPACE))
 		{
-			return nullptr;
+			if (space_bar)
+				return space_bar->action;
 		}
+		
+		return nullptr;
 	}
 }
 
-void KeyboardHandler::ProcessKeybaord(float delta_time)
+KeyboardHandler* KeyboardHandler::Create(gef::InputManager* input_, Events& events)
 {
-	Event* event_ = KeyEvents();
-
-	if (pawn)
-	{
-		if (event_)
-		{
-			event_->Action(pawn, delta_time);
-		}
-	}
-	else if (anim_pawn)
-	{
-		if (event_)
-		{
-			event_->Action(anim_pawn, delta_time);
-		}
-	}
-
-}
-
-KeyboardHandler* KeyboardHandler::Create(gef::InputManager* input_)
-{
-	return new KeyboardHandler(input_);
+	return new KeyboardHandler(input_, events);
 }
 
 void KeyboardHandler::BindKeys(Keys* key, Event* action)

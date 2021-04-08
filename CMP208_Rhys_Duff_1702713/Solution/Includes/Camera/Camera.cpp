@@ -102,7 +102,6 @@ void Camera::Update(float delta_time)
 
 void Camera::SetTarget(gef::Vector4 target)
 {
-	position = (target + gef::Vector4(0.0f, 6.0f, 10.0f));
 	camera_target = target;
 }
 

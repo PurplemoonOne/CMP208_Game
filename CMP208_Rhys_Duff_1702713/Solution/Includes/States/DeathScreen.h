@@ -8,6 +8,7 @@
 #include "assets/png_loader.h"
 
 class PawnController;
+class UIButton;
 
 // @brief Initial screen displayed on start up.
 class DeathScreen : public State
@@ -25,10 +26,12 @@ public:
 
 private:
 
-	// Splash Screen Images.
-	gef::Sprite logo;
+
 	gef::ImageData image;
+	std::array<UIButton*, 4> buttons;
 
+	bool game_state;
+	bool exit;
 
-
+	float session_clock;
 };

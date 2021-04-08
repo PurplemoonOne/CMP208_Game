@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "AssetLoader.h"
+#include "graphics/image_data.h"
 
 AssetLoader::AssetLoader(gef::Platform& platform_, PrimitiveBuilder* primitive_builder_)
 	:
@@ -127,6 +128,14 @@ gef::Animation* AssetLoader::LoadAnimation(std::string animation_scene_filename,
 	}
 
 	return anim;
+}
+
+gef::Texture* AssetLoader::Texture(std::string filename, gef::Platform* platform)
+{
+	gef::ImageData image;
+	png_loader.Load(filename.c_str(), *platform, image);
+	gef::Texture* texture = gef::Texture::Create(*platform, image);
+	return texture;
 }
 
 gef::Mesh* AssetLoader::GetMeshFromSceneAssets(gef::Scene* scene)

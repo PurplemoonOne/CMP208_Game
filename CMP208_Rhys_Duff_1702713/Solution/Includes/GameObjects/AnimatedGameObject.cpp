@@ -17,7 +17,6 @@ AnimatedGameObject::AnimatedGameObject(const gef::Skeleton& skeleton_, gef::Plat
 	/*..Create a new motion player to maintain animations..*/
 	animation_player = new MotionClipPlayer();
 	animation_player->Init(this->bind_pose());
-	object_type = ObjectType::environment_dynamic_;
 
 	animation_driver = new AnimDriver();
 }
@@ -36,24 +35,33 @@ AnimatedGameObject* AnimatedGameObject::Create(const gef::Skeleton& skeleton, ge
 	return new AnimatedGameObject(skeleton, platform);
 }
 
-void AnimatedGameObject::Update(float delta_time)
+
+void AnimatedGameObject::Update(float delta_time, PhysicsComponent* physics)
 {
+	if (physics) {
+		UpdateMesh(physics);
+	}
+	// Update the animation player and update to the new pose.
+	animation_player->Update(delta_time, this->bind_pose());
+	this->UpdateBoneMatrices(animation_player->pose());
+
+
 
 
 	BuildTransform();
 }
 
-void AnimatedGameObject::AnimationUpdate(float delta_time)
-{
-	// Update the animation player and update to the new pose.
-	animation_player->Update(delta_time, this->bind_pose());
-
-	this->UpdateBoneMatrices(animation_player->pose());
-}
-
 void AnimatedGameObject::BuildTransform()
 {
 	set_transform(GetFinalTransform());
+}
+
+void AnimatedGameObject::OnCollision(ObjectType game_object)
+{
+}
+
+void AnimatedGameObject::EndCollision(ObjectType game_object)
+{
 }
 
 void AnimatedGameObject::SetMesh(gef::Mesh* mesh_)
@@ -82,10 +90,10 @@ inline void AnimatedGameObject::UpdateMesh(PhysicsComponent* physics_component)
 	//from the simulation.
 	physics_component->Update();
 
-	SetPosition(physics_component->PhysicsBodyComponent()->GetPosition().x,
-		physics_component->PhysicsBodyComponent()->GetPosition().y,
+	SetPosition(physics_component->PhysicsBody()->GetPosition().x,
+		physics_component->PhysicsBody()->GetPosition().y,
 		0.0f);
-	SetRotation(0.0f, 0.0f, physics_component->PhysicsBodyComponent()->GetAngle());
+	SetRotation(GetRotation().x(), GetRotation().y(), physics_component->PhysicsBody()->GetAngle());
 
 	BuildTransform();
 }

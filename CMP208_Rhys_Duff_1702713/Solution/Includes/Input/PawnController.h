@@ -9,11 +9,7 @@
 #include "KeyboardHandler.h"
 #include "SCEInputHandler.h"
 
-/*..Actions..*/
-#include "Gameplay/Move.h"
-#include "Gameplay/Jump.h"
-#include "Gameplay/AddForceToLeftEngine.h"
-#include "Gameplay/AddForceToRightEngine.h"
+#include "Gameplay/Gameplay.h"
 
 
 namespace gef
@@ -93,6 +89,10 @@ public:
 	void PosessPawn(Pawn* pawn);
 	void PosessPawn(AnimatedPawn* pawn);
 
+	// @brief Take control of an animated pawn.
+	// @param[in] Pointer to a animated pawn.
+	void PossessPhysObject(PhysicsComponent* phys);
+
 	/// @brief Getter to the touch/mouse manager
 	inline gef::InputManager* GetTouchInputManager() { return input_manager; }
 
@@ -104,7 +104,12 @@ public:
 	// @brief return the mouse position and state for this frame.
 	inline const MouseData& GetMouseData() { return mouse_data; }
 
+	// @brief Contains all the gameplay related objects.
+	Events actions;
+
 private:
+
+	void ExecuteEvent(Event* event_, float delta_time);
 
 	MouseData mouse_data;
 
@@ -136,6 +141,7 @@ private:
 	/// @brief Pointer to the current player in the scene.
 	Pawn* pawn;
 	AnimatedPawn* anim_pawn;
+	PhysicsComponent* phys_object;
 
 	/// @brief Tracks whether we can grab the mouse coordinates checking if we are pressing left mouse button.
 	bool can_get_mouse_coords = false;

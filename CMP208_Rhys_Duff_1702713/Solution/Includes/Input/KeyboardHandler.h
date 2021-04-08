@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Gameplay/Move.h"
+#include "Gameplay/Gameplay.h"
 
 namespace gef
 {
@@ -14,37 +14,28 @@ class Pawn;
 
 class KeyboardHandler
 {
+private:
+
+	KeyboardHandler(gef::InputManager* input_, Events& events);
+
 public:
 
 	// @brief Creates a new Keyboard handler for the pawn controller class.
 	// @param[in] Pointer to the input manager.
 	// @param[in] Pointer to the pawn class.
-	static KeyboardHandler* Create(gef::InputManager* input_);
+	static KeyboardHandler* Create(gef::InputManager* input_, Events& events);
 
 	/// @brief Function responsible for binding keys.
 	void BindKeys(Keys* key, Event* action);
 
-	/// @brief Evaluate the keys pressed and execute an action.
-	void ProcessKeybaord(float delta_time);
-
 	~KeyboardHandler();
-
-	// @brief Take control of a pawn.
-	// @param[in] Pointer to a pawn.
-	void PossessPawn(Pawn* pawn_); 
-
-	// @brief Take control of an animated pawn.
-	// @param[in] Pointer to a animated pawn.
-	void PossessPawn(AnimatedPawn* pawn_);
-
-private:
-
-
 
 	/// @brief Handles input from the keyboard 
 	Event* KeyEvents();
 
-	KeyboardHandler(gef::InputManager* input_);
+private:
+
+	Events* events;
 
 	/*..Pointer to the input manager..*/
 	gef::InputManager* input_manager;
@@ -52,6 +43,7 @@ private:
 	/*..Pointer to the player..*/
 	Pawn* pawn;
 	AnimatedPawn* anim_pawn;
+	PhysicsComponent* phys_object;
 
 	/*..w,a,s,d..*/
 
@@ -72,9 +64,7 @@ private:
 	Keys* shift;
 	Keys* l_alt;
 	Keys* ctrl;
-
-	MoveLeft move_left;
-	MoveRight move_right;
+	Keys* space_bar;
 
 };
 

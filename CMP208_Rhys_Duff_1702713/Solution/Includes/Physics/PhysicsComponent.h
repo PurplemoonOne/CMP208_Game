@@ -55,7 +55,7 @@ public:
 
 	/// @brief Returns the objects physics component.
 	/// @returns A pointer to the physics body.
-	inline b2Body* PhysicsBodyComponent() { return physics_body; }
+	inline b2Body* PhysicsBody() { return physics_body; }
 
 
 

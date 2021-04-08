@@ -1,5 +1,6 @@
 #pragma once
 #include "Event.h"
+#include "Physics/PhysicsComponent.h"
 
 class Jump : public Event
 {
@@ -16,16 +17,19 @@ public:
 
 	}
 
-	virtual void Action(b2Body* body, float delta_time)
+	virtual void Action(PhysicsComponent* body, float delta_time)
 	{
-		Player* player = reinterpret_cast<Player*>(body->GetUserData().pointer);
+		Player* player = reinterpret_cast<Player*>(body->PhysicsBody()->GetUserData().pointer);
 
 		if (player)
 		{
-			player->BroadcastInput(true);
+			if (player->CanJump())
+			{
+				player->BroadcastInput(true);
+				player->SetCanJump(false);
 
-			body->ApplyForceToCenter(b2Vec2(0.0f, 10.0f), true);
-
+				body->PhysicsBody()->ApplyForceToCenter(b2Vec2(0.0f, 150.0f), true);
+			}
 		}
 	}
 

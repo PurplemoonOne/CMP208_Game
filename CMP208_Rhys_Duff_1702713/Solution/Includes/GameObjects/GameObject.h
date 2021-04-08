@@ -41,8 +41,6 @@ public:
 	/// @param[in] Reference to the current platform.
 	static GameObject* Create(gef::Platform& platform_);
 
-
-
 	/*..GFX..*/
 
 	/// @brief Initialises and sets the static mesh for the Actor.
@@ -60,12 +58,15 @@ public:
 
 	/// @brief Updates the gameobjets behaviour.
 	/// @param[in] Change in time since the last frame.
-	virtual void Update(float delta_time) override;
+	virtual void Update(float delta_time, PhysicsComponent* phys_component = 0) override;
 
 	/// @brief Builds the objects transform 
 	virtual void BuildTransform();
 
 	/*..Collisions..*/
+
+	virtual void OnCollision(ObjectType game_object);
+	virtual void EndCollision(ObjectType game_object);
 
 	// @brief Set the type of game object this is. This will determine what the object can interact with.
 	// @param[in] ObjectType Enter the flag this object will endure.
@@ -84,6 +85,7 @@ public:
 	// @note Currently the physics components are stored in a vector and pushed in tandem 
 	// with the game object vector. This is so they have a 1:1 correlation when it comes to 
 	// looping over the objects.
+	// Ultimately this is to ensure the data is coalesced improving cache hits speeding the overall process 
 
 
 
@@ -101,11 +103,12 @@ public:
 	// @param[in] Whether this object is a collider or a trigger. Triggers aren't included in physics calculations.
 	//void InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor);
 
+
+protected:
+
 	/// @brief Update the GFX on the game object if a physics component is added.
 	// @param[in] Takes a pointer to a physics body.
 	inline void UpdateMesh(PhysicsComponent* physics_component);
-
-protected:
 
 	/*..Protected variables..*/
 	ObjectType object_type;

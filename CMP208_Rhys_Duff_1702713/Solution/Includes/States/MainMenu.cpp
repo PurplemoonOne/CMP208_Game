@@ -9,97 +9,37 @@
 #include <system/platform.h>
 
 MainMenu::MainMenu(gef::Platform* platform_)
+	:
+	backdrop(nullptr),
+	title(nullptr),
+	game_state(false),
+	options(false),
+	exit(false),
+	session_clock(0.0f)
 {
-	game_state = false;
-	options = false;
-	exit = false;
-
-	session_clock = 0.0f;
-
-	asset_loader = new AssetLoader(*platform_);
-	tower = GameObject::Create(*platform_);
-	tower->SetMesh(asset_loader->LoadMesh("../assets/Structures/building_tower_tall.scn"));
-	tower->SetPosition(0.0f, 0.0f, 0.0f);
 }
 
 MainMenu::~MainMenu()
 {
+	//Remove the camera.
+	if (camera)
+	{
+		delete camera;
+		camera = nullptr;
+	}
+
+	if (backdrop)
+	{
+		delete backdrop;
+		backdrop = nullptr;
+	}
 }
 
 void MainMenu::OnEnter()
 {
-	gef::Platform* platform = context->GetPlatform();
-
-	// grab the data for the default shader used for rendering 3D geometry
-	gef::Default3DShaderData& default_shader_data = this->context->Renderer()->default_shader_data();
-
-	// set the ambient light
-	default_shader_data.set_ambient_light_colour(gef::Colour(0.45f, 0.25f, 0.45f, 1.0f));
-
-	// add a point light that is almost white, but with a blue tinge
-	// the position of the light is set far away so it acts light a directional light
-	gef::PointLight default_point_light;
-	default_point_light.set_colour(gef::Colour(0.7f, 0.7f, 1.0f, 1.0f));
-	default_point_light.set_position(gef::Vector4(-500.0f, 400.0f, 700.0f));
-	default_shader_data.AddPointLight(default_point_light);
-
-	/*..Create our buttons..*/
-	float centre_x = ((platform->width() / 4.0f));
-
-	/*..Create tags, titles and prefixes to make appending easier..*/
-	std::string tags[] = { "Play", "Options", "Exit" };
-	std::string prefix = "buttons/";
-	std::string suffix = ".png";
-	std::string filenames[] = 
-	{
-		"play-pressed",
-		"playYellow",
-		"options-pressed",
-		"optionsYellow", 
-		"exit-pressed",
-		"exitYellow"
-	};
-
-	float y_positions[] =
-	{
-		((platform->height() / 2.0f) - ((platform->height() / 4.0f))),
-		((platform->height() / 2.0f)),
-		((platform->height() / 2.0f) + ((platform->height() / 4.0f)))
-	};
-
-	uint32 tag_index = 0;//Need a seperate counter for our tags.
-
-	for (uint32 index = 0; index < 6; ++index)
-	{
-		//Incriment our tag index.
-		index == 2 || index == 4 ? tag_index++ : 0;
-
-		UIButton* button = UIButton::Create("", gef::Vector2(centre_x, y_positions[tag_index]));
-
-		//Append filepath.
-		std::string final_path = prefix + filenames[index] + suffix;
-
-		//Convert to C style string.
-		//Fill image data with a loaded png.
-		asset_loader->png_loader.Load(final_path.c_str(), *platform, image);
-
-		//Create a texture using the populated image data.
-		gef::Texture* texture = gef::Texture::Create(*platform, image);	
-
-		button->set_texture(texture);
-		button->InitFont(platform);
-		button->set_height(50.0f);
-		button->set_width(100.0f);
-		buttons[index] = button;
-
-		//Clear last filepath.
-		final_path.clear();
-	}
-
-	camera = Camera::Create(platform);
-	camera->InitialisePerspectiveMatrices();
-	camera->SetTarget(gef::Vector4(0.0f, 0.0f, 0.0f));
-	camera->SetPosition(4.0f, 10.0f, 0.0f);
+	LoadBackdrop();
+	LoadButtons();
+	SetupCamera();
 }
 
 void MainMenu::Input(float delta_time)
@@ -138,22 +78,28 @@ void MainMenu::Input(float delta_time)
 
 	}
 
-	
-
 }
 
-float new_rotation = 0.0f;
+
+
 bool MainMenu::Update(float delta_time)
 {
 	session_clock += 1.0f * delta_time;
+	camera->Update(delta_time);
+
 	for (auto& button : buttons)
 	{
 		button->Update(delta_time);
 	}
 
-	
+	//Update the backdrop.
+	backdrop->set_position(gef::Vector4(context->GetPlatform()->width() / 2.0f, (context->GetPlatform()->height() / 2.0f) - 256.0f, 0.2f));
+	title->set_position(gef::Vector4(context->GetPlatform()->width() / 2.0f, context->GetPlatform()->height() / 3.0f, 0.1f));
+
+	AnimateTitle(delta_time);
 
 	if (game_state) {
+		context->SetGameIsRunning(true);
 		context->Transition(States::GAME);
 	}
 	else if (options)
@@ -171,24 +117,18 @@ bool MainMenu::Update(float delta_time)
 
 void MainMenu::Render()
 {
-	gef::Renderer3D* renderer = this->context->Renderer();
-	gef::SpriteRenderer* sprite_renderer = this->context->SpriteRenderer();
+	gef::SpriteRenderer* sprite_renderer = context->SpriteRenderer();
 
-	camera->SetSceneMatrices(renderer);
+	sprite_renderer->Begin(true);
 
-	renderer->Begin(true);
-
-		renderer->DrawMesh(*tower);
-
-	renderer->End();
-
-	sprite_renderer->Begin(false);
-
-
-	for (UIButton* button : buttons)
-	{
-		button->Render(sprite_renderer);
-	}
+		for (UIButton* button : buttons)
+		{
+			button->Render(sprite_renderer);
+		}
+	
+		//Draw background first.
+		sprite_renderer->DrawSprite(*backdrop);
+		sprite_renderer->DrawSprite(*title);
 
 	sprite_renderer->End();
 
@@ -196,17 +136,122 @@ void MainMenu::Render()
 
 
 void MainMenu::OnExit()
-{	//Clear some memory.
+{
+	//Clear some memory.
 	session_clock = 0.0f;
 
 	options = false;
 	game_state = false;
 	exit = false;
 
-	for (auto& button : buttons){
-		delete button->texture();
-		delete button;
+	for (auto& button : buttons)
+	{
+		if (button)
+		{
+			if (button->texture())
+			{
+				delete button->texture();
+				button->set_texture(nullptr);
+			}
+			delete button;
+			button = nullptr;
+		}
 	}
 
-	delete camera;
+	//Remove camera.
+	if (camera)
+	{
+		delete camera;
+		camera = nullptr;
+	}
+
+	//Remove backdrop.
+	if (backdrop)
+	{
+		if (backdrop->texture())
+		{
+			delete backdrop->texture();
+			backdrop->set_texture(nullptr);
+		}
+		delete backdrop;
+		backdrop = nullptr;
+	}
+
+	if (title)
+	{
+		if (title->texture())
+		{
+			delete title->texture();
+			title->set_texture(nullptr);
+		}
+		delete title;
+		title = nullptr;
+	}
 }
+
+void MainMenu::LoadButtons()
+{
+	gef::Platform* platform = context->GetPlatform();
+	/*..Create our buttons..*/
+	float centre_x = ((platform->width() / 4.0f));
+
+	float y_positions[] =
+	{
+		((platform->height() / 2.0f) - ((platform->height() / 4.0f))),
+		((platform->height() / 2.0f)),
+		((platform->height() / 2.0f) + ((platform->height() / 4.0f)))
+	};
+
+	uint32 tag_index = 0;
+	for (int32 index = 0; index < buttons.size(); ++index)
+	{
+		index == 2 || index == 4 ? tag_index++ : NULL;
+		UIButton* button = UIButton::Create("", gef::Vector4(centre_x, y_positions[tag_index], 0.1f), 0.1f);
+		button->set_texture(context->GFXData()->GetTexture((TextureID)index));	//Get the created texture and set the button accordingly.
+		button->InitFont(platform);
+		button->set_height(50.0f);
+		button->set_width(100.0f);
+		buttons[index] = button;
+	}
+
+	
+}
+
+void MainMenu::LoadBackdrop()
+{
+	gef::Platform* platform = context->GetPlatform();
+	AssetLoader* asset_loader = context->GFXData()->GetAssetLoader();
+
+	//Initialise backdrop.
+	backdrop = new gef::Sprite();
+	backdrop->set_texture(asset_loader->Texture("forest_background/menu_backdrop.png", platform));
+	backdrop->set_height(platform->height() + 512);
+	backdrop->set_width(platform->width());
+	backdrop->set_position(gef::Vector4(platform->width() / 2.0f, (platform->height() / 2.0f) + 256.0f, 0.2f));
+
+	//Initialise backdrop.
+	title = new gef::Sprite();
+	title->set_texture(asset_loader->Texture("ode.png", platform));
+	title->set_height(0.0f);
+	title->set_width(0.0f);
+	title->set_position(gef::Vector4(platform->width() / 2.0f, platform->height() / 3.0f, 0.1f));
+}
+
+void MainMenu::AnimateTitle(float delta_time)
+{
+	//Animate the title 
+	if (title->width() <= 512.0f && title->height() <= 512.0f)
+	{
+		float width = title->width();
+		float height = title->height();
+
+		width += 128.0f * delta_time;
+		height += 128.0f * delta_time;
+
+		title->set_width(width);
+		title->set_height(height);
+
+	}
+}
+
+

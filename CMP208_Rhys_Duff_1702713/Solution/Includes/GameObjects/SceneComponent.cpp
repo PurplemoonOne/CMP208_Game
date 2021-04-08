@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "SceneComponent.h"
+class PhysicsComponent;
 
 SceneComponent::SceneComponent(gef::Platform& platform_)
 	: scale(1.0f, 1.0f, 1.0f),
@@ -14,7 +15,7 @@ SceneComponent* SceneComponent::Create(gef::Platform& platform_)
 	return new SceneComponent(platform_);
 }
 
-void SceneComponent::Update(float delta_time)
+void SceneComponent::Update(float delta_time, PhysicsComponent* physics)
 {
 
 }

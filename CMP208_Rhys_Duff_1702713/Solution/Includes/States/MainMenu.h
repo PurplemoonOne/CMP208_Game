@@ -23,15 +23,20 @@ public:
 
 private:
 
+	void LoadButtons();
+	
+	void SetupCamera();
+	void LoadBackdrop();
+
+	void AnimateTitle(float delta_time);
+
 	//Main menu scene.
 	Camera* camera;
-	GameObject* tower;
-
+	std::array<GameObject*, 2> chunks;
 	gef::ImageData image;
-
+	gef::Sprite* backdrop;
+	gef::Sprite* title;
 	std::array<UIButton*, 6> buttons;
-
-	AssetLoader* asset_loader;
 
 	bool game_state;
 	bool options;

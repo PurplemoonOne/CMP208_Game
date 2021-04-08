@@ -30,8 +30,8 @@ PawnController::PawnController(gef::Platform& p_ptr, gef::InputManager* input_)
 	if (input_manager && input_manager->touch_manager() && (input_manager->touch_manager()->max_num_panels() > 0))
 		input_manager->touch_manager()->EnablePanel(0);
 
-	keyboard = KeyboardHandler::Create(input_manager);
-	controller = SCE_InputHandler::Create(input_manager);
+	keyboard = KeyboardHandler::Create(input_manager, actions);
+	controller = SCE_InputHandler::Create(input_manager, actions);
 }
 
 PawnController::~PawnController()
@@ -53,32 +53,67 @@ void PawnController::PosessPawn(Pawn* pawn_)
 	//First stop pointing to current posessed pawn.
 	anim_pawn = nullptr;
 	pawn = nullptr;
-
+	phys_object = nullptr;
 	//Change pointer to point to new pawn.
 	pawn = pawn_;
-
-	keyboard->PossessPawn(pawn_);
-	controller->PossessPawn(pawn_);
 }
 
 void PawnController::PosessPawn(AnimatedPawn* pawn_)
 {
 	pawn = nullptr;
 	anim_pawn = nullptr;
-
+	phys_object = nullptr;
 	anim_pawn = pawn_;
+}
 
-	keyboard->PossessPawn(anim_pawn);
-	controller->PossessPawn(anim_pawn);
+void PawnController::PossessPhysObject(PhysicsComponent* phys)
+{
+	pawn = nullptr;
+	anim_pawn = nullptr;
+	phys_object = nullptr;
+
+	phys_object = phys;
 }
 
 void PawnController::ProcessInput(float delta_time)
 {
+	//Process the input - Read input from devices 
+	//Proceed to execute the event on a valid object.
 	input_manager->Update();
 
 	ProcessTouchInput();
-	keyboard->ProcessKeybaord(delta_time);
-	controller->ProcessSonyController(delta_time);
+
+	//Read from the controller and keyboard.
+	Event* sce_event = controller->ControllerHandler();
+	Event* key_event = keyboard->KeyEvents();
+
+	if (sce_event)
+	{
+		ExecuteEvent(sce_event, delta_time);
+	}
+	else if (key_event)
+	{
+		ExecuteEvent(key_event, delta_time);
+	}
+
+}
+
+void PawnController::ExecuteEvent(Event* event_, float delta_time)
+{
+	/*..Process the command..*/
+	//Evaluate which object to peform the command on.
+	if (pawn)
+	{
+		event_->Action(pawn, delta_time);
+	}
+	else if (anim_pawn)
+	{
+		event_->Action(anim_pawn, delta_time);
+	}
+	else if (phys_object)
+	{
+		event_->Action(phys_object, delta_time);
+	}
 }
 
 Event* PawnController::PickAction()
