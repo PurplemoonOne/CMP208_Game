@@ -16,27 +16,33 @@ public:
 	{
 		b2BodyUserData* body_a = &contact->GetFixtureA()->GetBody()->GetUserData();
 		b2BodyUserData* body_b = &contact->GetFixtureB()->GetBody()->GetUserData();
-
-		/*..jumping checks..*/
 		
-			GameObject* player = reinterpret_cast<GameObject*>(body_a->pointer);
-			GameObject* floor = reinterpret_cast<GameObject*>(body_b->pointer);
+		AnimatedGameObject* player = reinterpret_cast<AnimatedGameObject*>(body_a->pointer);
+		GameObject* game_object = reinterpret_cast<GameObject*>(body_b->pointer);
 
-			if (player)
+		if (body_a)
+		{
+			if (player && (player->GetObjectType() == ObjectType::dynamic_pawn_))
 			{
-				if (floor)
+				if (game_object)
 				{
-					player->OnCollision(floor->GetObjectType());
+					player->OnCollision(game_object->GetObjectType());
 				}
 			}
-		
-			if (floor)
+		}
+		if (body_b)
+		{
+			if (game_object)
 			{
 				if (player)
 				{
-					player->OnCollision(floor->GetObjectType());
+					game_object->OnCollision(player->GetObjectType());
 				}
 			}
+		}
+			
+		
+
 	}
 
 	/// Called when two fixtures cease to touch.
@@ -45,43 +51,25 @@ public:
 		b2BodyUserData* body_a = &contact->GetFixtureA()->GetBody()->GetUserData();
 		b2BodyUserData* body_b = &contact->GetFixtureB()->GetBody()->GetUserData();
 
-		/*..jumping checks..*/
+		GameObject* game_object = reinterpret_cast<GameObject*>(body_b->pointer);
+		AnimatedGameObject* player = reinterpret_cast<AnimatedGameObject*>(body_a->pointer);
+
+		
 		if (body_a)
 		{
-			Player* player = reinterpret_cast<Player*>(body_a->pointer);
-
-			if (player)
+			if (player && (player->GetObjectType() == ObjectType::dynamic_pawn_))
 			{
-				if (body_b)
-				{
-					GameObject* floor = reinterpret_cast<GameObject*>(body_b->pointer);
-					if (floor)
-					{
- 						player->EndCollision(floor->GetObjectType());
-					}
-				}
+				player->EndCollision(game_object->GetObjectType());
 			}
 		}
-
 		if (body_b)
 		{
-			GameObject* floor = reinterpret_cast<GameObject*>(body_b->pointer);
-
-			if (floor)
+			if (game_object)
 			{
-				if (body_a)
-				{
-					Player* player = reinterpret_cast<Player*>(body_a->pointer);
-					if (player)
-					{
-						player->EndCollision(floor->GetObjectType());
-					}
-				}
+				game_object->EndCollision(player->GetObjectType());
 			}
 		}
-
-
-
+		
 	}
 
 

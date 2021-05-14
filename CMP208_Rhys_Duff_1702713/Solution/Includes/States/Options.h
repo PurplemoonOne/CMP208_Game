@@ -4,6 +4,7 @@
 #include "graphics/image_data.h"
 
 class UIButton;
+class ParallaxBackground;
 
 class Options : public State
 {
@@ -18,17 +19,36 @@ public:
 	virtual void Render() override;
 	virtual void OnExit() override;
 
+	int& TilesToRender() { return tiles_to_render; }
+
 private:
 
 	bool back;
 
 	void UpdateVolume();
 	void CleanSprites();
+	void EvalButton();
+	void InitSliders();
+	void RenderFont();
 
+	ParallaxBackground* parallax_bg;
 	gef::ImageData image;
+
+	//Volume options.
 	std::vector<Slider*> sliders;
-	gef::Sprite* backdrop;
+	std::array<gef::Font*, 3> option_text;
+
+	//Tiling options.
+	void InitTileOptions();
+	void RenderTilesFont();
+	std::array<UIButton*, 2> tile_option_arrows;
+	std::array<gef::Font*, 2> tiles_font;
+	int tiles_to_render;
+
+
 	float slider_values[3];
+	bool not_exit;
+	int index;
 	UIButton* button;
 };
 

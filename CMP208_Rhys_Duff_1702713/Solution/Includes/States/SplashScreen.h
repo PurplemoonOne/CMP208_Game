@@ -26,7 +26,6 @@ private:
 
 	Int32 track_id;
 
-
 	float transparency;
 	// Splash Screen Images.
 	gef::Sprite logo;

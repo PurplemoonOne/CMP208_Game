@@ -18,18 +18,21 @@ public:
 	/// @brief Constructor for the gameobject.
 	/// @param[in] Takes a reference to the current platform.
 	/// @param[in] Takes a pointer to the physics world.
-	Pawn(gef::Platform& platform_);
+	Pawn();
 
 	~Pawn();
 
 public:
 
 	/*..Methods public access..*/
-	static Pawn* Create(gef::Platform& platform_);
+	static Pawn* Create();
 
 	/// @brief Updates this objects attributes.
 	/// @param[in] Delta time tracks the time since last frame.
-	virtual void Update(float delta_time, PhysicsComponent* physics = 0) override;
+	void Update(float delta_time) override;
+
+	void OnCollision(ObjectType ot) override;
+	void EndCollision(ObjectType ot) override;
 
 protected:
 

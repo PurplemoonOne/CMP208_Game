@@ -64,7 +64,7 @@ void Audio3D::Update()
 			// remove the emitter if it has stopped
 			if (emitter->playing())
 			{
-				if (!audio_manager_->sample_voice_playing(emitter->voice_id()))
+				if (!audio_manager_->sample_voice_playing(emitter->sfx_id()))
 				{
 					emitter->SoundStopped();
 					delete_emitter = true;
@@ -100,7 +100,7 @@ void Audio3D::Update()
 					gef::VolumeInfo volume_info;
 					volume_info.volume = volume;
 					volume_info.pan = pan;
-					audio_manager_->SetSampleVoiceVolumeInfo(emitter->voice_id(), volume_info);
+					audio_manager_->SetSampleVoiceVolumeInfo(emitter->sfx_id(), volume_info);
 				}
 			}
 		}
@@ -111,7 +111,7 @@ void Audio3D::Update()
 			{
 				//		    Stop the sound on the emitter
 				if (emitter->voice_id() != -1)
-					audio_manager_->StopPlayingSampleVoice(emitter->voice_id());
+					audio_manager_->StopPlayingSampleVoice(emitter->sfx_id());
 				emitter->SoundStopped();
 			}
 		}

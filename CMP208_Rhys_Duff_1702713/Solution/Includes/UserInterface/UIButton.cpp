@@ -2,27 +2,31 @@
 #include "UIButton.h"
 
 #include "Input/PawnController.h"
+#include "Audio.h"
 
 
-UIButton::UIButton(std::string text_, gef::Vector4 position, float depth)
+UIButton::UIButton(std::string text_, gef::Vector4 position)
 	:
-	text(text_)
+	text(text_),
+	is_selected(false)
 {
 	mouse_data = nullptr;
 	font = nullptr;
-	position_ = gef::Vector4(position.x(), position.y(), depth);
+	position_ = gef::Vector4(position.x(), position.y(), position.z());
 	CalculateAnchors();
 }
 
 UIButton::~UIButton()
 {
-	delete font;
-	font = nullptr;
+	if (font) {
+		delete font;
+		font = nullptr;
+	}
 }
 
-UIButton* UIButton::Create(std::string text, gef::Vector4 position, float depth)
+UIButton* UIButton::Create(std::string text, gef::Vector4 position)
 {
-	return new UIButton(text, position, depth);
+	return new UIButton(text, position);
 }
 
 void UIButton::InitFont(gef::Platform* platform_)
@@ -33,20 +37,6 @@ void UIButton::InitFont(gef::Platform* platform_)
 
 void UIButton::Update(float delta_time)
 {
-	CalculateAnchors();
-
-	if (mouse_data)
-	{
-		switch (mouse_data->left_button_state)
-		{
-		case MouseState::CLICKED:
-
-			break;
-		default:
-
-			break;
-		}
-	}
 
 }
 
@@ -69,24 +59,28 @@ void UIButton::Render(gef::SpriteRenderer* sprite_renderer)
 
 }
 
-bool UIButton::IsHover(PawnController* pawn_controller)
+bool UIButton::IsHover(PawnController* pawn_controller, Audio* audio)
 {
-	bool validate = false;
-
+	CalculateAnchors();
 	const MouseData* mouse_data = &pawn_controller->GetMouseData();
 
 		//Check if we're hovering over button
-		if ((mouse_data->coordinates.x > anchors.bottom_left.x) && // > bottom left x
-			(mouse_data->coordinates.y < anchors.top_right.y) && // < top right y
+	if ((mouse_data->coordinates.x > anchors.bottom_left.x) && // > bottom left x
+		(mouse_data->coordinates.y < anchors.top_right.y) && // < top right y
 
-			(mouse_data->coordinates.x < anchors.bottom_right.x) && // < bottom right x
-			(mouse_data->coordinates.y > anchors.bottom_right.y)	 // > bottom right y
-			)
-		{
-			validate = true;
-		}
-	
-	return validate;
+		(mouse_data->coordinates.x < anchors.bottom_right.x) && // < bottom right x
+		(mouse_data->coordinates.y > anchors.bottom_right.y)	 // > bottom right y
+		)
+	{
+		is_selected = true;
+		audio->PlaySFX(sfxid::button_click_a, false);
+	}
+	else
+	{
+		is_selected = false;
+	}
+
+	return is_selected;
 }
 
 void UIButton::CalculateAnchors()

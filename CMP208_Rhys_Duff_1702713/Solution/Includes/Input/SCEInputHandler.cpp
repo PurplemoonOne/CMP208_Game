@@ -39,6 +39,9 @@ SCE_InputHandler::SCE_InputHandler(gef::InputManager* input_manager_, Events& ev
 	left_trigger = new Button();
 	left_stick_button = new Button();
 
+	left_joystick = new Joystick();
+	right_joystick = new Joystick();
+
 	BindButtons();
 }
 
@@ -91,12 +94,24 @@ SCE_InputHandler::~SCE_InputHandler()
 
 	delete left_stick_button;
 	left_stick_button= nullptr;
+
+	delete left_joystick;
+	left_joystick = nullptr;
+
+	delete right_joystick;
+	right_joystick = nullptr;
 }
 
 void SCE_InputHandler::BindButtons()
 {
+	
+	cross->action = &jump;
 
+	left_joystick->action[0] = &move_right;
+	left_joystick->action[1] = &move_left;
 
+	dpad_left->action = &move_left;
+	dpad_right->action = &move_right;
 
 }
 
@@ -111,7 +126,6 @@ Event* SCE_InputHandler::ControllerHandler()
 
 	if (sce_in_manager)
 	{
-
 		const gef::SonyController* sce_controller = sce_in_manager->GetController(controller_counter);
 
 		if (sce_controller->buttons_down() & gef_SONY_CTRL_CROSS)
@@ -125,6 +139,14 @@ Event* SCE_InputHandler::ControllerHandler()
 		if (sce_controller->buttons_down() & gef_SONY_CTRL_R2)
 		{
 			return right_trigger->action;
+		}
+		if (sce_controller->left_stick_x_axis() > gef::DegToRad(0.0f))
+		{
+			return left_joystick->action[0];
+		}
+		if (sce_controller->left_stick_x_axis() < gef::DegToRad(0.0f))
+		{
+			return left_joystick->action[1];
 		}
 		else
 		{

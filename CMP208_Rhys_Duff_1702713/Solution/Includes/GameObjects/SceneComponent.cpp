@@ -3,19 +3,19 @@
 #include "SceneComponent.h"
 class PhysicsComponent;
 
-SceneComponent::SceneComponent(gef::Platform& platform_)
+SceneComponent::SceneComponent()
 	: scale(1.0f, 1.0f, 1.0f),
 	position(0.0f, 0.0f, 0.0f),
 	rotation(0.0f, 0.0f, 0.0f)
 {
 }
 
-SceneComponent* SceneComponent::Create(gef::Platform& platform_)
+SceneComponent* SceneComponent::Create()
 {
-	return new SceneComponent(platform_);
+	return new SceneComponent();
 }
 
-void SceneComponent::Update(float delta_time, PhysicsComponent* physics)
+void SceneComponent::Update(float delta_time)
 {
 
 }

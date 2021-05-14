@@ -6,7 +6,8 @@ Context::Context(gef::Platform& platform_)
 	platform(&platform_),
 	state(nullptr),
 	is_game_running(false),
-	reset(false)
+	reset(false),
+	win(false)
 {
 	// @note Create the essential objects required to interact with our application.
 	// Only one context can be instantiated and run.
@@ -23,6 +24,8 @@ Context::Context(gef::Platform& platform_)
 		audio = Audio::Create(*platform);
 		/*..Asset loader..*/
 		graphics_data = GraphicsData::Create(platform);
+
+		graphics_data->InitialiseTextures();
 
 		/*..Create our game states..*/
 		SplashScreen* splash_screen = new SplashScreen(platform);
@@ -43,7 +46,7 @@ Context::Context(gef::Platform& platform_)
 		map[States::PAUSE] = pause_menu;
 		pause_menu = nullptr;
 
-		DeathScreen* death_screen = new DeathScreen(platform);
+		WinLoseScreen* death_screen = new WinLoseScreen(platform);
 		map[States::DEATH] = death_screen;
 		death_screen = nullptr;
 

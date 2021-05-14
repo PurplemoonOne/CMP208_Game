@@ -8,46 +8,49 @@
 /*..Physics Component..*/
 #include "Physics/PhysicsComponent.h"
 
-GameObject::GameObject(gef::Platform& platform_)
+GameObject::GameObject()
 	: 
-	SceneComponent(platform_),
-	
-	object_type(ObjectType::static_)
+	SceneComponent(),
+	object_type(ObjectType::static_),
+	ignore_z_rotation(false),
+	is_alive(true),
+	physics(nullptr)
 {
 	position = gef::Vector4::kZero;
 	rotation = gef::Vector4::kZero;
 	scale = gef::Vector4::kOne;
 
-
 }
 
-GameObject* GameObject::Create(gef::Platform& platform_)
+GameObject::~GameObject()
 {
-	return new GameObject(platform_);
 }
 
-//See the header file on why these methods are commented.
-// 
-//void GameObject::AttachPhysicsComponent(b2World* world_)
-//{
-//	physics_component = PhysicsComponent::Create(world_, this, is_dynamic);
-//}
-//
-//void GameObject::InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor)
-//{
-//	//If no friction is applied, assumes to be static.
-//	if (physics_component)
-//		physics_component->CreateFixture(shape_, density, friction, mass, is_sensor);
-//
-//	else
-//		gef::DebugOut("Error, Create a physics component before attempting to intialise attribute.");
-//}
-
-void GameObject::Update(float delta_time, PhysicsComponent* physics_component)
+GameObject* GameObject::Create()
 {
-	if (physics_component != nullptr)
+	return new GameObject();
+}
+ 
+void GameObject::AttachPhysicsComponent(b2World* world_)
+{
+	physics = PhysicsComponent::Create(world_, this);
+}
+
+void GameObject::InitialisePhysicsFixture(PhysicsComponent::Shape shape_, float density, float friction, float mass, bool is_sensor)
+{
+	//If no friction is applied, assumes to be static.
+	if (physics)
+		physics->CreateFixture(shape_, density, friction, mass, is_sensor);
+
+	else
+		gef::DebugOut("Error, Create a physics component before attempting to intialise attribute.");
+}
+
+void GameObject::Update(float delta_time)
+{
+	if (physics != nullptr)
 	{
-		UpdateMesh(physics_component);
+		UpdateMesh(physics);
 	}
 
 	//////////////////////////////////////////////////////////
@@ -68,6 +71,14 @@ void GameObject::BuildTransform()
 	set_transform(GetFinalTransform());
 }
 
+void GameObject::OnCollision(ObjectType game_object)
+{
+}
+
+void GameObject::EndCollision(ObjectType game_object)
+{
+}
+
 inline void GameObject::UpdateMesh(PhysicsComponent* physics_component)
 {
 	//We need to update the GFX to reflect the changes made
@@ -77,7 +88,12 @@ inline void GameObject::UpdateMesh(PhysicsComponent* physics_component)
 	SetPosition(physics_component->PhysicsBody()->GetPosition().x, 
 		physics_component->PhysicsBody()->GetPosition().y,
 		0.0f);
-	SetRotation(GetRotation().x(), GetRotation().y(), physics_component->PhysicsBody()->GetAngle());
+	if (!ignore_z_rotation) {
+		SetRotation(GetRotation().x(), GetRotation().y(), physics_component->PhysicsBody()->GetAngle());
+	}
+	else {
+		SetRotation(GetRotation().x(), GetRotation().y(), GetRotation().z());
+	}
 
 }
 
@@ -87,24 +103,12 @@ void GameObject::SetMeshAsCube(PrimitiveBuilder* primitive_builder)
 	set_mesh(primitive_builder->GetDefaultCubeMesh());
 }
 
-void GameObject::SetMeshAsSphere(PrimitiveBuilder* primitive_builder)
+void GameObject::SetMeshAsSphere(PrimitiveBuilder* p)
 {
-	set_mesh(primitive_builder->GetDefaultSphereMesh());
+	set_mesh(p->GetDefaultSphereMesh());
 }
 
 void GameObject::SetMesh(gef::Mesh* mesh_)
 {
 	set_mesh(mesh_);
-}
-
-void GameObject::OnCollision(ObjectType game_object)
-{
-
-	
-
-}
-
-void GameObject::EndCollision(ObjectType game_object)
-{
-	
 }

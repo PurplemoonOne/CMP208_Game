@@ -1,61 +1,88 @@
 #pragma once
+#include "States/Context.h"
 
 
 class GameObject;
 class PhysicsComponent;
+class GraphicsData;
+class Collectable;
+class Context;
 
-
-struct Coordinates
+enum BlockID
 {
-	uint16 x;
-	uint16 y;
-	bool is_occupied;
+	null_ = 0,
+	mud,
+	mud_col,
+	grass,
+	water, 
+	lava,
+	ice,
+	coin,
+	gem,
+	goal,
+	oscillating_platform,
+	max
 };
 
 struct Chunk
 {
-	// @brief A chunk is a volume of space 
-	// populated with game objects and is 
-	// data structure
-	Chunk(int32 id_, gef::Vector4 world_pos);
-
-	// @brief Array for all the objects within this tile.
-	std::array<GameObject*, 5> game_objects;
-	std::array<PhysicsComponent*, 5> phys_components;
-
-	// @brief unique numerical identifier.
-	int32 chunk_id;
-
-	// @brief local coordinate system for a tile.
-	Coordinates local_coordinates[10][10];
-
-	// @brief World coordinates for a chunk
-	gef::Vector4 true_position;
+	uint32 id;
+	gef::Vector4 location;
+	float distance_to_player;
+	//std::array<GameObject*, 1024> blocks;
+	std::vector<GameObject*> blocks;
 };
 
 class LevelGenerator
 {
 public:
 
-	LevelGenerator(gef::Platform* platform_);
-
-	// @brief Generates world macro elements
-	void GenerateWorld();
-
-	// @brief Generates world intermediates 
-	void GenerateWorldPlatforms(PrimitiveBuilder* primitive_builder, b2World* world);
-
-	// @brief Getter used to grab a specific chunk. i.e for rendering.
-	Chunk* GetChunk(int32 id_) const { return chunks[id_]; }
+	LevelGenerator(Context* context, b2World* world);
 
 	/*..Attributes..*/
-	std::array<Chunk*, 1> chunks;
+
+
+	std::vector<GameObject*> blocks;
+	std::array<Chunk, 8> chunk;
+
+	// @brief Update the level's attributes.
+	void Update(float delta_time);
+
+	// @brief Update the current chunks attributes.
+	void UpdateChunk(float delta_time);
+
+	// @brief Render the entire level.
+	// @param[in] Takes a pointer to the 3D renderer.
+	// @note this was devised as a means to test the level. See 'void RenderChunk(gef::Renderer3D* renderer)' for an optimal implementation.
+	void Render(gef::Renderer3D* renderer);
+
+	// @brief Render chunks based on how many should be rendered and where the player currently is located.
+	// @param[in] Takes a pointer to the 3D renderer.
+	void RenderChunk(gef::Renderer3D* renderer);
+
+	// @brief Sort the chunks bases on the player's positional value.
+	// @param[in] A const argument to the player's position
+	// @param[in] A boolean to check if the player is moving.
+	void EvaluateChunkToRender(const gef::Vector4& player_position, bool is_moving);
+
+	// @brief Sets the number of tiles to be drawn in a given frame.
+	// @param[in] The number of tiles to be drawn. Cannot be 0 and may not exceed the maximum number of tiles.
+	void SetDrawDistance(int value);
+	const int& DrawDistance() { return number_of_tiles_to_render; }
 
 private:
 
+	int number_of_tiles_to_render;
+	uint32 current_chunk_id;
+	AudioEmitter audio_emitter;
+
+	// @brief Break the level into tiles to ease the number of draw calls per frame.
+	void SplitLevel();
+
+	// @brief Generate the level.
+	void Initialise(Context* context,b2World* world);
 
 	/*..Pointer to the platform..*/
-	gef::Platform* platform;
-
+	Context* context;
 };
 

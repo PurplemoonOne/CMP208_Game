@@ -32,13 +32,7 @@ void SplashScreen::OnEnter()
 	logo.set_width((float)context->GetPlatform()->width());
 
 
-	track_id = context->GetAudio()->AudioManager()->LoadMusic("Splash.wav", *context->GetPlatform());
-
-	gef::VolumeInfo vol_info;
-	vol_info.volume = 100.0f;
-
-	context->GetAudio()->AudioManager()->SetMusicVolumeInfo(vol_info);
-	context->GetAudio()->AudioManager()->PlayMusic();
+	context->GetAudio()->PlayMusic(MusicID::MENU);
 }
 
 void SplashScreen::Input(float delta_time)
@@ -78,6 +72,7 @@ void SplashScreen::OnExit()
 {
 	//Re-set some variables.
 	timer = 0;
+
 	
 	if (logo.texture())
 	{

@@ -5,7 +5,7 @@
 #include "States/MainMenu.h"
 #include "States/PauseMenu.h"
 #include "States/SplashScreen.h"
-#include "States/DeathScreen.h"
+#include "States/WinLoss.h"
 
 #include "Physics/ContactListener.h"
 

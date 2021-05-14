@@ -3,7 +3,7 @@
 
 Enemy::Enemy(gef::Platform& platform_)
 	:
-	GameObject(platform_),
+	GameObject(),
 	health(100.0f),
 	max_health(100.0f),
 	velocity(5.0f),
@@ -21,11 +21,11 @@ Enemy* Enemy::Create(gef::Platform& platform_)
 	return new Enemy(platform_);
 }
 
-void Enemy::Update(float delta_time, PhysicsComponent* phys_component)
+void Enemy::Update(float delta_time)
 {
-	if (phys_component != nullptr)
+	if (physics != nullptr)
 	{
-		UpdateMesh(phys_component);
+		UpdateMesh(physics);
 	}
 
 

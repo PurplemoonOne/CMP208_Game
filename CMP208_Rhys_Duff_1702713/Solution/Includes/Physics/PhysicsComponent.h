@@ -3,7 +3,6 @@
 #include "box2d/box2d.h"
 #include "maths/vector4.h"
 
-
 class GameObject;
 class AnimatedGameObject;
 
@@ -29,16 +28,16 @@ protected:
 	*	Physics component.
 	*/
 
-	PhysicsComponent(b2World* world_, GameObject* game_object, bool is_dynamic);
-	PhysicsComponent(b2World* world_, AnimatedGameObject* game_object, bool is_dynamic);
+	PhysicsComponent(b2World* world_, GameObject* game_object);
+	PhysicsComponent(b2World* world_, AnimatedGameObject* game_object);
 
 public:
 
 	~PhysicsComponent();
 
 	/// @brief Returns a new Physics component.
-	static PhysicsComponent* Create(b2World* world_, GameObject* game_object, bool is_dynamic);
-	static PhysicsComponent* Create(b2World* world_, AnimatedGameObject* game_object, bool is_dynamic);
+	static PhysicsComponent* Create(b2World* world_, GameObject* game_object);
+	static PhysicsComponent* Create(b2World* world_, AnimatedGameObject* game_object);
 
 	/// @brief update the attributes of the physics body.
 	/// @param[in] The bodies Denisty.
@@ -49,8 +48,8 @@ public:
 
 	/// @brief update the attributes of the physics body.
 	/// @param[in] The bodies Denisty.
-	/// @param[in] The bodies Weight (in KG).
-	/// @param[in] The bodies Friction (in N's)
+	/// @param[in] The bodies Weight.
+	/// @param[in] The bodies Friction.
 	inline void UpdatePhysicsParameters(float density, float weight, float friction);
 
 	/// @brief Returns the objects physics component.
@@ -61,7 +60,7 @@ public:
 
 private:
 
-	inline void InitialisePhysicsBody(bool is_dynamic);
+	inline void InitialisePhysicsBody();
 
 	/*..Pointer to the game object that *this* is attached to..*/
 	GameObject* game_object;

@@ -3,27 +3,38 @@
 
 
 /*..Pawn Include..*/
-#include "Gameobjects/SpaceShip.h"
 #include "Gameobjects/Player.h"
 #include "Gameobjects/Planet.h"
+#include "Vendor/motion_clip_player.h"
+#include "Goal.h"
 /*..Camera..*/
 #include "Camera/Camera.h"
 #include "Camera/ThirdPersonCamera.h"
 
 /*..Physics..*/
 #include "Physics/PhysicsComponent.h"
-
 #include "Physics/ContactListener.h"
+
+/*..Input..*/
 #include "Input/PawnController.h"
 
+/*..user Interface..*/
+#include "UserInterface/UserInterface.h"
 #include "UserInterface/UIButton.h"
 
 #include "Utilities/AssetLoader.h"
 
-#include "LevelGenerator.h"
+/*..Skybox..*/
+#include "Skybox.h"
+
+/*..Collectables..*/
+#include "Collectable.h"
+
 
 class AudioEmitter;
 class GraphicsData;
+class ParallaxBackground;
+class LevelGenerator;
 
 class GameState : public  State
 {
@@ -54,47 +65,42 @@ private:
 	gef::Renderer3D* renderer;
 
 	float fps_;
+	float timer;
+	gef::Font* font;
+	gef::Font* health;
+	gef::Font* time;
 
 	/*..Initialisers..*/
 	void InitFont();
-	void LoadLevelSoundEffects();
-	void CleanUpFont();
-	void DrawHUD(gef::SpriteRenderer* sprite_renderer);
 	void SetupLights();
 	void InitialiseScene();
 	void InitSkybox();
 	void InitCamera();
+	void InitPlayer(gef::Platform* platform);
 	void ResetScene();
 
-	void UpdateLevel(float delta_time);
+	//Render functions
+	void DrawHUD();
+	void RenderSkysphere(gef::Renderer3D* renderer);
 
-	gef::Font* font_;
+	void UpdatePlayer(float delta_time);
 
 	PrimitiveBuilder* primitive_builder_;
 
-	//My Includes
-	void InitPlayer(gef::Platform* platform);
 
-
-	//Gameobjects
-	std::vector<GameObject*> environment_objects;
-	std::vector<PhysicsComponent*> physics_components;
+	/*..Scene Game objects..*/
 	Player* player;
-	PhysicsComponent* player_phys;
-	GameObject* skybox;
 	ContactListener scene_contact_listener;
+	UserInterface* user_interface;
+	Skybox* skybox;
 
-	//Camera
+	/*..Camera..*/
 	ThirdPersonCamera* t_camera;
 
 	/*..Box 2D world..*/
 	b2World* world;
 
-	float yPos = 0.0f;
-
+	/*..Level generator..*/
 	LevelGenerator* level;
-
-	void LoadSceneModels(AssetLoader* asset_loader, gef::Platform* platform);
-
 };
 

@@ -10,6 +10,7 @@ namespace gef
 }
 
 class PawnController;
+class Audio;
 
 struct AnchorData
 {
@@ -27,14 +28,14 @@ class UIButton : public gef::Sprite
 {
 protected:
 
-	UIButton(std::string text, gef::Vector4 position, float depth);
+	UIButton(std::string text, gef::Vector4 position);
 
 public:
 
 	~UIButton();
 
 	// @brief Create a new Button object.
-	static UIButton* Create(std::string text, gef::Vector4 position, float depth);
+	static UIButton* Create(std::string text, gef::Vector4 position);
 
 	// @brief Create a new font object.
 	void InitFont(gef::Platform* platform_);
@@ -46,7 +47,7 @@ public:
 	virtual void Render(gef::SpriteRenderer* sprite_renderer);
 	
 	// @brief Method to check if mouse is hovering over the button.
-	bool IsHover(PawnController* pawn_controller);
+	bool IsHover(PawnController* pawn_controller, Audio* audio);
 
 	// @brief Class Getters.
 
@@ -56,6 +57,9 @@ public:
 	inline const std::string& GetText() { return text; }
 
 	void CalculateAnchors();
+
+	virtual inline void IsSelected(bool value) { is_selected = value; }
+	inline const bool& CurrentlySelected() { return is_selected; }
 
 protected:
 
@@ -71,6 +75,6 @@ protected:
 	// @brief Anchors representing our 4 corners of the button.
 	AnchorData anchors;
 
-
+	bool is_selected;
 
 };

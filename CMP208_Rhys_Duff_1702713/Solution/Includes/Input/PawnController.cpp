@@ -8,16 +8,16 @@
 /*..Include command..*/
 #include "Gameplay/Event.h"
 
-/*..Camera..*/
-#include "Camera/Camera.h"
+#include "system/platform.h"
 
 PawnController::PawnController(gef::Platform& p_ptr, gef::InputManager* input_)
 	:
-	platform_ptr(&p_ptr),
+	platform(&p_ptr),
 	input_manager(NULL),
 	active_touch_id_(-1),
 	touch_position_(gef::Vector2::kZero),
-	touch_in_manager(nullptr)
+	touch_in_manager(nullptr),
+	using_controller(false)
 {
 	/*..Init data..*/
 
@@ -81,21 +81,26 @@ void PawnController::ProcessInput(float delta_time)
 	//Proceed to execute the event on a valid object.
 	input_manager->Update();
 
-	ProcessTouchInput();
-
 	//Read from the controller and keyboard.
 	Event* sce_event = controller->ControllerHandler();
 	Event* key_event = keyboard->KeyEvents();
 
 	if (sce_event)
 	{
+		using_controller = true;
 		ExecuteEvent(sce_event, delta_time);
 	}
 	else if (key_event)
 	{
+		using_controller = false;
 		ExecuteEvent(key_event, delta_time);
 	}
+	else
+	{
+		using_controller = false;
+	}
 
+	ProcessTouchInput();
 }
 
 void PawnController::ExecuteEvent(Event* event_, float delta_time)
@@ -148,6 +153,22 @@ void PawnController::ProcessTouchInput()
 	const gef::TouchInputManager* touch_input = input_manager->touch_manager();
 
 	/*..This frames mouse information..*/
+	mouse_data.coordinates = touch_input->mouse_position();
+
+	// @note Compare mouse coordinates to last frame.
+	// If they are the same we must be using the controller.
+	// Otherwise we are probably moving the mouse around.
+	if ((int)mouse_data.coordinates.x != (int)mouse_data.prev_coordinates.x)
+	{
+		SetControllerActive(false);
+	}
+	else //if((int)mouse_data.coordinates.x == (int)mouse_data.prev_coordinates.x)
+	{
+		SetControllerActive(true);
+	}
+
+	mouse_data.prev_coordinates = mouse_data.coordinates;
+	mouse_data.left_button_state = MouseState::NULL_;
 
 	if (touch_input && (touch_input->max_num_panels() > 0))
 	{
@@ -173,6 +194,7 @@ void PawnController::ProcessTouchInput()
 					
 					mouse_data.coordinates = touch_position_;
 					mouse_data.left_button_state = MouseState::CLICKED;
+					using_controller = false;
 				}
 			}
 			else if (active_touch_id_ == touch->id)
@@ -186,7 +208,7 @@ void PawnController::ProcessTouchInput()
 
 					mouse_data.coordinates = touch_position_;
 					mouse_data.left_button_state = MouseState::IS_DOWN;
-
+					using_controller = false;
 				}
 				else if (touch->type == gef::TT_RELEASED)
 				{
@@ -198,6 +220,7 @@ void PawnController::ProcessTouchInput()
 
 					mouse_data.coordinates = touch_position_;
 					mouse_data.left_button_state = MouseState::RELEASED;
+					using_controller = false;
 				}
 			}
 		}

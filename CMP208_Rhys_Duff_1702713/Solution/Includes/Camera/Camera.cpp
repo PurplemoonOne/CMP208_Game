@@ -10,7 +10,7 @@
 #define PI = 3.1415
 
 Camera::Camera(gef::Platform* platform_)
-	:SceneComponent(*platform_),
+	:SceneComponent(),
 	platform(platform_),
 	camera_target(gef::Vector4::kZero),
 	camera_up(gef::Vector4::kZero)

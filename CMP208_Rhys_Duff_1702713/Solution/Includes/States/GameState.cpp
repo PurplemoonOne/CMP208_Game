@@ -2,22 +2,32 @@
 #include "GameState.h"
 
 #include "Context.h"
+#include "system/platform.h"
+
+/*..Level Generator..*/
+#include "LevelGenerator.h"
+#include "ParallaxBackground.h"
 
 GameState::GameState(gef::Platform* platform_, GraphicsData* asset_loader)
 	:
 	player(nullptr),
+	skybox(nullptr),
 	world(nullptr),
-	level(nullptr)
+	level(nullptr),
+	primitive_builder_(nullptr),
+	t_camera(nullptr),
+	time(nullptr),
+	font(nullptr),
+	user_interface(nullptr),
+	fps_(0.0f),
+	timer(0.0f)
 {
-	font_ = nullptr;
+	/*..Create a new 3D renderer..*/
 	renderer = gef::Renderer3D::Create(*platform_);
 }
 
 GameState::~GameState()
 {
-	//Kill the font.
-	CleanUpFont();
-
 	if (player) {
 		delete player;
 		player = nullptr;
@@ -33,22 +43,27 @@ void GameState::OnEnter()
 	gef::Platform* platform = context->GetPlatform();
 	AssetLoader* asset_loader = context->GFXData()->GetAssetLoader();
 
+	/*..Load the models from disc..*/
+	context->GFXData()->LoadModels();
+	context->GetAudio()->PlayMusic(MusicID::LEVEL);
+
+	//Fonts
+	InitFont();
+
 	//Physics & Player.
 	InitialiseScene();
+
 	//Lighting
 	SetupLights();
-	//Audio
-	LoadLevelSoundEffects();
-	//Font
-	InitFont();
+
 	//Camera
 	InitCamera();
-	//Skybox
-	InitSkybox();
+
 	//Set the collision callback methods.
 	world->SetContactListener(&scene_contact_listener);
+
 	//Posses the player's physics body.
-	context->GetInput()->PossessPhysObject(player_phys);
+	context->GetInput()->PosessPawn(player);
 }
 
 void GameState::Input(float delta_time)
@@ -57,8 +72,6 @@ void GameState::Input(float delta_time)
 
 	//Update input devices.
 	input->GetInputManager()->Update();
-	
-
 
 	gef::Keyboard* keyboard = input->GetInputManager()->keyboard();
 
@@ -68,7 +81,7 @@ void GameState::Input(float delta_time)
 	}
 
 	//Process Input
-	player->BroadcastInput(false);
+
 	input->ProcessInput(delta_time);
 }
 
@@ -89,41 +102,27 @@ bool GameState::Update(float delta_time)
 		//Game Logic.
 
 		//Audio
-		//context->GetAudio3D()->listener().SetTransform(player->transform());
-		//context->GetAudio3D()->Update();
+		context->GetAudio()->GetAudio3D()->listener().SetTransform(player->transform());
+		context->GetAudio()->GetAudio3D()->Update();
 
 		//For each partition - update the gameobjects and it's physics component.
-		UpdateLevel(delta_time);
-
-		//Update the scenes game objects and their respective physics bodies.
-		for (int index = 0; index < environment_objects.size(); ++index)
-		{
-			if (environment_objects.at(index) != nullptr)
-			{
-				physics_components.at(index)->Update();
-
-				environment_objects.at(index)->Update(delta_time, physics_components.at(index));
-			}
-		}
-	
-
-		//Update the player.
-		if (player != nullptr)
-		{
-			player->Update(delta_time, player_phys);
-		}
-
+		// 
+		// 
 		skybox->SetPosition(player->GetPosition().x(), player->GetPosition().y(), player->GetPosition().z());
 		skybox->Update(delta_time);
 
-		
+		//level->Update(delta_time);
+		level->EvaluateChunkToRender(player->GetPosition(), true);
+		level->UpdateChunk(delta_time);
+		UpdatePlayer(delta_time);
+
 		//End Game Logic.
 		////////////////////////////////////////////////////////////////////////////////////
 		////////////////////////////////////////////////////////////////////////////////////
 		//Physics Step.
 	
-		const uint32 velocity_iterations = 8;
-		const uint32 position_iterations = 4;
+		const uint32 velocity_iterations = 4;
+		const uint32 position_iterations = 2;
 	
 		/*
 		*
@@ -137,53 +136,28 @@ bool GameState::Update(float delta_time)
 		//End Physics Step.
 		////////////////////////////////////////////////////////////////////////////////////
 
-		//If the player has fallen of the world end the game.
-		if (player && player->GetPosition().y() < -2.0f)
-		{
-			context->Reset(true);
-			context->Transition(States::DEATH);
-		}
-
 		return true;
 }
 
 void GameState::Render()
 {
-	gef::SpriteRenderer* sprite_renderer = this->context->SpriteRenderer();
-
+	gef::SpriteRenderer* sprite_renderer = context->SpriteRenderer();
 
 	//Set the correct view matrices for our camera.
 	t_camera->SetSceneMatrices(renderer);
 
 	// Being rendering all of our 3D geometry.
-	renderer->Begin();
+	renderer->Begin(true);
+	RenderSkysphere(renderer);
 
-	//Draw the gfx contained in a chunk.
-	if (level != nullptr)
-	{
-		for (auto& chunk : level->chunks)
+		if (player != nullptr)
 		{
-			for (int j = 0; j < chunk->game_objects.size(); ++j)
-			{
-				if (chunk->game_objects[j] != nullptr)
-				{
-					renderer->DrawMesh(*chunk->game_objects[j]);
-				}
-			}
+			renderer->DrawSkinnedMesh(*player, player->bone_matrices());
 		}
-	}
 
-	for (auto& object : environment_objects)
-	{
-		if (object != nullptr)
-		{
-			renderer->DrawMesh(*object);
-		}
-		
-	}
-
-	if(player != nullptr)
-	renderer->DrawSkinnedMesh(*player, player->bone_matrices());
+		//Draw the gfx contained in a chunk.
+		//level->Render(renderer);
+		level->RenderChunk(renderer);
 
 	//End rendering.
 	renderer->End();
@@ -191,8 +165,9 @@ void GameState::Render()
 
 	// start drawing sprites, don't clear the frame buffer
 	sprite_renderer->Begin(false);
-	
-		DrawHUD(sprite_renderer);
+
+	user_interface->DrawScore(sprite_renderer, player->GetScore());
+	user_interface->DrawHealth(sprite_renderer, player->GetHealth());
 
 	sprite_renderer->End();
 }
@@ -201,48 +176,27 @@ void GameState::OnExit()
 {
 	// Clean up shaders.
 	renderer->default_shader_data().CleanUp();
+	context->GetAudio()->PlayMusic(MusicID::null);
 
-	delete font_;
-	font_ = nullptr;
-
+	if (font)
+	{
+		delete font;
+		font = nullptr;
+	}
+	if (time)
+	{
+		delete time;
+		time = nullptr;
+	}
+	if (health)
+	{
+		delete health;
+		health = nullptr;
+	}
 
 	ResetScene();
 }
 
-void GameState::InitFont()
-{
-	font_ = new gef::Font(*context->GetPlatform());
-	font_->Load("comic_sans");
-}
-
-void GameState::CleanUpFont()
-{
-	if (font_ != nullptr)
-	{
-		delete font_;
-		font_ = nullptr;
-	}
-}
-
-void GameState::DrawHUD(gef::SpriteRenderer* sprite_renderer)
-{
-	float x = t_camera->CameraLookAt().x();
-	float y = t_camera->CameraLookAt().y();
-	float z = t_camera->CameraLookAt().z();
-
-	if (font_)
-	{
-		// display frame rate
-		font_->RenderText(sprite_renderer,
-			gef::Vector4(200.0f, 510.0f, -0.9f),
-			1.0f, 0xffffffff, gef::TJ_LEFT,
-			"Camera Target: %.1f %.1f %.1f",
-			x,
-			y,
-			z
-		);
-	}
-}
 
 void GameState::SetupLights()
 {
@@ -272,26 +226,16 @@ void GameState::InitialiseScene()
 
 		InitPlayer(platform);
 
+		//Skybox
+		InitSkybox();
+	
 		//Set the collision callback methods.
 		world->SetContactListener(&scene_contact_listener);
 
-		//level = new LevelGenerator(platform);
-		//level->GenerateWorld();
-		//level->GenerateWorldPlatforms(primitive_builder_, world);
+		level = new LevelGenerator(context, world);
 
-	
-		GameObject* ground = GameObject::Create(*platform);
-		ground->SetMeshAsCube(primitive_builder_);
-		ground->SetObjectType(ObjectType::environment_);
-		ground->SetPosition(0.0f, -2, 0.0f);
-		ground->SetScale(100.0f, 1.0f, 2.0f);
-		environment_objects.push_back(ground);
-
-		// Physics body.
-		PhysicsComponent* ground_body = PhysicsComponent::Create(world, ground, false);
-		ground_body->CreateFixture(PhysicsComponent::Shape::BOX, 0.0f, 0.1f, 1.0f, false);
-		physics_components.push_back(ground_body);
-
+		user_interface = UserInterface::Create(context->GFXData());
+		user_interface->InitFont(context->GetPlatform());
 		//Avoiding memory leaks.
 		//Only Transitioning to the main menu 
 		//Resets the data.
@@ -301,14 +245,12 @@ void GameState::InitialiseScene()
 
 void GameState::InitSkybox()
 {
-	gef::Platform* platform = context->GetPlatform();
-	skybox = GameObject::Create(*context->GetPlatform());
-	skybox->SetPosition(0.0f, 0.0f, 0.0f);
-	skybox->SetScale(10.0f, 10.0f, 10.0f);
-
-
-	//gef::Scene* scn_ = context->GetAssetLoader()->LoadSceneAssets(platform, "../assets/skybox.scn");
-	context->GFXData()->GetAssetLoader()->LoadMesh("../assets/skybox.scn");
+	skybox = Skybox::Create();
+	skybox->SetMesh(context->GFXData()->GetMesh(ModelID::SkySphere));
+	skybox->SetObjectType(ObjectType::environment_dynamic_);
+	skybox->SetPosition(player->GetPosition().x(), player->GetPosition().y(), player->GetPosition().z());
+	skybox->SetScale(20.0f, 20.0f, 20.0f);
+	skybox->SetAlive(true);
 }
 
 void GameState::InitCamera()
@@ -316,7 +258,6 @@ void GameState::InitCamera()
 	//Setup the camera.
 	t_camera = ThirdPersonCamera::Create(context->GetPlatform());
 	t_camera->InitialisePerspectiveMatrices();
-
 }
 
 void GameState::ResetScene()
@@ -324,6 +265,9 @@ void GameState::ResetScene()
 	// @note If context is nullptr then we haven't transitioned to this state
 	if (context->IsReset())
 	{
+		//Clean up models if system reset.
+		context->GFXData()->ClearMesh();
+
 		delete level;
 		level = nullptr;
 
@@ -333,11 +277,9 @@ void GameState::ResetScene()
 		delete player;
 		player = nullptr;
 
-		delete player_phys;
-		player_phys = nullptr;
-
 		delete primitive_builder_;
 		primitive_builder_ = nullptr;
+
 
 		if (skybox)
 		{
@@ -345,45 +287,103 @@ void GameState::ResetScene()
 			skybox = nullptr;
 		}
 
-		for (auto& enviro : environment_objects)
-		{
-			delete enviro;
-			enviro = nullptr;
-		}
-
-		for (auto& physics : physics_components)
-		{
-			delete physics;
-			physics = nullptr;
-		}
-
 		renderer->default_shader_data().CleanUp();
 	}
-	CleanUpFont();
+
 }
 
-void GameState::UpdateLevel(float delta_time)
-{
-	if (level != nullptr)
-	{
-		for (auto& chunk : level->chunks)
-		{
-			for (int j = 0; j < chunk->game_objects.size(); ++j)
-			{
-				//Ensure we're not dealing with a NULL object - there are some.
-				if (chunk->game_objects.at(j) != nullptr)
-				{
-					if (chunk->phys_components.at(j) != nullptr)
-					{
-						//Update the chunks.
-						chunk->phys_components.at(j)->Update();
 
-						//Get the physics component for better readability.
-						PhysicsComponent* phys_component = chunk->phys_components.at(j);
-						chunk->game_objects.at(j)->Update(delta_time, phys_component);
-					}
-				}
-			}
+
+void GameState::DrawHUD()
+{
+	if (font)
+	{
+		font->RenderText(
+			context->SpriteRenderer(),
+			gef::Vector4(500.0f, 250.0f, -0.9f),
+			1.0f,
+			0xffffffff,
+			gef::TextJustification::TJ_LEFT,
+			"Score : %.1f",
+			player->GetScore()
+		);
+	}
+
+	if (health)
+	{
+		health->RenderText(
+			context->SpriteRenderer(),
+			gef::Vector4(100.0f, 250.0f, -0.9f),
+			1.0f,
+			0xffffffff,
+			gef::TextJustification::TJ_LEFT,
+			"Health : %.1f",
+			player->GetHealth()
+		);
+	}
+
+	if (time)
+	{
+		time->RenderText(
+			context->SpriteRenderer(),
+			gef::Vector4(
+				(context->GetPlatform()->width() / 2.0f),
+				(context->GetPlatform()->height() / 6.0f),
+				-0.9f),
+			1.0f,
+			0xffffffff,
+			gef::TextJustification::TJ_LEFT,
+			"Time Remaining : %.1f",
+			timer
+
+		);
+	}
+}
+
+void GameState::RenderSkysphere(gef::Renderer3D* renderer)
+{
+	renderer->SetDepthTest(gef::Renderer3D::DepthTest::kAlways);
+	renderer->DrawMesh(*skybox);
+	renderer->SetDepthTest(gef::Renderer3D::DepthTest::kLessEqual);
+}
+
+void GameState::UpdatePlayer(float delta_time)
+{
+	//Update the player.
+	if (player != nullptr)
+	{
+		player->Update(delta_time);
+		user_interface->Update(context->GetPlatform());
+
+
+		//Update score.
+		WinLoseScreen* wl = nullptr;
+
+		//Cast to winloss screen.
+		wl = static_cast<WinLoseScreen*>(this->context->GetState(States::DEATH));
+
+		if (wl != nullptr) 
+		{
+			wl->GetFinalScore(player->GetScore());
+		}
+
+		if (player->ReachedPortal())
+		{
+			context->SetHasWon(true);
+			context->Reset(true);
+			context->SetHasWon(true);
+			context->Transition(States::DEATH);
+		}
+	}
+
+	if (player != nullptr)
+	{
+		//If the player has fallen of the world end the game.
+		if (player->GetPosition().y() < -2.0f)
+		{
+			context->Reset(true);
+			context->SetHasWon(false);
+			context->Transition(States::DEATH);
 		}
 	}
 }
@@ -395,39 +395,47 @@ void GameState::InitPlayer(gef::Platform* platform)
 	GraphicsData* gfx_data = context->GFXData();
 
 	/*..Create our player..*/
-	player = Player::Create(*asset_loader->LoadSkeleton("../assets/Robot/robot.scn"), *platform);
-	/*..Store our mesh in the data class..*/
-	gfx_data->InsertModel(ModelID::Player, asset_loader->LoadMesh("../assets/Robot/robot.scn"));
+	player = Player::Create(*asset_loader->LoadSkeleton("../assets/Robot/robot.scn"));
 	/*..Using the player ID assign a pointer to the mesh..*/
-	player->set_mesh(gfx_data->GetMesh(ModelID::Player));
+	player->set_mesh(gfx_data->GetMesh(ModelID::Player));				//Grab mesh from data class.
+	player->IgnoreZRotation(true);										//Ignore Z rotation, box2D will not influence Z rotation.
+	player->SetPosition(10.0f, 25.0f, 10.0f);							//Set Position
+	player->SetRotation(0.0f, 90.0f, 0.0f);								//Set Rotation
+	player->SetScale(1.0f, 1.0f, 1.0f);									//Set Scale
+	player->SetObjectType(ObjectType::dynamic_pawn_);					//Object type
 
-	player->SetPosition(0.0f, 2.0f, 0.0f);
-	player->SetRotation(0.0f, 90.0f, 0.0f);
-	player->SetScale(1.0f, 1.0f, 1.0f);
+	player->InsertAnimation(AnimationID::idle, asset_loader->LoadAnimation("../assets/Robot/Animation/@idle01.scn", ""));
+	player->InsertAnimation(AnimationID::walk, asset_loader->LoadAnimation("../assets/Robot/Animation/@walk.scn", ""));
+	player->InsertAnimation(AnimationID::run, asset_loader->LoadAnimation("../assets/Robot/Animation/@run.scn", ""));
+	player->InsertAnimation(AnimationID::jump, asset_loader->LoadAnimation("../assets/Robot/Animation/@jump.scn", ""));
+	player->InsertAnimation(AnimationID::fall, asset_loader->LoadAnimation("../assets/Robot/Animation/@fall.scn", ""));
+	player->InsertAnimation(AnimationID::fall_to_roll, asset_loader->LoadAnimation("../assets/Robot/Animation/@fall_roll.scn", ""));
 
-	player->SetObjectType(ObjectType::dynamic_pawn_);
-	player->idle = asset_loader->LoadAnimation("../assets/Robot/Animation/@idle01.scn", "");
-	player->walk = asset_loader->LoadAnimation("../assets/Robot/Animation/@walk.scn", "");
 
-	if (player->idle)
+	if (player->GetAnimation(AnimationID::idle))
 	{
-		player->AnimationPlayer()->set_clip(player->idle);
+		player->AnimationPlayer()->set_clip(player->GetAnimation(AnimationID::idle));
 		player->AnimationPlayer()->set_anim_time(0.0f);
 		player->AnimationPlayer()->set_looping(true);
 	}
 
-	player_phys = PhysicsComponent::Create(world, player, true);
-	player_phys->CreateFixture(PhysicsComponent::Shape::BOX, 0.3f, 0.4f, 0.5f, false);
+	/*..Create the physics body for the player..*/
+	player->AttachPhysicsComponent(world);
+	player->InitialisePhysicsFixture(PhysicsComponent::Shape::BOX, 0.4f, 0.6f, 1.0f, false);
 }
 
 
-void GameState::LoadLevelSoundEffects()
+void GameState::InitFont()
 {
-	//Load SFX
-}
+	gef::Platform* platform = context->GetPlatform();
 
-void GameState::LoadSceneModels(AssetLoader* asset_loader, gef::Platform* platform)
-{
-	//Load Scene
+	font = new gef::Font(*platform);
+	font->Load("comic_sans");
+
+	health = new gef::Font(*platform);
+	health->Load("comic_sans");
+
+	time = new gef::Font(*platform);
+	time->Load("comic_sans");
 }
 

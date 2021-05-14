@@ -25,16 +25,20 @@ public:
 
 private:
 
-	gef::ImageData image;
+	void UpdateButtonTextures();
 
-	std::array<UIButton*, 6> buttons;
+	void IsMouseHoveringOverButton();
+	void UpdateTransition();
 
-	bool game_state;
-	bool options;
-	bool exit;
+	std::array<UIButton*, 3> buttons;
+	gef::Sprite* backdrop;
 
+	int index;
 	float session_clock;
+	bool button_pressed;
+	bool not_exit;
 
-	void SetupLights();
+	void LoadBackdrop();
+	void LoadButtons();
 
 };

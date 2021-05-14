@@ -19,7 +19,7 @@ public:
 
 	/// @brief Updates the gameobjets behaviour.
 	/// @param[in] Change in time since the last frame.
-	virtual void Update(float delta_time, PhysicsComponent* phys_component = 0) override;
+	virtual void Update(float delta_time) override;
 
 	/*..Collisions..*/
 

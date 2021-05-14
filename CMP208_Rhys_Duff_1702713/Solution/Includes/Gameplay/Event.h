@@ -48,3 +48,12 @@ public:
 	Event* action;
 	bool bound;
 };
+
+// @brief Joysticks can have up to 4 actions mapped.
+// @note Using the angle can invoke different actions.
+class Joystick
+{
+public:
+	Event* action[4];
+	bool bound[4];
+};

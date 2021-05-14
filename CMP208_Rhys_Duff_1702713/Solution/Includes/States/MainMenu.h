@@ -3,6 +3,7 @@
 #include "graphics/image_data.h"
 #include "GameObjects/GameObject.h"
 #include "Camera/Camera.h"
+#include "ParallaxBackground.h"
 
 class AssetLoader;
 class UIButton;
@@ -24,25 +25,20 @@ public:
 private:
 
 	void LoadButtons();
-	
-	void SetupCamera();
 	void LoadBackdrop();
-
+	void IsMouseHoveringOverButton();
+	void UpdateTransition();
+	void UpdateButtonTextures();
 	void AnimateTitle(float delta_time);
 
 	//Main menu scene.
-	Camera* camera;
-	std::array<GameObject*, 2> chunks;
-	gef::ImageData image;
-	gef::Sprite* backdrop;
 	gef::Sprite* title;
-	std::array<UIButton*, 6> buttons;
+	std::array<UIButton*, 3> buttons;
+	ParallaxBackground* parallax_bg;
 
-	bool game_state;
-	bool options;
-	bool exit;
-
+	int index;
 	float session_clock;
-
+	bool button_pressed;
+	bool not_exit;
 };
 

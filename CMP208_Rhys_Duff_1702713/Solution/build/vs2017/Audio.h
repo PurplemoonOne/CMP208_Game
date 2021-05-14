@@ -5,6 +5,10 @@ class Audio3D;
 enum class sfxid
 {
 	null = -1,
+	coin_sfx,
+	portal_sfx,
+	button_click_a,
+	button_click_b
 };
 
 enum class MusicID
@@ -16,7 +20,7 @@ enum class MusicID
 
 struct SFX
 {
-	std::string filePath = 0;
+	std::string file_path;
 	Int32 index = -1;
 };
 
@@ -31,9 +35,9 @@ public:
 	static Audio* Create(gef::Platform& platform);
 
 	//@brief Load all sound effects off disk.
-	void InitialiseSoundEffects();
+	void InitialiseSoundEffects(gef::Platform* platform);
 	//@brief Load all music off disk
-	void InitialiseMusic();
+	void InitialiseMusic(gef::Platform* platform);
 
 	// @brief Update 3D audio.
 	void Update();

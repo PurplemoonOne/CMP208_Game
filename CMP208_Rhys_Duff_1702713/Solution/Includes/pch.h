@@ -32,6 +32,7 @@
 
 //Maths
 #include <maths/math_utils.h>
+#include <math.h>
 
 //Input
 #include "input/input_manager.h"

@@ -34,6 +34,8 @@ enum class MouseState
 struct MouseData
 {
 	gef::Vector2 coordinates;
+	gef::Vector2 prev_coordinates;
+
 	MouseState left_button_state;
 	MouseState right_button_state;
 };
@@ -107,6 +109,9 @@ public:
 	// @brief Contains all the gameplay related objects.
 	Events actions;
 
+	inline const bool& ControllerActive() { return using_controller; }
+	inline void SetControllerActive(bool value) { using_controller = value; }
+
 private:
 
 	void ExecuteEvent(Event* event_, float delta_time);
@@ -136,7 +141,7 @@ private:
 	gef::InputManager* input_manager;
 
 	/*..Pointer to the platform..*/
-	gef::Platform* platform_ptr;
+	gef::Platform* platform;
 
 	/// @brief Pointer to the current player in the scene.
 	Pawn* pawn;
@@ -145,6 +150,6 @@ private:
 
 	/// @brief Tracks whether we can grab the mouse coordinates checking if we are pressing left mouse button.
 	bool can_get_mouse_coords = false;
-
+	bool using_controller;
 
 };

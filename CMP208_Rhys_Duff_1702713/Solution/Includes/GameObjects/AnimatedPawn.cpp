@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "AnimatedPawn.h"
 
-AnimatedPawn::AnimatedPawn(const gef::Skeleton& skeleton, gef::Platform& platform)
+AnimatedPawn::AnimatedPawn(const gef::Skeleton& skeleton)
 	:
-	AnimatedGameObject(skeleton, platform)
+	AnimatedGameObject(skeleton)
 {
 }
 
@@ -11,18 +11,15 @@ AnimatedPawn::~AnimatedPawn()
 {
 }
 
-AnimatedPawn* AnimatedPawn::Create(const gef::Skeleton& skeleton, gef::Platform& platform)
+AnimatedPawn* AnimatedPawn::Create(const gef::Skeleton& skeleton)
 {
-	return new AnimatedPawn(skeleton, platform);
+	return new AnimatedPawn(skeleton);
 }
 
 
-void AnimatedPawn::Update(float delta_time, PhysicsComponent* physics)
+void AnimatedPawn::Update(float delta_time)
 {
-	if (physics)
-	{
-		UpdateMesh(physics);
-	}
+
 
 
 	AnimatedGameObject::Update(delta_time);

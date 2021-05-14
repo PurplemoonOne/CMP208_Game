@@ -17,7 +17,7 @@ class SceneComponent
 {
 protected:
 
-	SceneComponent(gef::Platform& platform_);
+	SceneComponent();
 	~SceneComponent(){}
 
 
@@ -25,12 +25,12 @@ public:
 
 	// @brief Returns a new pointer to this object which is allocated on the heap.
 	// @param[in] Takes the current system platform as an argument.
-	SceneComponent* Create(gef::Platform& platform_);
+	SceneComponent* Create();
 
 
 	// @brief Update this objects attributes.
 	// @param[in] Delta time since last frame.
-	virtual void Update(float delta_time, PhysicsComponent* physics_component = 0);
+	virtual void Update(float delta_time);
 
 public:
 

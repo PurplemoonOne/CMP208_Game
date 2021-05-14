@@ -2,7 +2,7 @@
 #include "GameState.h"
 #include "MainMenu.h"
 #include "SplashScreen.h"
-#include "DeathScreen.h"
+#include "WinLoss.h"
 #include "PauseMenu.h"
 #include "Options.h"
 
@@ -40,6 +40,9 @@ public:
 	//@brief return the application's current state.
 	inline State* CurrentState() const { return state; }
 
+	// @brief Get a specific state.
+	inline State* GetState(States id) const { return map.at(id); }
+
 	// @Grab the input.
 	inline PawnController* GetInput() const { return pawn_controller; }
 
@@ -57,6 +60,9 @@ public:
 	inline void Reset(bool running) { reset = running; }
 	inline const bool& IsReset() { return reset; }
 
+	inline void SetHasWon(bool value) { win = value; }
+	inline const bool& HasWon() { return win; }
+
 private:
 	/*..Store our state instances in a map object..*/
 	std::map<States, State*> map;
@@ -65,6 +71,7 @@ private:
 	State* state;
 	bool is_game_running;
 	bool reset;
+	bool win;
 
 	/*..Application Variables..*/
 	gef::SpriteRenderer* sprite_renderer;

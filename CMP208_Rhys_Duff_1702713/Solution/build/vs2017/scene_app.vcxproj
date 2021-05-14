@@ -207,8 +207,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Includes\Animation\AnimDriver.cpp" />
-    <ClCompile Include="..\..\Includes\Animation\WalkAnim.cpp" />
     <ClCompile Include="..\..\Includes\Camera\Camera.cpp" />
     <ClCompile Include="..\..\Includes\Camera\ThirdPersonCamera.cpp" />
     <ClCompile Include="..\..\Includes\GameObjects\AnimatedGameObject.cpp" />
@@ -232,7 +230,7 @@
     <ClCompile Include="..\..\Includes\Physics\PhysicsComponent.cpp" />
     <ClCompile Include="..\..\Includes\scene_app.cpp" />
     <ClCompile Include="..\..\Includes\States\Context.cpp" />
-    <ClCompile Include="..\..\Includes\States\DeathScreen.cpp" />
+    <ClCompile Include="..\..\Includes\States\WinLoss.cpp" />
     <ClCompile Include="..\..\Includes\States\GameState.cpp" />
     <ClCompile Include="..\..\Includes\States\MainMenu.cpp" />
     <ClCompile Include="..\..\Includes\States\Options.cpp" />
@@ -269,13 +267,17 @@
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Collectable.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Goal.cpp" />
     <ClCompile Include="GraphicsData.cpp" />
+    <ClCompile Include="Grass.cpp" />
+    <ClCompile Include="Ice.cpp" />
+    <ClCompile Include="Lava.cpp" />
     <ClCompile Include="LevelGenerator.cpp" />
+    <ClCompile Include="MovingPlatform.cpp" />
+    <ClCompile Include="ParallaxBackground.cpp" />
+    <ClCompile Include="Skybox.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Includes\Animation\AnimDriver.h" />
-    <ClInclude Include="..\..\Includes\Animation\AnimState.h" />
-    <ClInclude Include="..\..\Includes\Animation\WalkAnim.h" />
     <ClInclude Include="..\..\Includes\Camera\Camera.h" />
     <ClInclude Include="..\..\Includes\Camera\ThirdPersonCamera.h" />
     <ClInclude Include="..\..\Includes\GameObjects\AnimatedGameObject.h" />
@@ -285,8 +287,6 @@
     <ClInclude Include="..\..\Includes\GameObjects\Pawn.h" />
     <ClInclude Include="..\..\Includes\GameObjects\Player.h" />
     <ClInclude Include="..\..\Includes\GameObjects\SceneComponent.h" />
-    <ClInclude Include="..\..\Includes\Gameplay\AddForceToLeftEngine.h" />
-    <ClInclude Include="..\..\Includes\Gameplay\AddForceToRightEngine.h" />
     <ClInclude Include="..\..\Includes\Gameplay\Event.h" />
     <ClInclude Include="..\..\Includes\Gameplay\Gameplay.h" />
     <ClInclude Include="..\..\Includes\Gameplay\Jump.h" />
@@ -299,7 +299,7 @@
     <ClInclude Include="..\..\Includes\Physics\PhysicsComponent.h" />
     <ClInclude Include="..\..\Includes\scene_app.h" />
     <ClInclude Include="..\..\Includes\States\Context.h" />
-    <ClInclude Include="..\..\Includes\States\DeathScreen.h" />
+    <ClInclude Include="..\..\Includes\States\WinLoss.h" />
     <ClInclude Include="..\..\Includes\States\GameState.h" />
     <ClInclude Include="..\..\Includes\States\MainMenu.h" />
     <ClInclude Include="..\..\Includes\States\Options.h" />
@@ -318,8 +318,17 @@
     <ClInclude Include="Audio.h" />
     <ClInclude Include="Collectable.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Goal.h" />
     <ClInclude Include="GraphicsData.h" />
+    <ClInclude Include="Grass.h" />
+    <ClInclude Include="Ice.h" />
+    <ClInclude Include="Lava.h" />
+    <ClInclude Include="Layer.h" />
     <ClInclude Include="LevelGenerator.h" />
+    <ClInclude Include="MapData.h" />
+    <ClInclude Include="MovingPlatform.h" />
+    <ClInclude Include="ParallaxBackground.h" />
+    <ClInclude Include="Skybox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

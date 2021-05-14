@@ -4,7 +4,7 @@
 
 /*..graphics headers..*/
 #include <graphics/mesh_instance.h>
-
+#include "Physics/PhysicsComponent.h"
 class PhysicsComponent;
 
 #include "ObjectType.h"
@@ -27,41 +27,41 @@ protected:
 
 	/// @brief Actor constructor.
 	/// @param[in] Reference to the current platform.
-	GameObject(gef::Platform& platform_);
+	GameObject();
 
 
 public:
 
 	/// @brief Default constructor.
-	~GameObject() {}
+	~GameObject();
 
 	/*..Creation..*/
 
 	/// @brief Returns a new Actor object which is allocated on to the heap.
 	/// @param[in] Reference to the current platform.
-	static GameObject* Create(gef::Platform& platform_);
+	static GameObject* Create();
 
 	/*..GFX..*/
 
 	/// @brief Initialises and sets the static mesh for the Actor.
 	/// @param[in] Takes a pointer to a primitive builder.
-	virtual void SetMeshAsCube(PrimitiveBuilder* primitive_builder);
+	void SetMeshAsCube(PrimitiveBuilder* primitive_builder);
 
 	/// @brief Initialises and sets the static mesh for the Actor.
 	/// @param[in] Takes a pointer to a primitive builder.
-	virtual void SetMeshAsSphere(PrimitiveBuilder* primitive_builder);
+	void SetMeshAsSphere(PrimitiveBuilder* primitive_builder);
 
 	// @brief Applies a custom mesh to the object.
-	virtual void SetMesh(gef::Mesh* mesh_);
+	void SetMesh(gef::Mesh* mesh_);
 
 	/*..Standard functions..*/
 
 	/// @brief Updates the gameobjets behaviour.
 	/// @param[in] Change in time since the last frame.
-	virtual void Update(float delta_time, PhysicsComponent* phys_component = 0) override;
+	virtual void Update(float delta_time) override;
 
 	/// @brief Builds the objects transform 
-	virtual void BuildTransform();
+	void BuildTransform();
 
 	/*..Collisions..*/
 
@@ -77,23 +77,11 @@ public:
 
 	/*..Physics..*/
 
-
-	//----------------------------------Important!--------------------------------------------//
-	// @note the following methods have been commented out for peformance reasons. 
-	// I thought I would keep them in as well as the definitions to show design iteration.
-
-	// @note Currently the physics components are stored in a vector and pushed in tandem 
-	// with the game object vector. This is so they have a 1:1 correlation when it comes to 
-	// looping over the objects.
-	// Ultimately this is to ensure the data is coalesced improving cache hits speeding the overall process 
-
-
-
 	// @brief Returns a pointer to the physics object
-	//inline PhysicsComponent* GetPhysicsBody() const { if (physics_component) { return physics_component; } }
+	inline PhysicsComponent* GetPhysicsBody() const { if (physics) { return physics; } }
 
 	/// @brief Call this to attach a physics component to the game object.
-	//void AttachPhysicsComponent(b2World* world_);
+	void AttachPhysicsComponent(b2World* world_);
 
 	// @brief Initialise the characteristics this game object will have.
 	// @param[in] The shape of the physics collider.
@@ -101,10 +89,17 @@ public:
 	// @param[in] The amount of friction to act upon this object when sliding against a surface.
 	// @param[in] The amount of 'matter' this object will contain, affects force calculations.
 	// @param[in] Whether this object is a collider or a trigger. Triggers aren't included in physics calculations.
-	//void InitialisePhysicsFixture(PolyShape shape_, float density, float friction, float mass, bool is_sensor);
+	void InitialisePhysicsFixture(PhysicsComponent::Shape shape_, float density, float friction, float mass, bool is_sensor);
 
+	inline void SetAlive(bool value) { is_alive = value; }
+	inline const bool& IsAlive() { return is_alive; }
+
+	inline void IgnoreZRotation(bool value) { ignore_z_rotation = value; }
 
 protected:
+
+	bool is_alive;
+	bool ignore_z_rotation;
 
 	/// @brief Update the GFX on the game object if a physics component is added.
 	// @param[in] Takes a pointer to a physics body.
@@ -116,6 +111,6 @@ protected:
 	/// @brief this objects physics component. By default it's NULL.
 	//PhysicsComponent* physics_component;
 
-
+	PrimitiveBuilder* primitive_builder;
+	PhysicsComponent* physics;
 };
-

@@ -76,6 +76,21 @@
     <Filter Include="Source Files\Utilities">
       <UniqueIdentifier>{9e584e0c-4d1f-4af1-9a7a-509114637734}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Audio">
+      <UniqueIdentifier>{3ab5a1d7-1063-4a62-b778-4d12da12d7b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Environment">
+      <UniqueIdentifier>{bec2c1b7-eab1-4964-9c24-b6a315c2b35f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Level Generator">
+      <UniqueIdentifier>{31af0522-a853-4ad5-a21a-e6a6a89f6d9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Blocks">
+      <UniqueIdentifier>{ddb62ce1-3ea4-489d-be1a-6d00758393fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Blocks">
+      <UniqueIdentifier>{ff5cdde2-a842-48b3-b0da-99ebedacc162}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Includes\UserInterface\UIButton.cpp">
@@ -126,9 +141,6 @@
     <ClCompile Include="..\..\Includes\Camera\ThirdPersonCamera.cpp">
       <Filter>Source Files\Cameras</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Includes\Animation\AnimDriver.cpp">
-      <Filter>Source Files\Animation</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Includes\GameObjects\AnimatedGameObject.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
@@ -136,9 +148,6 @@
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Includes\States\Context.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Includes\States\DeathScreen.cpp">
       <Filter>Source Files\States</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Includes\States\GameState.cpp">
@@ -161,9 +170,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Includes\States\Options.cpp">
       <Filter>Source Files\States</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Includes\Animation\WalkAnim.cpp">
-      <Filter>Source Files\Animation</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Includes\Vendor\audio_3d.cpp">
       <Filter>Source Files\Vendor</Filter>
@@ -190,6 +196,30 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Includes\States\WinLoss.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
+    <ClCompile Include="ParallaxBackground.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MovingPlatform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Grass.cpp">
+      <Filter>Source Files\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Ice.cpp">
+      <Filter>Source Files\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Goal.cpp">
+      <Filter>Source Files\Blocks</Filter>
+    </ClCompile>
+    <ClCompile Include="Lava.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -239,12 +269,6 @@
     <ClInclude Include="..\..\Includes\Input\SCEInputHandler.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Includes\Gameplay\AddForceToLeftEngine.h">
-      <Filter>Header Files\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Includes\Gameplay\AddForceToRightEngine.h">
-      <Filter>Header Files\Gameplay</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Includes\Gameplay\Event.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
@@ -260,16 +284,10 @@
     <ClInclude Include="..\..\Includes\Camera\ThirdPersonCamera.h">
       <Filter>Header Files\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Includes\Animation\AnimDriver.h">
-      <Filter>Header Files\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Includes\Animation\AnimState.h">
-      <Filter>Header Files\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Includes\States\Context.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Includes\States\DeathScreen.h">
+    <ClInclude Include="..\..\Includes\States\WinLoss.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Includes\States\GameState.h">
@@ -302,9 +320,6 @@
     <ClInclude Include="..\..\Includes\States\Options.h">
       <Filter>Header Files\States</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Includes\Animation\WalkAnim.h">
-      <Filter>Header Files\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Includes\Vendor\audio_3d.h">
       <Filter>Header Files\Vendor</Filter>
     </ClInclude>
@@ -320,19 +335,46 @@
     <ClInclude Include="..\..\Includes\Gameplay\Gameplay.h">
       <Filter>Header Files\Gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="LevelGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Enemy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Collectable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Audio.h">
+    <ClInclude Include="GraphicsData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsData.h">
+    <ClInclude Include="Goal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParallaxBackground.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Grass.h">
+      <Filter>Header Files\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="Ice.h">
+      <Filter>Header Files\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="MovingPlatform.h">
+      <Filter>Header Files\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelGenerator.h">
+      <Filter>Header Files\Level Generator</Filter>
+    </ClInclude>
+    <ClInclude Include="Lava.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

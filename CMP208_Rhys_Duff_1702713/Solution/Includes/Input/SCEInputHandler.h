@@ -42,6 +42,11 @@ private:
 	AnimatedPawn* anim_pawn;
 	PhysicsComponent* phys_object;
 
+	/*..Events..*/
+	Jump jump;
+	MoveLeft move_left;
+	MoveRight move_right;
+
 	/*..Button objects..*/
 
 	///  Button objects used for executing actions.
@@ -68,5 +73,7 @@ private:
 	Button* options;
 	Button* start;
 
+	Joystick* left_joystick;
+	Joystick* right_joystick;
 };
 

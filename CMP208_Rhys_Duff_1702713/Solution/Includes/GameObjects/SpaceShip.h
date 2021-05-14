@@ -15,7 +15,7 @@ public:
 
 	/// @brief Updates this objects attributes.
 	/// @param[in] Delta time tracks the time since last frame.
-	virtual void Update(float delta_time, PhysicsComponent* physics = 0) override;
+	virtual void Update(float delta_time) override;
 
 	// @brief Set the current state of the ship's hull integrity.
 	// @pram[in] Takes a floating point value.
