@@ -20,6 +20,7 @@ public:
 	virtual void OnExit() override;
 
 	int& TilesToRender() { return tiles_to_render; }
+	void CurrentTilesBeingRendered(int& value) { tiles_to_render = value; }
 
 private:
 
@@ -40,10 +41,14 @@ private:
 
 	//Tiling options.
 	void InitTileOptions();
+	void EvalArrowButtons(const int index);
 	void RenderTilesFont();
+	void IncrimentTiles(const int& index);
+	void UpdateDpadTextures(const int& index);
 	std::array<UIButton*, 2> tile_option_arrows;
 	std::array<gef::Font*, 2> tiles_font;
 	int tiles_to_render;
+	bool tile_arrows_selected;
 
 
 	float slider_values[3];

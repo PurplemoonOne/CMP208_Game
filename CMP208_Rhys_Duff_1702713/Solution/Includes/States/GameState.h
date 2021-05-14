@@ -36,6 +36,7 @@ class GraphicsData;
 class ParallaxBackground;
 class LevelGenerator;
 
+
 class GameState : public  State
 {
 public:
@@ -78,7 +79,7 @@ private:
 	void InitCamera();
 	void InitPlayer(gef::Platform* platform);
 	void ResetScene();
-
+	void Tiling();
 	//Render functions
 	void DrawHUD();
 	void RenderSkysphere(gef::Renderer3D* renderer);

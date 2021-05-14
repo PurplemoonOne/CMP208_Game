@@ -27,7 +27,7 @@ public:
 LevelGenerator::LevelGenerator(Context* context, b2World* world)
 	:
 	current_chunk_id(0),
-	number_of_tiles_to_render(2)
+	number_of_tiles_to_render(4)
 {
 	//Set all blocks to nullptr.
 	for (auto& c : chunk)

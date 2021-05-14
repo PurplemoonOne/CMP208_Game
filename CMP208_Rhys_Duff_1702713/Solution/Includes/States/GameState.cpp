@@ -28,6 +28,7 @@ GameState::GameState(gef::Platform* platform_, GraphicsData* asset_loader)
 
 GameState::~GameState()
 {
+
 	if (player) {
 		delete player;
 		player = nullptr;
@@ -101,6 +102,8 @@ bool GameState::Update(float delta_time)
 		////////////////////////////////////////////////////////////////////////////////////
 		//Game Logic.
 
+		
+
 		//Audio
 		context->GetAudio()->GetAudio3D()->listener().SetTransform(player->transform());
 		context->GetAudio()->GetAudio3D()->Update();
@@ -112,6 +115,7 @@ bool GameState::Update(float delta_time)
 		skybox->Update(delta_time);
 
 		//level->Update(delta_time);
+		Tiling();
 		level->EvaluateChunkToRender(player->GetPosition(), true);
 		level->UpdateChunk(delta_time);
 		UpdatePlayer(delta_time);
@@ -233,6 +237,7 @@ void GameState::InitialiseScene()
 		world->SetContactListener(&scene_contact_listener);
 
 		level = new LevelGenerator(context, world);
+		level->SetDrawDistance(4);
 
 		user_interface = UserInterface::Create(context->GFXData());
 		user_interface->InitFont(context->GetPlatform());
@@ -288,6 +293,17 @@ void GameState::ResetScene()
 		}
 
 		renderer->default_shader_data().CleanUp();
+	}
+
+}
+
+void GameState::Tiling()
+{
+	//Apply chunk settings.
+	Options* options = static_cast<Options*>(context->GetState(States::OPTIONS));
+	if (options)
+	{
+		level->SetDrawDistance(options->TilesToRender());
 	}
 
 }

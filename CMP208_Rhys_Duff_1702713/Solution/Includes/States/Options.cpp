@@ -13,6 +13,7 @@ Options::Options(gef::Platform* platform)
 	index(0)
 {
 	option_text.fill(nullptr);
+	tiles_to_render = 4;
 }
 
 Options::~Options()
@@ -50,6 +51,7 @@ void Options::OnEnter()
 
 	parallax_bg = ParallaxBackground::Create(platform, context->GFXData());
 	InitSliders();
+	InitTileOptions();
 
 	/*..Initialise the font..*/
 	for (auto& font : option_text)
@@ -81,25 +83,42 @@ void Options::Input(float delta_time)
 
 			if (controller)
 			{
-				if (controller->buttons_down() == gef_SONY_CTRL_DOWN)
+				if (controller->buttons_pressed() == gef_SONY_CTRL_DOWN)
 				{
-					sliders[index]->IsSelected(false);
-					index = (index == (sliders.size() - 1)) ? 0 : index + 1;
+					if (sliders[index])
+					{
+						sliders[index]->IsSelected(false);
+						index = (index == (sliders.size() - 1)) ? 0 : index + 1;
+					}
 				}
-				else if (controller->buttons_down() == gef_SONY_CTRL_UP)
+				else if (controller->buttons_pressed() == gef_SONY_CTRL_UP)
 				{
-					sliders[index]->IsSelected(false);
-					index = (index == 0) ? (sliders.size() - 1) : index - 1;
+					if (sliders[index])
+					{
+						sliders[index]->IsSelected(false);
+						index = (index == 0) ? (sliders.size() - 1) : index - 1;
+					}
 				}
 
-				sliders[index]->IsSelected(true);
+				if (sliders[index])
+				{
+					sliders[index]->IsSelected(true);
+					tile_arrows_selected = false;
+				}
+				else
+				{
+					tile_arrows_selected = true;
+				}
+			
 
 				if (controller->buttons_pressed() == gef_SONY_CTRL_RIGHT)
 				{
+					if(sliders[index])
 					sliders[index]->UpdatePosition(input->GetMouseData(), 20.0f);
 				}
 				else if (controller->buttons_pressed() == gef_SONY_CTRL_LEFT)
 				{
+					if(sliders[index])
 					sliders[index]->UpdatePosition(input->GetMouseData(), -20.0f);
 				}
 
@@ -110,6 +129,7 @@ void Options::Input(float delta_time)
 	{
 		for (auto& slider : sliders)
 		{
+			if(slider)
 			if (slider->IsHover(input, context->GetAudio()) && input->GetMouseData().left_button_state == MouseState::IS_DOWN)
 			{
 				slider->UpdatePosition(input->GetMouseData(), 0.0f);
@@ -118,6 +138,8 @@ void Options::Input(float delta_time)
 	}
 
 	EvalButton();
+	EvalArrowButtons(0);
+	EvalArrowButtons(1);
 }
 
 bool Options::Update(float delta_time)
@@ -125,6 +147,7 @@ bool Options::Update(float delta_time)
 	UpdateVolume();
 	for (auto& slider : sliders)
 	{
+		if(slider)
 		slider->Update(delta_time);
 	}
 	
@@ -156,9 +179,11 @@ void Options::Render()
 
 		RenderFont();
 		button->Render(sprite_renderer);
+		RenderTilesFont();
 		
 		for (auto& slider : sliders)
 		{
+			if(slider)
 			slider->Render(sprite_renderer);
 		}
 
@@ -219,6 +244,15 @@ void Options::CleanSprites()
 		}
 	}
 
+	for (auto& arrow : tile_option_arrows)
+	{
+		if (arrow)
+		{
+			delete arrow;
+			arrow = nullptr;
+		}
+	}
+
 }
 
 void Options::EvalButton()
@@ -273,6 +307,7 @@ void Options::InitSliders()
 		sliders.push_back(slider);
 	}
 
+	sliders.push_back(nullptr);
 
 }
 
@@ -320,16 +355,147 @@ void Options::InitTileOptions()
 
 	float x_pos = context->GetPlatform()->width() / 2.0f;
 	float y_pos = context->GetPlatform()->height() - 128.0f;
-	int negate = -1;
+	int negate = 1;
+
+	TextureID ids[] = 
+	{
+		TextureID::right_arrow,
+		TextureID::left_arrow, 
+	};
+
 	for (int index = 0; index < tile_option_arrows.size(); ++index) 
 	{
-		tile_option_arrows[index] = UIButton::Create("", gef::Vector4((x_pos + 64.0f) * negate, y_pos, -0.1f));
-		tile_option_arrows[index]->set_texture(context->GFXData()->GetTexture(TextureID::));
-		negate = 1;
+		tile_option_arrows[index] = UIButton::Create("", gef::Vector4((x_pos + 128.0f) * negate, y_pos, -0.1f));
+		tile_option_arrows[index]->set_texture(context->GFXData()->GetTexture(ids[index]));
+		tile_option_arrows[index]->set_height(64.0f);
+		tile_option_arrows[index]->set_width(64.0f);
+
+		index == 0 ? negate = -1 : negate = 1;	//Flip the arrow position.
 	}
 	
 }
 
+void Options::EvalArrowButtons(const int index)
+{
+	PawnController* input = context->GetInput();
+
+	float x_pos = context->GetPlatform()->width() / 2.0f;
+	float y_pos = context->GetPlatform()->height() - 128.0f;
+
+	int negate = 1;
+
+	if (input)
+	{
+
+		if (tile_option_arrows[index])
+		{
+			//
+			index == 0 ? negate = 1 : negate = -1;
+			tile_option_arrows[index]->set_position(gef::Vector4(x_pos + 128.0f * negate, y_pos, -0.1f));
+
+			if (tile_option_arrows[index]->IsHover(input, context->GetAudio()))//Don't need audio.
+			{
+				UpdateDpadTextures(index);
+				//Evaluate if the mouse has been clicked.
+				if (input->GetMouseData().left_button_state == MouseState::CLICKED)
+				{
+					IncrimentTiles(index);
+				}
+			}
+			else
+			{
+					UpdateDpadTextures(index);
+			}
+		}
+	}
+
+
+	//Handle controller input.
+	if (tile_arrows_selected)
+	{
+		const gef::SonyControllerInputManager* sce_manger = input->GetInputManager()->controller_input();
+
+		if (sce_manger)
+		{
+			const gef::SonyController* controller = sce_manger->GetController(0);
+
+			if (controller)
+			{
+				if (controller->buttons_pressed() == gef_SONY_CTRL_LEFT)
+				{
+					IncrimentTiles(1);
+					UpdateDpadTextures(1);
+				}
+				if (controller->buttons_pressed() == gef_SONY_CTRL_RIGHT)
+				{
+					IncrimentTiles(0);
+					UpdateDpadTextures(0);
+				}
+			}
+		}
+	}
+}
+
+
 void Options::RenderTilesFont()
 {
+	gef::SpriteRenderer* sp = context->SpriteRenderer();
+
+	float x_pos = context->GetPlatform()->width() / 2.0f;
+	float y_pos = context->GetPlatform()->height() - 128.0f;
+
+	//Display number of tiles.
+	tiles_font[0]->RenderText
+	(
+		sp,
+		gef::Vector4(x_pos, y_pos, -0.1f),
+		1.0f,
+		0xFFFFFFFF,
+		gef::TextJustification::TJ_LEFT,
+		"%i",
+		tiles_to_render
+	);
+
+	//Render title.
+	tiles_font[1]->RenderText
+	(
+		sp,
+		gef::Vector4(x_pos, y_pos - 64.0f, -0.1f),
+		1.0f,
+		0xFFFFFFFF,
+		gef::TextJustification::TJ_LEFT,
+		"Tiles to render :"
+	);
+
+	for (auto& arrow : tile_option_arrows)
+	{
+		if (arrow)
+		{
+			sp->DrawSprite(*arrow);
+		}
+	}
+}
+
+void Options::IncrimentTiles(const int& index)
+{
+	if(index == 0)
+	{
+		tiles_to_render++;
+		tiles_to_render > 8 ? tiles_to_render = 2 : NULL;
+	}
+	else
+	{
+		tiles_to_render--;
+		tiles_to_render < 2 ? tiles_to_render = 8 : NULL;
+	}
+}
+
+void Options::UpdateDpadTextures(const int& index)
+{
+	//Display the correct texture.
+	index == 0 ?
+
+		tile_option_arrows[index]->set_texture(context->GFXData()->GetTexture(TextureID::right_arrow_pressed))
+		:
+		tile_option_arrows[index]->set_texture(context->GFXData()->GetTexture(TextureID::left_arrow_pressed));
 }
