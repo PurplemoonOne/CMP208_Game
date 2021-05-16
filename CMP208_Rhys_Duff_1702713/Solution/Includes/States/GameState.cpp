@@ -71,8 +71,8 @@ void GameState::Input(float delta_time)
 {
 	PawnController* input = context->GetInput();
 
-	//Update input devices.
-	input->GetInputManager()->Update();
+	//Process Input
+	input->ProcessInput(delta_time);
 
 	gef::Keyboard* keyboard = input->GetInputManager()->keyboard();
 
@@ -80,10 +80,6 @@ void GameState::Input(float delta_time)
 	{
 		context->Transition(States::PAUSE);
 	}
-
-	//Process Input
-
-	input->ProcessInput(delta_time);
 }
 
 bool GameState::Update(float delta_time)
@@ -91,11 +87,7 @@ bool GameState::Update(float delta_time)
 
 		////////////////////////////////////////////////////////////////////////////////////
 		//
-		if (t_camera != nullptr)
-		{
-			t_camera->SetTarget(player->GetPosition());
-			t_camera->Update(delta_time);
-		}
+		UpdateCamera(delta_time);
 		//
 		////////////////////////////////////////////////////////////////////////////////////
 	
@@ -391,7 +383,6 @@ void GameState::UpdatePlayer(float delta_time)
 			context->Transition(States::DEATH);
 		}
 	}
-
 	if (player != nullptr)
 	{
 		//If the player has fallen of the world end the game.
@@ -401,6 +392,43 @@ void GameState::UpdatePlayer(float delta_time)
 			context->SetHasWon(false);
 			context->Transition(States::DEATH);
 		}
+	}
+	if (player != nullptr)
+	{
+		if (player->GetHealth() < 0.0f)
+		{
+			context->Reset(true);
+			context->SetHasWon(false);
+			context->Transition(States::DEATH);
+		}
+	}
+	if (player != nullptr)
+	{
+		if (player->GetAirTime() > 2.0f)
+		{
+			// Apply camera jitter if the player has been in the air for 'x' amount of time.
+			if (player->CanJump())
+			{
+				player->ResetAirTime();
+				t_camera->SetCanShake(true);
+			}
+		}
+	}
+
+}
+
+void GameState::UpdateCamera(float delta_time)
+{
+	if (t_camera != nullptr)
+	{
+		if (!t_camera->IsShaking()) {
+			t_camera->SetTarget(player->GetPosition());
+		}
+		if (t_camera->CanShake())
+		{
+			t_camera->CameraJitter(delta_time);
+		}
+		t_camera->Update(delta_time);
 	}
 }
 

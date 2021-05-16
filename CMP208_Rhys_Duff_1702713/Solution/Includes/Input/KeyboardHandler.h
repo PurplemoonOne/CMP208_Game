@@ -31,11 +31,11 @@ public:
 	~KeyboardHandler();
 
 	/// @brief Handles input from the keyboard 
-	Event* KeyEvents();
+	Event* GetKeyInput();
 
 private:
 
-	Events* events;
+	Events* _events;
 
 	/*..Pointer to the input manager..*/
 	gef::InputManager* input_manager;
@@ -45,26 +45,15 @@ private:
 	AnimatedPawn* anim_pawn;
 	PhysicsComponent* phys_object;
 
-	/*..w,a,s,d..*/
+	//Get the maximum number of keycodes.
+	static const UInt32 MAX_KEY_CODES = gef::Keyboard::KeyCode::NUM_KEY_CODES;
 
-	Keys* w;
-	Keys* a;
-	Keys* s;
-	Keys* d;
 
-	/*..up key, down key, left key and right key..*/
+	void BindKeyActions();
 
-	Keys* up;
-	Keys* down;
-	Keys* left;
-	Keys* right;
 
-	/*..Some more key objects..*/
+	std::array<Keys, MAX_KEY_CODES> key_events;
 
-	Keys* shift;
-	Keys* l_alt;
-	Keys* ctrl;
-	Keys* space_bar;
 
 };
 

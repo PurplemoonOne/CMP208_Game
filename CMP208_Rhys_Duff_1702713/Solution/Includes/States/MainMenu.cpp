@@ -97,6 +97,7 @@ bool MainMenu::Update(float delta_time)
 	UpdateTransition();	
 	AnimateTitle(delta_time);
 
+	if(parallax_bg)
 	parallax_bg->UpdateMenuVersion(delta_time);
 
 	return not_exit;

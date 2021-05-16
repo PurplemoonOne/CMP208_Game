@@ -22,16 +22,19 @@ public:
 	static ParallaxBackground* Create(gef::Platform* platform, GraphicsData* graphics_data);
 
 	void UpdateMenuVersion(float delta_time);
-	void UpdateGameVersion(float delta_time);
 	void Render(gef::SpriteRenderer* sprite_renderer);
 
 private:
 
+	bool should_update;
+
+	void Clean(std::array<Layer*, 11>& container);
 
 	void Init(GraphicsData* graphics_data);
 
 	// @brief Array of sprite images.
-	std::array<Layer*, 22> layers;
+	std::array<Layer*, 11> layers;
+	std::array<Layer*, 11> layers_sibling;
 	
 	// @brief Pointer to system platform.
 	gef::Platform* platform;

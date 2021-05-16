@@ -85,6 +85,7 @@ private:
 	void RenderSkysphere(gef::Renderer3D* renderer);
 
 	void UpdatePlayer(float delta_time);
+	void UpdateCamera(float delta_time);
 
 	PrimitiveBuilder* primitive_builder_;
 

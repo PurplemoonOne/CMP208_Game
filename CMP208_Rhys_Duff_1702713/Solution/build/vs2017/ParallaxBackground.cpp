@@ -5,39 +5,17 @@
 
 ParallaxBackground::ParallaxBackground(gef::Platform* platform_, GraphicsData* graphics_data)
 	:
-	platform(platform_)
+	platform(platform_),
+	should_update(true)
 {
 	Init(graphics_data);
-
-	float vel = 10.0f;
-	for (int i = 0; i < 22; ++i)
-	{
-		layers.at(i)->layer_velocity = vel;
-		//	If index is less than 10, reset the velocity
-		//	such that the sibling image for this index
-		//	shares the same velocity. 
-		//	i.e image @ i = 0 EQUALS image @ i = 11.
-		
-		vel = ((i == 10) ? vel = 10.0f : vel += 4.5f);
-	}
-
 }
 
 ParallaxBackground::~ParallaxBackground()
 {
-	for (auto& layer : layers)
-	{
-		if (layer)
-		{
-			if (layer->image)
-			{
-				delete layer->image;
-				layer->image = nullptr;
-			}
-			delete layer;
-			layer = nullptr;
-		}
-	}
+	should_update = false;
+	Clean(layers);
+	Clean(layers_sibling);
 }
 
 ParallaxBackground* ParallaxBackground::Create(gef::Platform* platform, GraphicsData* graphics_data)
@@ -47,22 +25,20 @@ ParallaxBackground* ParallaxBackground::Create(gef::Platform* platform, Graphics
 
 void ParallaxBackground::UpdateMenuVersion(float delta_time)
 {
-	int counter = 0;
 
 
 		for (int index = 0; index < layers.size(); ++index)
 		{
-			if (this)
-			{
-				if (layers.at(index)->image != nullptr)
+			
+				if (layers.at(index))
 				{
-					float layer_x = layers.at(index)->image->position().x();
+					//Read the layer's 'x' positional.
+					float pos_x = layers.at(index)->image->position().x();
 
-					if (layer_x < (platform->width() + platform->width() / 2.0f))
+					if (pos_x < (platform->width() + (platform->width() / 2.0f)))
 					{
-						layer_x += layers.at(index)->layer_velocity * delta_time;
-
-						layers.at(index)->image->set_position(layer_x, (platform->height() / 2.0f) - 256.0f, layers.at(index)->depth);
+						pos_x += layers.at(index)->layer_velocity * delta_time;
+						layers.at(index)->image->set_position(pos_x, (platform->height() / 2.0f) - 256.0f, layers.at(index)->depth);
 					}
 					else
 					{
@@ -70,30 +46,52 @@ void ParallaxBackground::UpdateMenuVersion(float delta_time)
 						layers.at(index)->image->set_position((0.0f - (platform->width() / 2.0f)), (platform->height() / 2.0f) - 256.0f, layers.at(index)->depth);
 					}
 
-
-					if (counter < 10) {
-						counter++;
-					}
-					else {
-						counter = 0;
-					}
 				}
-			}
-		}
-	
-}
+				if (layers_sibling.at(index)->image != nullptr)
+				{
+					//Read the layer's 'x' positional.
+					float pos_x = layers_sibling.at(index)->image->position().x();
 
-void ParallaxBackground::UpdateGameVersion(float delta_time)
-{
+					if (pos_x < (platform->width() + (platform->width() / 2.0f)))
+					{
+						pos_x += layers_sibling.at(index)->layer_velocity * delta_time;
+						layers_sibling.at(index)->image->set_position(pos_x, (platform->height() / 2.0f) - 256.0f, layers_sibling.at(index)->depth);
+					}
+					else
+					{
+						//Place image back at 0.0f minus half the screen width.
+						layers_sibling.at(index)->image->set_position((0.0f - (platform->width() / 2.0f)), (platform->height() / 2.0f) - 256.0f, layers_sibling.at(index)->depth);
+					}
+
+				
+				}
+		}
 }
 
 void ParallaxBackground::Render(gef::SpriteRenderer* sprite_renderer)
 {
-	for (auto& layer : layers)
+	for (int index = 0; index < layers.size(); ++index)
 	{
-		if (layer->image)
+		if (layers[index])
 		{
-			sprite_renderer->DrawSprite(*layer->image);
+			sprite_renderer->DrawSprite(*layers[index]->image);
+		}
+		if (layers_sibling[index])
+		{
+			sprite_renderer->DrawSprite(*layers_sibling[index]->image);
+		}
+	}
+	
+}
+
+void ParallaxBackground::Clean(std::array<Layer*, 11>& container)
+{
+	for (auto& layer : container)
+	{
+		if (layer)
+		{
+			delete layer;
+			layer = nullptr;
 		}
 	}
 }
@@ -102,35 +100,57 @@ void ParallaxBackground::Init(GraphicsData* graphics_data)
 {
 	layers.fill(nullptr);
 
-	float max_depth = 200.0f;
+	float max_depth = 1.1f;
 	float depth = max_depth;
-	int layer = ((layers.size() - layers.size() / 2) - 1);
+	int layer = 10;
+
+	//Layer velocities.
+	float vel[] =
+	{
+		100.0f,
+		95.0f,
+		90.0f,
+		85.0f,
+		80.0f,
+		75.0f,
+		70.0f,
+		65.0f,
+		60.0f,
+		55.0f,
+		50.0f,
+	};
+
+
 	for (int index = 0; index < layers.size(); ++index, --layer)
 	{
-		//If we're half way through grabing textures reset the layer and depth values.
-		if (index == (layers.size() / 2)) {
-			layer = ((layers.size() - layers.size() / 2) - 1);
-			depth = max_depth;
-		}
-
 		//From element 0 to size(), store the layers from furthest away to closest.
-		layers.at(index) = new Layer();
-		layers.at(index)->image = new gef::Sprite();
-		layers.at(index)->image->set_texture(graphics_data->GetBackdropTexture((BackdropLayersID)layer));
-		layers.at(index)->id = ((BackdropLayersID)layer);
-
+		layers.at(index) = new Layer();																			  //Creating a new layer object.
+		layers.at(index)->image = new gef::Sprite();															 //Creating a new sprite object.
+		layers.at(index)->image->set_texture(graphics_data->GetBackdropTexture((BackdropLayersID)layer));		//Applying texture
+		layers.at(index)->id = ((BackdropLayersID)layer);												   
+		layers.at(index)->layer_velocity = vel[layer];
+		//Dimensions
 		layers.at(index)->image->set_height(platform->height() + 512);
 		layers.at(index)->image->set_width(platform->width());
-		if (index < ((layers.size() / 2)))
-		{
-			layers.at(index)->image->set_position(gef::Vector4(platform->width() / 2.0f, (platform->height() / 2.0f) + 256.0f, depth));
-			layers.at(index)->depth = depth;
-		}
-		else
-		{
-			layers.at(index)->image->set_position(gef::Vector4((0.0f - (platform->width() / 2.0f)), (platform->height() / 2.0f) + 256.0f, depth));
-			layers.at(index)->depth = depth;
-		}
+		//Position
+		layers.at(index)->image->set_position(gef::Vector4(platform->width() / 2.0f, (platform->height() / 2.0f) + 256.0f, depth));
+		layers.at(index)->depth = depth;
+
+		//Repeat process for the counterpart images.
+		
+		//From element 0 to size(), store the layers from furthest away to closest.
+		layers_sibling.at(index) = new Layer();																			  //Creating a new layer object.
+		layers_sibling.at(index)->image = new gef::Sprite();															 //Creating a new sprite object.
+		layers_sibling.at(index)->image->set_texture(graphics_data->GetBackdropTexture((BackdropLayersID)layer));		//Applying texture
+		layers_sibling.at(index)->id = ((BackdropLayersID)layer);
+		layers_sibling.at(index)->layer_velocity = vel[layer];
+		//Dimensions
+		layers_sibling.at(index)->image->set_height(platform->height() + 512);
+		layers_sibling.at(index)->image->set_width(platform->width());
+		//Position
+		layers_sibling.at(index)->image->set_position(gef::Vector4(0.0f - platform->width() / 2.0f, (platform->height() / 2.0f) + 256.0f, depth));
+		layers_sibling.at(index)->depth = depth;
+
 		depth -= 0.1f;
 	}
 

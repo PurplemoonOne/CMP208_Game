@@ -13,6 +13,7 @@ Options::Options(gef::Platform* platform)
 	index(0)
 {
 	option_text.fill(nullptr);
+	tile_option_arrows.fill(nullptr);
 	tiles_to_render = 4;
 }
 

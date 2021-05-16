@@ -82,8 +82,8 @@ void PawnController::ProcessInput(float delta_time)
 	input_manager->Update();
 
 	//Read from the controller and keyboard.
-	Event* sce_event = controller->ControllerHandler();
-	Event* key_event = keyboard->KeyEvents();
+	Event* sce_event = controller->GetButtonCode();
+	Event* key_event = keyboard->GetKeyInput();
 
 	if (sce_event)
 	{

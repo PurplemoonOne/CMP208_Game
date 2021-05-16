@@ -35,18 +35,49 @@ public:
 
 };
 
+enum class DeviceState
+{
+	not_bound = -1,
+	pressed,
+	is_down, 
+	released
+};
+
 class Keys 
 {
 public:
-	Event* action;
-	bool bound;
+	Event* action[3] = 
+	{
+		nullptr,
+		nullptr,
+		nullptr
+	};
+	bool bound[3] = 
+	{
+		false,
+		false,
+		false
+	};
+
 };
 
 class Button
 {
 public:
-	Event* action;
-	bool bound;
+	Event* action[3] =
+	{
+		nullptr,//PRESSED
+		nullptr,//IS_DOWN
+		nullptr //RELEASED
+	};
+
+	bool bound[3] =
+	{
+		false,
+		false,
+		false
+	};
+
 };
 
 // @brief Joysticks can have up to 4 actions mapped.

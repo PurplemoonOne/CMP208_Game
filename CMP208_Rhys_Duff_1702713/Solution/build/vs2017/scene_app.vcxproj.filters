@@ -220,7 +220,7 @@
       <Filter>Source Files\Blocks</Filter>
     </ClCompile>
     <ClCompile Include="Lava.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Blocks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -371,11 +371,14 @@
     <ClInclude Include="LevelGenerator.h">
       <Filter>Header Files\Level Generator</Filter>
     </ClInclude>
-    <ClInclude Include="Lava.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MapData.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChargeJump.h">
+      <Filter>Header Files\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Lava.h">
+      <Filter>Header Files\Blocks</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

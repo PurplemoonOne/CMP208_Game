@@ -1,6 +1,7 @@
 #pragma once
 /*..Actions..*/
 #include "Gameplay/Move.h"
+#include "ChargeJump.h"
 #include "Gameplay/Jump.h"
 #include "Gameplay/AddForceToLeftEngine.h"
 #include "Gameplay/AddForceToRightEngine.h"
@@ -13,4 +14,5 @@ struct Events
 	Jump jump;
 	AddForceToLeftEngine force_left_engine;
 	AddForceToRightEngine force_right_engine;
+	ChargeJump charge_jump;
 };

@@ -22,7 +22,9 @@ public:
 				if (player->CanJump())
 				{
 					player->SetCanJump(false);
-					player->GetPhysicsBody()->PhysicsBody()->ApplyForceToCenter(b2Vec2(0.0f, 1000.0f), true);
+					player->GetPhysicsBody()->PhysicsBody()->ApplyForceToCenter(b2Vec2(0.0f, player->GetJumpForce()), true);
+					float reset_jump = 100.0f;
+					player->SetJumpForce(reset_jump);
 				}
 			}
 		}
@@ -39,7 +41,9 @@ public:
 				if (player->CanJump())
 				{
 					player->SetCanJump(false);
-					body->PhysicsBody()->ApplyForceToCenter(b2Vec2(0.0f, 100.0f), true);
+					body->PhysicsBody()->ApplyForceToCenter(b2Vec2(0.0f, player->GetJumpForce()), true);
+					float reset_jump = 100.0f;
+					player->SetJumpForce(reset_jump);
 				}
 			}
 		}

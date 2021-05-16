@@ -10,101 +10,80 @@
 KeyboardHandler::KeyboardHandler(gef::InputManager* input_, Events& events_)
 	:
 	input_manager(input_),
-	events(&events_),
+	_events(&events_),
 	pawn(nullptr),
-	anim_pawn(nullptr),
-	w(nullptr),
-	a(nullptr),
-	s(nullptr),
-	d(nullptr),
-	up(nullptr),
-	down(nullptr),
-	left(nullptr),
-	right(nullptr),
-	shift(nullptr),
-	l_alt(nullptr),
-	ctrl(nullptr),
-	space_bar(nullptr)
+	anim_pawn(nullptr)
 {
-	a = new Keys();
-	d = new Keys();
-	space_bar = new Keys();
-
-	a->action = &events->move_left;
-	d->action = &events->move_right;
-	space_bar->action = &events->jump;
+	BindKeyActions();
 }
 
 KeyboardHandler::~KeyboardHandler()
 {
 }
 
-Event* KeyboardHandler::KeyEvents()
+Event* KeyboardHandler::GetKeyInput()
 {
-	gef::Keyboard* keyboard_ = input_manager->keyboard();
 
-	if (keyboard_)
+	Event* event_ = nullptr;
+
+	const gef::Keyboard* keyboard = input_manager->keyboard();
+
+	for (int index = 0; index < key_events.size(); ++index)
 	{
 
-		if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_W))
-		{
-			if(w)
-			return w->action;
-		}
-		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_S))
-		{
-			if(s)
-			return s->action;
-		}
-		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_A))
-		{
-			if(a)
-			return a->action;
-		}
-		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_D))
-		{
-			if(d)
-			return d->action;
-		}
-		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_UP))
-		{
-			if(up)
-			return up->action;
-		}
-		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_DOWN))
-		{
-			if(down)
-			return down->action;
-		}
-		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_RIGHT))
-		{
-			if(right)
-			return right->action;
-		}
-		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_LEFT))
-		{
-			if(left)
-			return left->action;
-		}
-		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_LALT))
-		{
-			if(l_alt)
-			return l_alt->action;
-		}
-		else if (keyboard_->IsKeyDown(gef::Keyboard::KC_LCONTROL))
-		{
-			if(ctrl)
-			return ctrl->action;
-		}
-		else if (keyboard_->IsKeyDown(gef::Keyboard::KeyCode::KC_SPACE))
-		{
-			if (space_bar)
-				return space_bar->action;
-		}
-		
-		return nullptr;
+			if (keyboard->IsKeyPressed((gef::Keyboard::KeyCode)index))
+			{
+
+					if (key_events[index].action[(UInt32)DeviceState::pressed] != nullptr)
+					{
+
+								event_ = key_events[index].action[(UInt32)DeviceState::pressed];
+								return event_;
+					}
+
+			}
+			else if (keyboard->IsKeyDown((gef::Keyboard::KeyCode)index))
+			{
+
+					if (key_events[index].action[(UInt32)DeviceState::is_down] != nullptr)
+					{
+
+								event_ = key_events[index].action[(UInt32)DeviceState::is_down];
+								return event_;
+
+					}
+
+			}
+			else if (keyboard->IsKeyReleased((gef::Keyboard::KeyCode)index))
+			{
+
+					if (key_events[index].action[(UInt32)DeviceState::released] != nullptr)
+					{
+
+							event_ = key_events[index].action[(UInt32)DeviceState::released];
+							return event_;
+	
+					}
+
+			}
+
 	}
+
+	return nullptr;
 }
+
+void KeyboardHandler::BindKeyActions()
+{
+	//Bind the keys to the respective actions.
+	key_events[(int)gef::Keyboard::KeyCode::KC_D].action[(int)DeviceState::is_down] = &_events->move_right;
+	key_events[(int)gef::Keyboard::KeyCode::KC_A].action[(int)DeviceState::is_down] = &_events->move_left;
+
+	key_events[(int)gef::Keyboard::KeyCode::KC_SPACE].action[(int)DeviceState::released] = &_events->jump;
+	key_events[(int)gef::Keyboard::KeyCode::KC_SPACE].action[(int)DeviceState::is_down] = &_events->charge_jump;
+}
+
+
+
 
 KeyboardHandler* KeyboardHandler::Create(gef::InputManager* input_, Events& events)
 {
@@ -113,6 +92,6 @@ KeyboardHandler* KeyboardHandler::Create(gef::InputManager* input_, Events& even
 
 void KeyboardHandler::BindKeys(Keys* key, Event* action)
 {
-	key->action = action;
+
 }
 

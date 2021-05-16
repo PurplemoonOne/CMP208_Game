@@ -316,6 +316,7 @@
     <ClInclude Include="..\..\Includes\Vendor\motion_clip_player.h" />
     <ClInclude Include="..\..\Includes\Vendor\primitive_builder.h" />
     <ClInclude Include="Audio.h" />
+    <ClInclude Include="ChargeJump.h" />
     <ClInclude Include="Collectable.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Goal.h" />

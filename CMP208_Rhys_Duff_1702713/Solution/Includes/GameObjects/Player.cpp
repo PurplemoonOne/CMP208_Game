@@ -11,7 +11,9 @@ Player::Player(const gef::Skeleton& skeleton)
 	acceleration(1.2f),
 	experience_points(0.0f),
 	current_velocity(0.0f),
-	reached_portal(false)
+	jump_force(100.0f),
+	reached_portal(false),
+	air_time(0.0f)
 {
 	//Set health
 	health = max_health;
@@ -52,11 +54,25 @@ void Player::Update(float delta_time)
 		animation_player->set_clip(GetAnimation(AnimationID::fall));
 	}
 
+	//Track the air time.
+	if (!can_jump)
+	{
+		air_time += 1.0f * delta_time; 
+	}
+
 }
 
 void Player::OnCollision(ObjectType game_object)
 {
-	if (game_object == ObjectType::environment_)
+	if (
+		game_object == ObjectType::environment_
+		||
+		game_object == ObjectType::lava_
+		||
+		game_object == ObjectType::ice_
+		||
+		game_object == ObjectType::static_
+		)
 	{
 		can_jump = true;
 	}

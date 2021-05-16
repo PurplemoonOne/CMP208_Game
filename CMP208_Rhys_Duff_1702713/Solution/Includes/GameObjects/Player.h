@@ -48,7 +48,11 @@ public:
 
 	float current_velocity;
 
+	// @brief Sets whether the player can jump.
+	// @param[in] boolean flag.
 	inline void SetCanJump(bool value) { can_jump = value; }
+
+	// @brief Returns the status of jumping.
 	inline const bool& CanJump() { return can_jump; }
 
 	inline const int& GetScore(){ return score; }
@@ -61,6 +65,12 @@ public:
 	void InsertAnimation(AnimationID id, gef::Animation* anim);
 	gef::Animation* GetAnimation(AnimationID id) const { return animations[(uint32)id]; }
 
+	inline void SetJumpForce(float& value) { jump_force = value; }
+	const float& GetJumpForce() { return jump_force; }
+
+	// @brief Grabs the air time value.
+	inline const float& GetAirTime() { return air_time; }
+	inline void ResetAirTime() { air_time = 0.0f; }
 private:
 
 	float air_time;
@@ -79,6 +89,7 @@ private:
 	float health;
 	float max_health;
 
+	float jump_force;
 
 	float experience_points;
 	int score;

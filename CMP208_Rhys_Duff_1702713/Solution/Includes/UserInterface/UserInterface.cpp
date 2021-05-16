@@ -58,8 +58,8 @@ void UserInterface::DrawHealth(gef::SpriteRenderer* sprite_renderer, const float
 		1.0f,
 		0xffffffff,
 		gef::TextJustification::TJ_LEFT,
-		"%f",
-		health
+		"%i",
+		(int)health
 	);
 }
 

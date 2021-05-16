@@ -16,6 +16,7 @@ Lava* Lava::Create()
 
 void Lava::Update(float delta_time)
 {
+    GameObject::Update(delta_time); 
 }
 
 void Lava::OnCollision(ObjectType ot)

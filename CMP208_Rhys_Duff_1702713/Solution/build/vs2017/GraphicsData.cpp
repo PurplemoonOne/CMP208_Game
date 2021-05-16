@@ -60,7 +60,7 @@ void GraphicsData::InitialiseTextures()
 	InsertTexture(TextureID::death_title, asset_loader->Texture("you_died.png", platform));
 	InsertTexture(TextureID::score, asset_loader->Texture("score.png", platform));
 	InsertTexture(TextureID::paused, asset_loader->Texture("pause.png", platform));
-	InsertTexture(TextureID::health, asset_loader->Texture("pause.png", platform));
+	InsertTexture(TextureID::health, asset_loader->Texture("Health.png", platform));
 	InsertTexture(TextureID::Slider_Background, asset_loader->Texture("buttons/volume_bg.png", platform));
 	InsertTexture(TextureID::Slider_Foreground, asset_loader->Texture("buttons/volume_bar.png", platform));
 
@@ -81,17 +81,17 @@ void GraphicsData::InitialiseTextures()
 	prefix = "forest_background/";
 	std::string file_path[] =
 	{
-		"Layer_0000_9",
-		"Layer_0001_8",
-		"Layer_0002_7",
-		"Layer_0003_6",
-		"Layer_0004_Lights",
-		"Layer_0005_5",
-		"Layer_0006_4",
-		"Layer_0007_Lights",
-		"Layer_0008_3",
-		"Layer_0009_2",
-		"Layer_0010_1",
+		"layer_0",
+		"layer_1",
+		"layer_2",
+		"layer_3",
+		"layer_4",
+		"layer_5",
+		"layer_6",
+		"layer_7",
+		"layer_8",
+		"layer_9",
+		"layer_10",
 	};
 
 	suffix.clear();

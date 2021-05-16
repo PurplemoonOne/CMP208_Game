@@ -55,18 +55,17 @@ enum class ButtonTextureID
 
 enum class BackdropLayersID
 {
-	layer_0 = 0,
+	layer_0,
 	layer_1,
 	layer_2,
 	layer_3,
-	layer_lights_1,
+	layer_4,
 	layer_5,
 	layer_6,
-	layer_lights_2,
+	layer_7,
 	layer_8,
 	layer_9,
 	layer_10,
-	layer_11,
 	max
 };
 
